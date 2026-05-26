@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgroVisión Antioquia · Tablero integrado v3 (Prototipo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700&family=Hanken+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4f1e8; --paper:#fffdf8; --ink:#221c12; --ink-soft:#5b5343; --line:#e3dccb;
+    --forest:#1f4632; --forest-deep:#11271a; --moss:#4a7a4e; --gold:#e0a83a; --terra:#b8502f; --terra-soft:#f6e6dd; --clay:#9c6b3f;
+    --pt-calido:#d9622b; --pt-templado:#e0a83a; --pt-frio:#3f7d5a; --pt-paramo:#5b7c93;
+    --fam-fru:#c0533a; --fam-tub:#b07d2e; --fam-gra:#7a5c8e; --fam-hor:#3f7d5a;
+    --good:#2f7a45; --bad:#b8502f; --warn:#c9892c;
+    --shadow:0 1px 2px rgba(34,28,18,.05),0 10px 34px rgba(17,39,26,.10);
+    --shadow-lg:0 30px 80px rgba(17,39,26,.28);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:'Hanken Grotesk',system-ui,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .app{max-width:1320px;margin:0 auto;padding:18px 20px 60px}
+  .mono{font-family:'IBM Plex Mono',monospace}
+
+  header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand .dot{width:36px;height:36px;border-radius:9px;background:var(--forest);position:relative;flex:none}
+  .brand .dot::after{content:"";position:absolute;inset:8px 8px auto 8px;height:5px;border-radius:3px;background:var(--gold)}
+  .brand .dot::before{content:"";position:absolute;inset:auto 9px 8px 9px;height:10px;border-radius:0 0 6px 6px;background:var(--terra)}
+  .brand h1{font-family:'Fraunces',serif;font-weight:600;font-size:23px;line-height:1}
+  .brand .sub{font-size:12px;color:var(--ink-soft)}
+  .controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .demo-badge{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;background:var(--terra-soft);color:#a8502f;padding:6px 10px;border-radius:7px;border:1px solid #ecccbd}
+  .seg{display:flex;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:3px;box-shadow:var(--shadow)}
+  .seg button{border:none;background:none;font-family:inherit;font-size:13px;font-weight:600;color:var(--ink-soft);padding:7px 12px;border-radius:7px;cursor:pointer;transition:.15s}
+  .seg button.on{background:var(--forest);color:#f4f1e8}
+  .seg .lbl{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:var(--terra);align-self:center;padding:0 6px 0 4px;text-transform:uppercase}
+
+  .help{display:flex;align-items:center;gap:12px;background:linear-gradient(100deg,#fbf3e6,#fffdf8);border:1px solid var(--line);border-radius:13px;padding:12px 16px;margin-bottom:14px;box-shadow:var(--shadow)}
+  .help .hi{flex:none;width:32px;height:32px;border-radius:9px;background:var(--gold);color:#3a2c08;display:flex;align-items:center;justify-content:center;font-size:18px}
+  .help p{font-size:13.5px;color:var(--ink-soft);margin:0}
+  .help b{color:var(--forest-deep)}
+
+  .period-banner{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:var(--forest);color:#eef3ec;border-radius:13px;padding:12px 16px;margin-bottom:14px;box-shadow:var(--shadow)}
+  .pb-title{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:7px}
+  .pb-chips{display:flex;gap:8px;flex-wrap:wrap}
+  .pb-chips .pc{background:rgba(255,253,248,.10);border:1px solid rgba(255,253,248,.18);border-radius:8px;padding:5px 10px;font-size:12px;line-height:1.3}
+  .pb-chips .pc b{color:#fff;font-weight:600}
+  .pb-chips .pc span{color:#bcd0bd;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.05em;display:block;text-transform:uppercase}
+  .pb-btn{flex:none;background:var(--gold);color:#3a2c08;border:none;border-radius:9px;padding:9px 14px;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;transition:.15s}
+  .pb-btn:hover{background:#ecb852}
+
+  .fambar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px}
+  .famchip{flex:1;min-width:150px;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:11px 14px;cursor:pointer;transition:.15s;display:flex;align-items:center;gap:11px;box-shadow:var(--shadow)}
+  .famchip:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(17,39,26,.13)}
+  .famchip.on{border-color:var(--c);box-shadow:0 0 0 2px var(--c) inset}
+  .famchip .fi{width:30px;height:30px;border-radius:8px;flex:none;display:flex;align-items:center;justify-content:center;font-size:16px;background:var(--c);color:#fff}
+  .famchip .ft{font-weight:600;font-size:13.5px;color:var(--forest-deep);line-height:1.15}
+  .famchip .fn{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--ink-soft);margin-top:2px}
+
+  .kpis{display:grid;grid-template-columns:1.3fr repeat(6,1fr);gap:11px;margin-bottom:18px}
+  @media(max-width:1180px){.kpis{grid-template-columns:repeat(4,1fr)}}
+  @media(max-width:720px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .kpi{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:13px 14px 28px;box-shadow:var(--shadow);position:relative;cursor:pointer;transition:transform .14s,box-shadow .14s,border-color .14s;overflow:hidden}
+  .kpi:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(17,39,26,.16);border-color:#d8cdb2}
+  .kpi .lab{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft)}
+  .kpi .val{font-family:'Fraunces',serif;font-weight:600;font-size:23px;line-height:1.02;margin-top:6px;color:var(--forest-deep)}
+  .kpi .val small{font-size:13px;font-weight:400;color:var(--ink-soft)}
+  .kpi .chg{font-size:11.5px;margin-top:4px;font-weight:600}
+  .kpi .what{font-size:11px;color:var(--ink);margin-top:7px;line-height:1.32}
+  .kpi .per{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--terra);margin-top:5px;line-height:1.3}
+  .kpi .more{position:absolute;right:11px;bottom:9px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--terra);letter-spacing:.05em;opacity:.7}
+  .chg.up{color:var(--good)} .chg.down{color:var(--bad)} .chg.flat{color:var(--ink-soft)}
+  .kpi.gate{background:linear-gradient(150deg,var(--forest),var(--forest-deep));color:#f4f1e8;border-color:var(--forest-deep)}
+  .kpi.gate .lab{color:#c8d8c8}
+  .kpi.gate .gt{font-family:'Fraunces',serif;font-weight:600;font-size:17px;line-height:1.1;margin-top:8px;color:#fff}
+  .kpi.gate .gd{font-size:11.5px;color:#cfe0cf;margin-top:6px}
+  .kpi.gate .more{color:var(--gold);opacity:1}
+
+  .panel{background:var(--paper);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+  .panel .head{padding:15px 18px 0}
+  .panel .head .t{font-family:'Fraunces',serif;font-weight:600;font-size:18px;color:var(--forest-deep)}
+  .panel .head .d{font-size:12.5px;color:var(--ink-soft);margin-top:2px}
+  .panel .body{padding:14px 18px 18px}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+  @media(max-width:980px){.grid-2{grid-template-columns:1fr}}
+  .full{margin-top:16px}
+
+  /* ===== INTERACTIVE MAP ===== */
+  .maptools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:12px 18px 0}
+  .metricseg{display:flex;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:3px;flex-wrap:wrap}
+  .metricseg button{border:none;background:none;font-family:inherit;font-size:12.5px;font-weight:600;color:var(--ink-soft);padding:7px 11px;border-radius:7px;cursor:pointer;transition:.15s}
+  .metricseg button.on{background:var(--forest);color:#f4f1e8}
+  .toggle-m{margin-left:auto;display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-soft);cursor:pointer;user-select:none}
+  .toggle-m .sw{width:38px;height:21px;border-radius:12px;background:#d8cdb2;position:relative;transition:.18s}
+  .toggle-m .sw::after{content:"";position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;background:#fff;transition:.18s}
+  .toggle-m.on .sw{background:var(--moss)} .toggle-m.on .sw::after{left:19px}
+
+  .maplayout{display:grid;grid-template-columns:1.35fr .95fr;gap:14px;padding:12px 18px 0}
+  @media(max-width:1000px){.maplayout{grid-template-columns:1fr}}
+  .mapwrap{background:linear-gradient(165deg,#15301f,#1f4632);border-radius:12px;padding:8px;position:relative}
+  .mapwrap svg{width:100%;height:auto;display:block}
+  .region{cursor:pointer;stroke:#15301f;stroke-width:1.6;transition:filter .15s,opacity .15s,stroke .15s}
+  .region:hover{filter:brightness(1.12)}
+  .region.sel{stroke:#fffdf8;stroke-width:3.2}
+  .region.dim{opacity:.42}
+  .rlabel{font-family:'Hanken Grotesk',sans-serif;font-size:10.5px;font-weight:700;pointer-events:none;text-anchor:middle;paint-order:stroke;stroke:rgba(17,39,26,.34);stroke-width:2.4px;fill:#fffdf8}
+  .mdot{cursor:pointer;transition:r .12s,stroke-width .12s}
+  .mdot:hover{stroke:#fff;stroke-width:2}
+  .mdotlabel{font-family:'IBM Plex Mono',monospace;font-size:7.2px;fill:#fffdf8;text-anchor:middle;pointer-events:none;paint-order:stroke;stroke:rgba(17,39,26,.5);stroke-width:1.6px}
+  .poi{cursor:pointer}
+  .poilabel{font-family:'IBM Plex Mono',monospace;font-size:8px;fill:#fff;text-anchor:middle;pointer-events:none;paint-order:stroke;stroke:rgba(17,39,26,.6);stroke-width:2px}
+  .gulf{font-family:'Fraunces',serif;font-style:italic;font-size:11px;fill:#7fb0c9}
+  .maptip{position:absolute;pointer-events:none;background:rgba(17,28,18,.96);color:#f4f1e8;border:1px solid rgba(224,168,58,.45);border-radius:10px;padding:9px 11px;font-size:12px;max-width:230px;box-shadow:0 12px 30px rgba(0,0,0,.4);opacity:0;transform:translateY(4px);transition:opacity .12s;z-index:20;line-height:1.45}
+  .maptip.on{opacity:1;transform:none}
+  .maptip .tt{font-family:'Fraunces',serif;font-weight:600;font-size:14px;color:#fff;margin-bottom:3px}
+  .maptip .tk{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold)}
+  .maptip .trow{display:flex;justify-content:space-between;gap:14px;margin-top:3px}
+  .maptip .trow span{color:#bcd0bd} .maptip .trow b{color:#fff;font-weight:600}
+  .maptip .ttags{margin-top:5px;display:flex;gap:4px;flex-wrap:wrap}
+  .maptip .ttag{font-size:9.5px;background:rgba(255,253,248,.12);border-radius:5px;padding:2px 6px}
+
+  .maplegend{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 18px 4px}
+  .maplegend .lt{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft)}
+  .legchips{display:flex;gap:12px;flex-wrap:wrap}
+  .legchips .it{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-soft)}
+  .legchips .sw{width:13px;height:13px;border-radius:4px}
+  .gradbar{height:12px;width:150px;border-radius:6px;border:1px solid var(--line)}
+  .gradlab{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-soft);display:flex;justify-content:space-between;width:150px}
+  .poi-leg{display:flex;gap:12px;flex-wrap:wrap;padding:2px 18px 10px}
+  .poi-leg .it{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink-soft)}
+  .poi-leg .mko{width:14px;height:14px;border-radius:50%;border:2px solid var(--gold);background:var(--forest)}
+  .poi-leg .mko.min{border-color:#fff;width:11px;height:11px}
+  .poi-leg .mko.reg{border-color:#7fb0c9;background:#2c5a44;width:10px;height:10px}
+  .poi-leg .dotc{width:12px;height:12px;border-radius:50%}
+  .map-interp{margin:0 18px 14px;background:#faf6ec;border:1px dashed var(--line);border-radius:10px;padding:10px 13px;font-size:12.5px;color:var(--ink-soft)}
+  .map-interp b{color:var(--forest-deep)}
+
+  /* map side panel */
+  .mside{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px 15px;display:flex;flex-direction:column}
+  .mside .mst{font-family:'Fraunces',serif;font-weight:600;font-size:19px;color:var(--forest-deep);line-height:1.1}
+  .mside .msd{font-size:12px;color:var(--ink-soft);margin-top:3px}
+  .pt-chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;color:#fff;margin:8px 4px 0 0}
+  .fam-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:8px;color:#fff;margin:4px 4px 0 0}
+  .msgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:12px}
+  .msm{background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:8px 9px}
+  .msm .l{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft)}
+  .msm .v{font-family:'Fraunces',serif;font-weight:600;font-size:15px;color:var(--forest-deep);margin-top:2px;line-height:1}
+  .msm .v.up{color:var(--good)} .msm .v.down{color:var(--bad)}
+  .msm .v small{font-size:9px;font-weight:400;color:var(--ink-soft)}
+  .subtag{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#9c6b3f;margin:13px 0 5px}
+  .crops{display:flex;flex-wrap:wrap;gap:6px}
+  .crop{font-size:12px;background:#efe7d4;color:var(--forest-deep);padding:4px 9px;border-radius:7px;font-weight:500}
+  .munichips{display:flex;flex-wrap:wrap;gap:5px;max-height:120px;overflow-y:auto;padding-right:3px}
+  .munichip{font-size:11px;background:var(--paper);border:1px solid var(--line);color:var(--forest-deep);padding:3px 8px;border-radius:7px;cursor:pointer;transition:.12s}
+  .munichip:hover{background:var(--forest);color:#fff;border-color:var(--forest)}
+  .munichip.act{background:var(--gold);border-color:var(--gold);color:#3a2c08;font-weight:600}
+  .ms-note{font-size:11px;color:var(--ink-soft);margin-top:10px;line-height:1.4}
+
+  /* linked charts */
+  .chartrow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:6px 18px 16px}
+  @media(max-width:1100px){.chartrow{grid-template-columns:1fr 1fr}}
+  @media(max-width:560px){.chartrow{grid-template-columns:1fr}}
+  .minic{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 13px}
+  .minic .mct{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:#9c6b3f;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+  .minic .mct .dz{font-weight:500;color:var(--terra)}
+  .minic svg{width:100%;height:auto;display:block}
+  .hbar{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:11.5px}
+  .hbar .hn{width:74px;flex:none;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hbar .ht{flex:1;height:9px;background:#ede6d6;border-radius:5px;overflow:hidden}
+  .hbar .hf{height:100%;border-radius:5px}
+  .hbar .hv{width:34px;text-align:right;flex:none;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-soft)}
+
+  /* recommendations */
+  .rec{display:flex;align-items:flex-start;gap:12px;padding:11px 12px;border-radius:11px;background:#faf6ec;border:1px solid var(--line);margin-bottom:9px}
+  .rec .rank{font-family:'Fraunces',serif;font-weight:600;font-size:18px;color:var(--gold);width:24px;text-align:center;flex:none;line-height:1.4}
+  .rec .info{flex:1;min-width:0}
+  .rec .nm{font-weight:600;color:var(--forest-deep);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .rec .why{font-size:11.5px;color:var(--ink-soft);margin-top:2px;line-height:1.4}
+  .rec .bars{display:flex;gap:8px;align-items:center;margin-top:6px}
+  .barbox{flex:1}
+  .barbox .bl{font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink-soft);letter-spacing:.04em;display:flex;justify-content:space-between}
+  .track{height:6px;background:#e3dccb;border-radius:4px;overflow:hidden;margin-top:2px}
+  .fill{height:100%;border-radius:4px}
+  .fill.r{background:var(--moss)} .fill.k{background:var(--terra)}
+  .semaforo{font-size:10px;font-family:'IBM Plex Mono',monospace;padding:2px 7px;border-radius:6px;font-weight:500}
+  .sem-low{background:#e3efe5;color:#2f6b43} .sem-mid{background:#fbf0d8;color:#9a6b15} .sem-high{background:#f6e0d8;color:#a8502f}
+  .badge-exp{font-size:9.5px;font-family:'IBM Plex Mono',monospace;background:#e7eef6;color:#33597e;padding:2px 6px;border-radius:5px}
+  .interp{background:#eef3ec;border-left:3px solid var(--moss);border-radius:0 10px 10px 0;padding:11px 14px;margin-top:14px;font-size:13px;color:#34503c}
+  .interp .it-t{font-weight:700;color:var(--forest-deep);font-size:12px;display:block;margin-bottom:3px}
+
+  /* municipality browser */
+  .muni-tools{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+  .muni-tools input,.muni-tools select{font-family:inherit;font-size:13.5px;color:var(--forest-deep);background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:8px 11px}
+  .muni-tools input{flex:1;min-width:160px}
+  .muni-count{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--terra)}
+  .muni-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;max-height:340px;overflow-y:auto;padding-right:4px}
+  .muni{background:#faf6ec;border:1px solid var(--line);border-radius:10px;padding:9px 11px;cursor:pointer;transition:.12s}
+  .muni:hover{background:#fff;border-color:var(--clay)}
+  .muni .mn{font-weight:600;color:var(--forest-deep);font-size:13.5px}
+  .muni .ms{font-size:11px;color:var(--ink-soft);margin-top:2px}
+  .muni .mf{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
+  .muni .dot-f{width:11px;height:11px;border-radius:3px}
+
+  /* product explorer */
+  .selrow{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:8px}
+  select{font-family:inherit;font-size:14px;font-weight:600;color:var(--forest-deep);background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:8px 12px;cursor:pointer}
+  .cyclebox{background:linear-gradient(120deg,#eef3ec,#f7f3ea);border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin:10px 0}
+  .cyclebox h5{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--clay);margin-bottom:9px}
+  .cycle-track{display:flex;align-items:stretch;gap:0;border-radius:9px;overflow:hidden;border:1px solid var(--line)}
+  .cyc{flex:1;padding:9px 8px;text-align:center;color:#fff}
+  .cyc .cyl{font-size:9.5px;font-family:'IBM Plex Mono',monospace;opacity:.92}
+  .cyc .cyv{font-family:'Fraunces',serif;font-weight:600;font-size:13.5px;margin-top:2px;line-height:1.15}
+  .pchips{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}
+  @media(max-width:560px){.pchips{grid-template-columns:repeat(2,1fr)}}
+  .pchip{background:#faf6ec;border:1px solid var(--line);border-radius:9px;padding:8px 10px}
+  .pchip .pl{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft)}
+  .pchip .pv{font-family:'Fraunces',serif;font-weight:600;font-size:15px;color:var(--forest-deep);margin-top:2px}
+  .pchip .pv.up{color:var(--good)} .pchip .pv.down{color:var(--bad)}
+  .pchip .pp{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--terra);margin-top:3px;line-height:1.25}
+  .chart-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:var(--ink-soft);margin-top:6px}
+  .chart-legend .it{display:flex;align-items:center;gap:6px}
+  .ll{width:18px;height:0;border-top:3px solid}
+
+  .exp-hero{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+  @media(max-width:760px){.exp-hero{grid-template-columns:1fr 1fr}}
+  .exp-c{background:linear-gradient(150deg,#fffdf8,#f3ede0);border:1px solid var(--line);border-radius:12px;padding:13px 14px}
+  .exp-c .el{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft)}
+  .exp-c .ev{font-family:'Fraunces',serif;font-weight:600;font-size:22px;color:var(--forest-deep);margin-top:4px;line-height:1.05}
+  .exp-c .ed{font-size:11px;color:var(--ink-soft);margin-top:3px}
+  .dest-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:13px}
+  .dest-row .dn{width:120px;flex:none;font-weight:600;color:var(--forest-deep)}
+  .dest-row .dt{flex:1;height:9px;background:#ede6d6;border-radius:5px;overflow:hidden}
+  .dest-row .df{height:100%;border-radius:5px;background:#33597e}
+  .dest-row .dv{width:60px;text-align:right;flex:none;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-soft)}
+  .real-tag{display:inline-block;font-size:9.5px;font-family:'IBM Plex Mono',monospace;background:#e3efe5;color:#2f6b43;padding:2px 7px;border-radius:5px;vertical-align:middle}
+  .demo-tag{display:inline-block;font-size:9.5px;font-family:'IBM Plex Mono',monospace;background:#f6e6dd;color:#a8502f;padding:2px 7px;border-radius:5px;vertical-align:middle}
+
+  .abasto{display:flex;gap:12px;align-items:flex-start;background:#faf6ec;border:1px solid var(--line);border-radius:11px;padding:12px 14px;margin-bottom:9px}
+  .abasto .ab-i{flex:none;width:34px;height:34px;border-radius:9px;background:var(--forest);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:16px}
+  .abasto .ab-n{font-weight:600;color:var(--forest-deep)}
+  .abasto .ab-d{font-size:12px;color:var(--ink-soft);margin-top:2px;line-height:1.4}
+  .abasto .ab-geo{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--terra);margin-top:4px}
+
+  .overlay{position:fixed;inset:0;background:rgba(17,39,26,.55);backdrop-filter:blur(4px);opacity:0;visibility:hidden;transition:.22s;z-index:100;display:flex;align-items:flex-start;justify-content:center;padding:34px 18px;overflow-y:auto}
+  .overlay.on{opacity:1;visibility:visible}
+  .modal{background:var(--bg);width:min(960px,100%);border-radius:20px;box-shadow:var(--shadow-lg);transform:translateY(18px) scale(.99);transition:.22s;overflow:hidden;margin:auto}
+  .overlay.on .modal{transform:none}
+  .modal-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--paper);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+  .modal-bar .mt{font-family:'Fraunces',serif;font-weight:600;font-size:17px;color:var(--forest-deep)}
+  .x{border:none;background:#efe7d4;width:34px;height:34px;border-radius:9px;cursor:pointer;font-size:18px;color:var(--ink-soft);transition:.15s}
+  .x:hover{background:#e3d8bf;color:var(--ink)}
+  .modal-body{padding:20px 22px 26px;max-height:calc(100vh - 120px);overflow-y:auto}
+  .kd-hero{display:flex;align-items:flex-start;gap:16px;background:linear-gradient(140deg,#fffdf8,#f6efe1);border:1px solid var(--line);border-radius:15px;padding:18px 20px;margin-bottom:16px}
+  .kd-icon{flex:none;width:46px;height:46px;border-radius:12px;background:var(--forest);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:22px}
+  .kd-hero .kk{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--terra)}
+  .kd-hero h3{font-family:'Fraunces',serif;font-size:22px;color:var(--forest-deep);margin:2px 0 4px}
+  .kd-hero p{font-size:13.5px;color:var(--ink-soft);max-width:52ch}
+  .kd-big{margin-left:auto;text-align:right}
+  .kd-big .b{font-family:'Fraunces',serif;font-weight:600;font-size:30px;color:var(--forest-deep);line-height:1}
+  .kd-big .s{font-size:12px;font-weight:600;margin-top:4px}
+  .cmp{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:16px}
+  @media(max-width:620px){.cmp{grid-template-columns:1fr}}
+  .cmpc{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:13px 15px}
+  .cmpc .cl{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft)}
+  .cmpc .cv{font-family:'Fraunces',serif;font-weight:600;font-size:21px;margin-top:4px}
+  .cmpc .cd{font-size:11.5px;color:var(--ink-soft);margin-top:2px}
+  .cv.up{color:var(--good)} .cv.down{color:var(--bad)} .cv.flat{color:var(--forest-deep)}
+  .kd-sec{background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:16px 18px;margin-bottom:14px}
+  .kd-sec h4{font-family:'Fraunces',serif;font-size:16px;color:var(--forest-deep);margin-bottom:10px}
+  .brk{display:flex;align-items:center;gap:10px;margin-bottom:9px;font-size:13px}
+  .brk .bn{width:130px;flex:none;color:var(--ink)}
+  .brk .bt{flex:1;height:9px;background:#ede6d6;border-radius:5px;overflow:hidden}
+  .brk .bf{height:100%;border-radius:5px;background:var(--moss)}
+  .brk .bv{width:64px;text-align:right;flex:none;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-soft)}
+  .ficha{background:var(--paper);border:1px solid var(--line);border-radius:13px;overflow:hidden;margin-bottom:14px}
+  .ficha .fr{display:flex;gap:12px;padding:11px 15px;border-bottom:1px solid var(--line);font-size:13.5px;line-height:1.45}
+  .ficha .fr:last-child{border-bottom:none}
+  .ficha .fk{flex:none;width:150px;font-weight:700;color:var(--forest-deep);display:flex;align-items:flex-start;gap:6px}
+  .ficha .fv b{color:var(--forest-deep)}
+  @media(max-width:560px){.ficha .fr{flex-direction:column;gap:3px}.ficha .fk{width:auto}}
+  .kc-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;position:sticky;top:0;background:var(--bg);padding-bottom:4px}
+  .kc-tabs button{border:1px solid var(--line);background:var(--paper);font-family:inherit;font-size:12.5px;font-weight:600;color:var(--ink-soft);padding:7px 12px;border-radius:9px;cursor:pointer;transition:.14s}
+  .kc-tabs button.on{background:var(--forest);color:#f4f1e8;border-color:var(--forest)}
+  .kc-pane{display:none;animation:fade .25s}
+  .kc-pane.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .kc-pane h3{font-family:'Fraunces',serif;font-size:23px;color:var(--forest-deep);margin-bottom:8px}
+  .kc-pane h4{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#9c6b3f;margin:18px 0 6px}
+  .kc-pane p{font-size:14px;color:var(--ink);max-width:72ch;margin-bottom:12px;line-height:1.6}
+  .kc-pane ul,.kc-pane ol{margin:0 0 14px;padding-left:20px;max-width:72ch}
+  .kc-pane li{margin-bottom:6px;font-size:14px}
+  .kc-pane li::marker{color:var(--terra)}
+  .kc-card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+  .tag-real{font-size:10px;font-family:'IBM Plex Mono',monospace;background:#e3efe5;color:#2f6b43;padding:2px 7px;border-radius:5px}
+  .tag-gap{font-size:10px;font-family:'IBM Plex Mono',monospace;background:#f6e6dd;color:#a8502f;padding:2px 7px;border-radius:5px}
+  .kctbl{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:12px}
+  .kctbl th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#9c6b3f;padding:8px 10px;border-bottom:2px solid var(--line)}
+  .kctbl td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.45}
+  .kctbl td b{color:var(--forest-deep)}
+
+  .foot{margin-top:22px;font-size:12px;color:var(--ink-soft);text-align:center;line-height:1.6}
+  .foot b{color:var(--forest-deep)}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div class="brand">
+      <span class="dot"></span>
+      <div>
+        <h1>AgroVisión Antioquia</h1>
+        <div class="sub">Mapa analítico · 125 municipios · familias · precios COP/USD · exportación · siembra y cosecha</div>
+      </div>
+    </div>
+    <div class="controls">
+      <span class="demo-badge">◆ PROTOTIPO · DATOS MIXTOS</span>
+      <div class="seg" id="curSeg"><span class="lbl">Moneda</span><button data-c="COP" class="on">COP</button><button data-c="USD">USD</button></div>
+      <div class="seg" id="seasonSeg"><span class="lbl">Temporada</span><button data-s="lluvia" class="on">Lluvia</button><button data-s="seca">Seca</button></div>
+    </div>
+  </header>
+
+  <div class="help">
+    <div class="hi">☝</div>
+    <p><b>Cómo usar:</b> en el <b>mapa analítico</b> cambia el <b>indicador</b> (rentabilidad, precio, oferta, riesgo), pasa el cursor por subregiones, <b>municipios</b> y <b>puntos de abasto</b> para ver datos, y toca una zona para que cambien las <b>gráficas</b>. Filtra por <b>familia</b>, usa el <b>calculador siembra→cosecha</b> y el panel de <b>exportación</b>. El KPI verde abre la propuesta completa.</p>
+  </div>
+
+  <div class="period-banner" id="periodBanner">
+    <div class="pb-left"><div class="pb-title">Contexto temporal y monetario del análisis</div><div class="pb-chips" id="pbChips"></div></div>
+    <button class="pb-btn" id="glossaryBtn">ℹ Periodos y definiciones</button>
+  </div>
+
+  <div class="fambar" id="fambar"></div>
+  <div class="kpis" id="kpis"></div>
+
+  <!-- ===== INTERACTIVE ANALYTICAL MAP ===== -->
+  <div class="panel">
+    <div class="head">
+      <div class="t">Mapa analítico interactivo de Antioquia</div>
+      <div class="d">Subregiones coloreadas por indicador · 125 municipios localizados · puntos de comercialización · gráficas vinculadas a la zona seleccionada.</div>
+    </div>
+
+    <div class="maptools">
+      <div class="metricseg" id="metricSeg">
+        <button data-m="pt" class="on">Piso térmico</button>
+        <button data-m="rent">Rentabilidad</button>
+        <button data-m="price">Precio prom.</button>
+        <button data-m="oferta">Oferta</button>
+        <button data-m="risk">Riesgo</button>
+      </div>
+      <div class="toggle-m" id="muniToggle"><span>Ver los 125 municipios</span><span class="sw"></span></div>
+    </div>
+
+    <div class="maplayout">
+      <div class="mapwrap" id="mapwrap">
+        <svg viewBox="0 0 620 660" id="map" role="img" aria-label="Mapa interactivo de Antioquia">
+          <path d="M0,40 Q70,110 55,200 L0,230 Z" fill="#1a3b4d" opacity="0.55"/>
+          <text x="22" y="150" class="gulf" transform="rotate(-62 22 150)">Golfo de Urabá</text>
+          <g id="regions">
+            <path id="r-uraba" class="region" data-key="uraba" d="M95,80 Q150,55 212,66 L206,162 L70,150 Q54,112 95,80 Z"/>
+            <path id="r-norte" class="region" data-key="norte" d="M212,66 L348,74 L336,168 L206,162 Z"/>
+            <path id="r-bajocauca" class="region" data-key="bajocauca" d="M348,74 L472,100 L548,168 L462,188 L336,168 Z"/>
+            <path id="r-occidente" class="region" data-key="occidente" d="M70,150 L206,162 L232,252 L112,266 L58,200 Z"/>
+            <path id="r-nordeste" class="region" data-key="nordeste" d="M336,168 L462,188 L508,302 L382,298 L320,248 L323,206 Z"/>
+            <path id="r-aburra" class="region" data-key="aburra" d="M232,252 L300,247 L313,302 L242,310 Z"/>
+            <path id="r-oriente" class="region" data-key="oriente" d="M313,302 L382,298 L408,402 L300,418 L246,332 L242,310 Z"/>
+            <path id="r-magdalena" class="region" data-key="magdalena" d="M508,302 L560,332 L548,478 L422,468 L408,360 Z"/>
+            <path id="r-suroeste" class="region" data-key="suroeste" d="M112,266 L232,252 L242,310 L246,332 L292,422 L252,548 L120,508 L76,402 L96,312 Z"/>
+          </g>
+          <g id="regionLabels"></g>
+          <g id="muniLayer"></g>
+          <g id="poiLayer"></g>
+        </svg>
+        <div class="maptip" id="maptip"></div>
+      </div>
+
+      <div class="mside" id="mside"></div>
+    </div>
+
+    <div class="maplegend">
+      <span class="lt" id="legTitle">Piso térmico</span>
+      <div id="legendBox"></div>
+    </div>
+    <div class="poi-leg">
+      <div class="it"><span class="mko"></span>Central Mayorista (Itagüí)</div>
+      <div class="it"><span class="mko min"></span>Plaza Minorista (Medellín)</div>
+      <div class="it"><span class="mko reg"></span>Plazas / acopio regional (aprox.)</div>
+      <div class="it"><span class="dotc" style="background:var(--pt-frio)"></span>Municipio (color = piso térmico)</div>
+    </div>
+
+    <div class="chartrow" id="chartRow"></div>
+
+    <div class="map-interp" id="mapInterp"></div>
+  </div>
+
+  <!-- RECOMMENDATIONS -->
+  <div class="panel full">
+    <div class="head">
+      <div class="t" id="rec-title">¿Qué sembrar ahora?</div>
+      <div class="d" id="rec-sub">Ranking por rentabilidad y riesgo (demo). Cambia con la zona y la familia.</div>
+    </div>
+    <div class="body" id="recBody"></div>
+  </div>
+
+  <!-- MUNICIPALITY BROWSER -->
+  <div class="panel full">
+    <div class="head">
+      <div class="t">Explorador de los 125 municipios</div>
+      <div class="d">Busca o filtra por subregión, piso térmico o familia. Al tocar un municipio se localiza y selecciona en el mapa.</div>
+    </div>
+    <div class="body">
+      <div class="muni-tools">
+        <input id="muniSearch" type="text" placeholder="🔍 Buscar municipio (ej. Rionegro, Urrao, Apartadó)…">
+        <select id="muniSub"><option value="">Todas las subregiones</option></select>
+        <select id="muniPt"><option value="">Todos los pisos térmicos</option><option value="calido">Cálido</option><option value="templado">Templado</option><option value="frio">Frío</option></select>
+        <span class="muni-count" id="muniCount"></span>
+      </div>
+      <div class="muni-grid" id="muniGrid"></div>
+    </div>
+  </div>
+
+  <!-- PRODUCT EXPLORER -->
+  <div class="grid-2">
+    <div class="panel">
+      <div class="head">
+        <div class="t">Producto · siembra → cosecha → venta</div>
+        <div class="d">Ciclo, ventana comercial y precios COP/USD. Proyección <b>ilustrativa</b> con banda de confianza.</div>
+      </div>
+      <div class="body">
+        <div class="selrow">
+          <select id="prodSel"></select>
+          <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--forest-deep)" id="curPrice"></div>
+          <div class="chg" id="curChg" style="font-size:13px"></div>
+        </div>
+        <div class="cyclebox" id="cyclebox"></div>
+        <div class="pchips" id="pchips"></div>
+        <svg id="chart" viewBox="0 0 560 230" style="width:100%;height:auto"></svg>
+        <div class="chart-legend">
+          <div class="it"><span class="ll" style="border-color:var(--forest)"></span>Histórico</div>
+          <div class="it"><span class="ll" style="border-color:var(--terra);border-top-style:dashed"></span>Proyección (demo)</div>
+          <div class="it"><span class="sw" style="width:14px;height:10px;border-radius:3px;background:rgba(184,80,47,.16)"></span>Banda de confianza</div>
+        </div>
+        <div class="interp" id="prodInterp"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="head">
+        <div class="t">Comparador de productos</div>
+        <div class="d">Precio, rentabilidad y riesgo de la familia seleccionada (demo, motor consistente).</div>
+      </div>
+      <div class="body" id="comparerBody"></div>
+    </div>
+  </div>
+
+  <!-- EXPORT -->
+  <div class="panel full">
+    <div class="head">
+      <div class="t">Mercado de exportación · Antioquia <span class="real-tag">DATOS REALES 2025</span></div>
+      <div class="d">Cifras oficiales de comercio exterior. La comparación local/nacional/internacional por producto es ilustrativa.</div>
+    </div>
+    <div class="body" id="exportBody"></div>
+  </div>
+
+  <!-- ABASTO -->
+  <div class="panel full">
+    <div class="head">
+      <div class="t">Centros de abasto y comercialización</div>
+      <div class="d">Puntos verificados con georreferencia aproximada. La lista completa de plazas se completa desde fuentes oficiales.</div>
+    </div>
+    <div class="body" id="abastoBody"></div>
+  </div>
+
+  <div class="foot">
+    <b>Prototipo de demostración.</b> Conviven <b>datos reales verificados</b> (subregiones, 125 municipios, pisos térmicos, exportación de aguacate Hass/banano 2025, TRM) con <b>datos ilustrativos</b> (precios, proyecciones, rentabilidad, riesgo, oferta/demanda y posiciones de municipios en el mapa, marcados).<br>
+    Fuentes: <b>DANE/SIPSA</b> · <b>EVA (UPRA/datos.gov.co)</b> · <b>IDEAM</b> · <b>IGAC</b> · <b>Agronet</b> · <b>ProColombia</b> · <b>Analdex</b> · <b>Corpohass</b> · <b>DIAN</b> · <b>Banco de la República (TRM)</b> · <b>Gobernación de Antioquia</b>.
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-bar"><div class="mt" id="modalTitle">Detalle</div><button class="x" id="modalClose" aria-label="Cerrar">✕</button></div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<div id="kcTemplate" style="display:none">
+  <div class="kc-tabs" id="kcTabs">
+    <button data-p="problema" class="on">Problema</button>
+    <button data-p="solucion">Solución</button>
+    <button data-p="familias">Familias</button>
+    <button data-p="municipios">125 municipios</button>
+    <button data-p="fuentes">Fuentes</button>
+    <button data-p="modelo">Modelo IA</button>
+    <button data-p="export">Exportación</button>
+    <button data-p="monetario">Monetario</button>
+    <button data-p="roadmap">Roadmap</button>
+    <button data-p="vacios">Vacíos</button>
+  </div>
+  <div class="kc-pane on" data-pane="problema"><h3>El problema y la oportunidad</h3><p>Muchos agricultores de Antioquia siembran lo mismo todo el año sin información del mercado. El precio sube y baja según época, oferta, demanda, zona, clima y abastecimiento. Cuando todos cosechan a la vez, la plaza se sobreoferta y el precio cae por debajo del costo.</p><p>La decisión de siembra se toma hoy, pero la rentabilidad se define meses después. Esta plataforma traduce datos públicos —precios, producción municipal, clima y comercio exterior— en recomendaciones de qué, cuándo y dónde sembrar, y dónde vender.</p></div>
+  <div class="kc-pane" data-pane="solucion"><h3>Solución propuesta</h3><p>Plataforma de tres capas. <b>Ingesta:</b> conectores a SIPSA, planilla de la Central Mayorista, EVA (API datos.gov.co), IDEAM, DIAN y ProColombia. <b>Analítica e IA:</b> limpieza, variables, modelos de precio y motor de recomendación. <b>Experiencia:</b> este tablero con mapa analítico, 125 municipios, familias, calculador siembra→cosecha, COP/USD y exportación.</p></div>
+  <div class="kc-pane" data-pane="familias"><h3>Clasificación por familia agrícola</h3><p>Toda la información se filtra por cuatro familias. Cada una agrupa productos con clima y mercado afines.</p><div id="kcFamilias"></div></div>
+  <div class="kc-pane" data-pane="municipios"><h3>Cobertura de los 125 municipios</h3><p>Organizados en sus 9 subregiones oficiales (Ordenanza 41 de 1975 · Anuario Estadístico de Antioquia). Cada municipio hereda el piso térmico predominante de su subregión.</p><div id="kcMunis"></div><p style="margin-top:12px"><span class="tag-gap">A VALIDAR</span> El detalle por municipio (productos, áreas, precios en finca) se carga desde las <b>EVA</b>. La posición exacta de cada municipio en el mapa usa centroides oficiales de <b>IGAC/DANE</b>.</p></div>
+  <div class="kc-pane" data-pane="fuentes"><h3>Fuentes públicas verificadas</h3><table class="kctbl"><thead><tr><th>Fuente</th><th>Aporta</th><th>Estado</th></tr></thead><tbody>
+    <tr><td><b>SIPSA — DANE</b></td><td>Precios mayoristas diarios de ~700 productos; geovisor.</td><td><span class="tag-real">DISPONIBLE</span></td></tr>
+    <tr><td><b>Central Mayorista de Antioquia</b></td><td>Planilla de precios por producto/ronda.</td><td><span class="tag-real">DISPONIBLE</span></td></tr>
+    <tr><td><b>EVA</b> (UPRA/datos.gov.co)</td><td>Área, producción, rendimiento, calendarios y costos por municipio. API.</td><td><span class="tag-real">DISPONIBLE</span></td></tr>
+    <tr><td><b>IDEAM · IGAC</b></td><td>Clima, pisos térmicos, suelos, cartografía y centroides municipales.</td><td><span class="tag-real">DISPONIBLE</span></td></tr>
+    <tr><td><b>ProColombia · Analdex · Corpohass</b></td><td>Inteligencia de mercados y cifras de exportación.</td><td><span class="tag-real">DISPONIBLE</span></td></tr>
+    <tr><td><b>DIAN · Legiscomex · Cámaras</b></td><td>Volúmenes y empresas exportadoras.</td><td><span class="tag-gap">PARCIAL</span></td></tr>
+    <tr><td><b>Banco de la República</b></td><td>TRM oficial diaria (COP/USD).</td><td><span class="tag-real">DISPONIBLE</span></td></tr>
+  </tbody></table></div>
+  <div class="kc-pane" data-pane="modelo"><h3>Modelo predictivo con IA</h3><p>Predicción de series de tiempo con variables exógenas, para estimar precio futuro y derivar rentabilidad, temporada y riesgo, por producto y municipio.</p><ul><li><b>Nivel 1:</b> SARIMA / Prophet (estacionalidad).</li><li><b>Nivel 2:</b> XGBoost / LightGBM con rezagos, clima, abastecimiento, geografía y TRM.</li><li><b>Nivel 3:</b> LSTM / Temporal Fusion Transformer.</li></ul><p>Recomienda: qué, dónde y cuándo sembrar, cuándo cosechar y vender, precio esperado, rentabilidad, riesgo y alternativa más rentable. Validación walk-forward (MAPE/RMSE).</p></div>
+  <div class="kc-pane" data-pane="export"><h3>Mercado de exportación</h3><p>Antioquia es el principal departamento agroexportador de Hass del país. En 2025 las exportaciones nacionales de aguacate Hass alcanzaron 201.479 t y US$375 millones; Antioquia aportó cerca del 47% del valor (US$177,4 millones, +50,2% frente a 2024). El banano —eje Urabá— es la primera fruta de exportación; café, flores y aceite de palma completan la canasta.</p><p>Destino principal del Hass: Europa (&gt;60%), liderada por Países Bajos (~35,8%), seguida de España y Alemania; Estados Unidos crece con fuerza. Empresas y volúmenes por empresa: DIAN/Legiscomex y Cámaras de Comercio.</p></div>
+  <div class="kc-pane" data-pane="monetario"><h3>Análisis monetario COP / USD</h3><p>Todos los precios pueden verse en pesos o dólares con el conmutador superior, usando la TRM oficial. Para exportables, una TRM más alta (peso depreciado) favorece al exportador; una más baja lo reduce.</p><p>Por producto: precio de compra y venta, mayorista/minorista, histórico, proyectado, variación %, volatilidad, márgenes, COP vs USD, mejores meses para vender y meses de mayor riesgo.</p></div>
+  <div class="kc-pane" data-pane="roadmap"><h3>Roadmap por fases</h3><table class="kctbl"><thead><tr><th>Fase</th><th>Tiempo</th><th>Entrega</th></tr></thead><tbody>
+    <tr><td><b>0 · Ingesta</b></td><td>Sem. 1–4</td><td>Conectores SIPSA, EVA, IDEAM, TRM, DIAN. Base por municipio.</td></tr>
+    <tr><td><b>1 · Tablero MVP</b></td><td>Sem. 5–9</td><td>Mapa 125 municipios, familias, precios COP/USD, calculador.</td></tr>
+    <tr><td><b>2 · Modelos</b></td><td>Sem. 10–16</td><td>Predicción de precio, rentabilidad y riesgo por producto/municipio.</td></tr>
+    <tr><td><b>3 · Export + recomendador</b></td><td>Sem. 17–22</td><td>Inteligencia de mercados, empresas exportadoras y alertas.</td></tr>
+    <tr><td><b>4 · Escalado</b></td><td>Continuo</td><td>App móvil, reentrenamiento, convenios CMA/gremios/UMATA.</td></tr>
+  </tbody></table></div>
+  <div class="kc-pane" data-pane="vacios"><h3>Vacíos de datos y cómo cerrarlos</h3><table class="kctbl"><thead><tr><th>Vacío</th><th>Cómo obtenerlo</th></tr></thead><tbody>
+    <tr><td><b>Producto/precio por municipio</b> <span class="tag-gap">A CARGAR</span></td><td>EVA tiene producción y precio en finca por municipio y cultivo.</td></tr>
+    <tr><td><b>Coordenadas exactas de municipios y plazas</b> <span class="tag-gap">PARCIAL</span></td><td>Centroides IGAC/DANE; geocodificación de plazas desde Gobernación/alcaldías.</td></tr>
+    <tr><td><b>Empresas exportadoras y volúmenes</b> <span class="tag-gap">PARCIAL</span></td><td>DIAN, Legiscomex y Cámaras de Comercio; no se inventan nombres ni cifras.</td></tr>
+    <tr><td><b>Demanda real</b> <span class="tag-gap">VACÍO</span></td><td>Aproximar con abastecimiento SIPSA-A y dinámica de precio.</td></tr>
+    <tr><td><b>Precio internacional por producto</b> <span class="tag-gap">PARCIAL</span></td><td>FAO, Trade Map, USDA y boletines de ProColombia.</td></tr>
+  </tbody></table></div>
+</div>
+
+<script>
+const PT={calido:{c:'#d9622b',label:'Cálido',alt:'0–1.000 m'},templado:{c:'#e0a83a',label:'Templado',alt:'1.000–2.000 m'},frio:{c:'#3f7d5a',label:'Frío',alt:'2.000–3.000 m'},paramo:{c:'#5b7c93',label:'Páramo',alt:'>3.000 m'}};
+const FAM={
+  fru:{name:'Frutales y Pasifloras',short:'Frutales',c:'#c0533a',icon:'🍊'},
+  tub:{name:'Tubérculos y Plátanos',short:'Tubérculos',c:'#b07d2e',icon:'🥔'},
+  gra:{name:'Granos, Cereales y Oleaginosas',short:'Granos',c:'#7a5c8e',icon:'🌾'},
+  hor:{name:'Hortalizas, Verduras y Flores',short:'Hortalizas',c:'#3f7d5a',icon:'🥬'}
+};
+const PTFAM={calido:['fru','tub','gra'],templado:['fru','gra','hor'],frio:['tub','hor','fru']};
+
+const MUNIS={
+  aburra:['Medellín','Barbosa','Bello','Caldas','Copacabana','Envigado','Girardota','Itagüí','La Estrella','Sabaneta'],
+  bajocauca:['Caucasia','Cáceres','El Bagre','Nechí','Tarazá','Zaragoza'],
+  magdalena:['Caracolí','Maceo','Puerto Berrío','Puerto Nare','Puerto Triunfo','Yondó'],
+  nordeste:['Amalfi','Anorí','Cisneros','Remedios','San Roque','Santo Domingo','Segovia','Vegachí','Yalí','Yolombó'],
+  norte:['Angostura','Belmira','Briceño','Campamento','Carolina del Príncipe','Don Matías','Entrerríos','Gómez Plata','Guadalupe','Ituango','San Andrés de Cuerquia','San José de la Montaña','San Pedro de los Milagros','Santa Rosa de Osos','Toledo','Valdivia','Yarumal'],
+  occidente:['Abriaquí','Anzá','Armenia','Buriticá','Caicedo','Cañasgordas','Dabeiba','Ebéjico','Frontino','Giraldo','Heliconia','Liborina','Olaya','Peque','Sabanalarga','San Jerónimo','Santa Fe de Antioquia','Sopetrán','Uramita'],
+  oriente:['Abejorral','Alejandría','Argelia','Cocorná','Concepción','El Carmen de Viboral','El Peñol','El Retiro','El Santuario','Granada','Guarne','Guatapé','La Ceja','La Unión','Marinilla','Nariño','Rionegro','San Carlos','San Francisco','San Luis','San Rafael','San Vicente','Sonsón'],
+  suroeste:['Amagá','Andes','Angelópolis','Betania','Betulia','Caramanta','Ciudad Bolívar','Concordia','Fredonia','Hispania','Jardín','Jericó','La Pintada','Montebello','Pueblorrico','Salgar','Santa Bárbara','Támesis','Tarso','Titiribí','Urrao','Valparaíso','Venecia'],
+  uraba:['Apartadó','Arboletes','Carepa','Chigorodó','Murindó','Mutatá','Necoclí','San Juan de Urabá','San Pedro de Urabá','Turbo','Vigía del Fuerte']
+};
+
+const SUB={
+  uraba:{name:'Urabá',pt:'calido',pts:['calido'],desc:'Llanura cálida sobre el Golfo; despensa exportadora de banano y plátano.',crops:['Banano','Plátano','Yuca','Cacao','Aguacate Hass'],center:'Central Mayorista (Itagüí)',dist:320,alt:'0–500 m'},
+  norte:{name:'Norte',pt:'frio',pts:['frio','templado'],desc:'Altiplano frío y lechero; papa, hortalizas y leche.',crops:['Papa','Zanahoria','Fríjol','Cebolla','Tomate'],center:'Central Mayorista (Itagüí)',dist:90,alt:'2.000–2.900 m'},
+  bajocauca:{name:'Bajo Cauca',pt:'calido',pts:['calido'],desc:'Cálido y húmedo; yuca, plátano y frutales; arroz y minería.',crops:['Yuca','Plátano','Banano','Cacao'],center:'Central Mayorista (Itagüí)',dist:270,alt:'50–300 m'},
+  occidente:{name:'Occidente',pt:'templado',pts:['templado','calido'],desc:'Vertientes templadas y cálidas; café, frutales y caña.',crops:['Café','Aguacate Hass','Cítricos','Fríjol'],center:'Central Mayorista (Itagüí)',dist:110,alt:'600–2.000 m'},
+  nordeste:{name:'Nordeste',pt:'templado',pts:['templado','calido'],desc:'Montaña templada; café, caña y cacao; tradición minera.',crops:['Café','Plátano','Cacao','Fríjol'],center:'Central Mayorista (Itagüí)',dist:140,alt:'700–2.200 m'},
+  aburra:{name:'Valle de Aburrá',pt:'templado',pts:['templado'],desc:'Eje urbano de Medellín; sede de la Central Mayorista y la Plaza Minorista.',crops:['Tomate','Cebolla','Zanahoria','Flores'],center:'Aquí mismo',dist:0,alt:'1.300–1.800 m'},
+  oriente:{name:'Oriente',pt:'frio',pts:['frio','templado'],desc:'Altiplano frío muy productivo; papa, hortalizas, fresa y flores.',crops:['Papa','Tomate','Zanahoria','Cebolla','Fresa','Flores'],center:'Central Mayorista (Itagüí)',dist:55,alt:'1.900–2.600 m'},
+  magdalena:{name:'Magdalena Medio',pt:'calido',pts:['calido'],desc:'Llanura cálida sobre el río Magdalena; cacao, palma y frutales.',crops:['Cacao','Plátano','Yuca','Banano'],center:'Central Mayorista (Itagüí)',dist:200,alt:'100–500 m'},
+  suroeste:{name:'Suroeste',pt:'templado',pts:['templado','frio'],desc:'Corazón cafetero; café de altura, plátano y aguacate Hass.',crops:['Café','Aguacate Hass','Plátano','Fríjol','Cítricos'],center:'Central Mayorista (Itagüí)',dist:100,alt:'1.200–2.300 m'}
+};
+
+const PROD={
+  'Papa':{base:1800,amp:.28,phase:7,vol:.10,pt:'frio',days:120,cost:1100,fam:'tub',exp:false},
+  'Aguacate Hass':{base:4200,amp:.22,phase:3,vol:.12,pt:'templado',days:400,cost:2400,fam:'fru',exp:true},
+  'Plátano':{base:1500,amp:.15,phase:11,vol:.08,pt:'calido',days:330,cost:900,fam:'tub',exp:true},
+  'Banano':{base:1300,amp:.12,phase:6,vol:.07,pt:'calido',days:300,cost:800,fam:'fru',exp:true},
+  'Tomate':{base:2600,amp:.35,phase:5,vol:.18,pt:'frio',days:110,cost:1500,fam:'hor',exp:false},
+  'Café':{base:9500,amp:.18,phase:9,vol:.14,pt:'templado',days:300,cost:6200,fam:'gra',exp:true},
+  'Cebolla':{base:2200,amp:.30,phase:2,vol:.16,pt:'frio',days:130,cost:1300,fam:'hor',exp:false},
+  'Zanahoria':{base:1600,amp:.26,phase:8,vol:.13,pt:'frio',days:100,cost:950,fam:'hor',exp:false},
+  'Fríjol':{base:5200,amp:.20,phase:4,vol:.11,pt:'templado',days:120,cost:3300,fam:'gra',exp:false},
+  'Yuca':{base:1200,amp:.17,phase:10,vol:.09,pt:'calido',days:240,cost:720,fam:'tub',exp:false},
+  'Cítricos':{base:1700,amp:.24,phase:1,vol:.13,pt:'templado',days:540,cost:1000,fam:'fru',exp:false},
+  'Cacao':{base:11000,amp:.10,phase:8,vol:.09,pt:'calido',days:540,cost:7200,fam:'gra',exp:true},
+  'Mora':{base:3800,amp:.30,phase:6,vol:.19,pt:'frio',days:240,cost:2200,fam:'fru',exp:false},
+  'Fresa':{base:5500,amp:.28,phase:5,vol:.21,pt:'frio',days:150,cost:3200,fam:'fru',exp:false},
+  'Maracuyá':{base:3000,amp:.32,phase:7,vol:.20,pt:'calido',days:300,cost:1700,fam:'fru',exp:true},
+  'Gulupa':{base:6800,amp:.26,phase:4,vol:.18,pt:'templado',days:300,cost:3900,fam:'fru',exp:true},
+  'Maíz':{base:1900,amp:.16,phase:3,vol:.12,pt:'calido',days:130,cost:1200,fam:'gra',exp:false},
+  'Flores':{base:8000,amp:.20,phase:1,vol:.15,pt:'frio',days:90,cost:4800,fam:'hor',exp:true},
+  'Tomate de árbol':{base:2900,amp:.27,phase:6,vol:.17,pt:'frio',days:330,cost:1700,fam:'fru',exp:false},
+  'Arracacha':{base:2100,amp:.22,phase:9,vol:.13,pt:'frio',days:300,cost:1300,fam:'tub',exp:false}
+};
+
+const MES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const MESL=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const NHIST=24,NPROJ=6,TODAY=4;const Y0=2026,M0=4,DAY0=26;
+function dlabel(off){const t=M0+off,y=Y0+Math.floor(t/12),m=((t%12)+12)%12;return MES[m].toLowerCase()+' '+y;}
+function dateAfter(days){const d=new Date(Y0,M0,DAY0);d.setDate(d.getDate()+Math.round(days));return d;}
+function dMonthYear(d){return MESL[d.getMonth()]+' '+d.getFullYear();}
+const W={histDesde:dlabel(-(NHIST-1)),histHasta:dlabel(0),hoy:dlabel(0),projDesde:dlabel(1),projHasta:dlabel(NPROJ),baseDesde:dlabel(-(NHIST-1)),baseHasta:dlabel(-(NHIST-12)),h12Desde:dlabel(-11),h12Hasta:dlabel(0),mesAnt:dlabel(-1),anioAnt:dlabel(-12),hoyFull:'26 mayo 2026'};
+let TRM=3667.06;
+
+function prng(s){return function(){s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+const pct=n=>(n>=0?'+':'')+n.toFixed(1)+'%';
+function lerp(a,b,t){return a+(b-a)*t;}
+function hx(c){c=c.replace('#','');return[parseInt(c.slice(0,2),16),parseInt(c.slice(2,4),16),parseInt(c.slice(4,6),16)];}
+function lerpColor(c1,c2,t){const a=hx(c1),b=hx(c2);return'rgb('+Math.round(lerp(a[0],b[0],t))+','+Math.round(lerp(a[1],b[1],t))+','+Math.round(lerp(a[2],b[2],t))+')';}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+
+let season='lluvia',selSub=null,selMuni=null,famFilter='all',currency='COP',mapMetric='pt',showAllMunis=false;
+
+function money(cop){if(currency==='USD'){const u=cop/TRM;return'US$'+u.toLocaleString('es-CO',{maximumFractionDigits:u<10?2:0});}return'$'+Math.round(cop).toLocaleString('es-CO');}
+
+function series(name){
+  const p=PROD[name],rnd=prng(hash(name)),total=NHIST+NPROJ,pts=[];
+  for(let i=0;i<total;i++){
+    const monthIdx=TODAY-(NHIST-1)+i,m=((monthIdx%12)+12)%12;
+    const seas=p.amp*Math.sin(2*Math.PI*((m-p.phase)/12)),trend=.05*(i/total),noise=(rnd()-.5)*p.vol;
+    const v=Math.round(p.base*(1+seas+trend+(i<NHIST?noise:0)));pts.push({i,m,v,proj:i>=NHIST});
+  }
+  pts.forEach((pt,idx)=>{if(pt.proj){const k=(idx-NHIST+1)/NPROJ;pt.lo=Math.round(pt.v*(1-.06-.10*k));pt.hi=Math.round(pt.v*(1+.06+.10*k));}});
+  return{p,pts};
+}
+function metrics(name){
+  const {p,pts}=series(name);
+  const hist=pts.filter(d=>!d.proj),cur=hist[hist.length-1].v,prev=hist[hist.length-2].v;
+  const yAgo=hist[hist.length-1-12]?hist[hist.length-1-12].v:hist[0].v;
+  const mChg=(cur-prev)/prev*100,yChg=(cur-yAgo)/yAgo*100;
+  const peak=(p.phase+3)%12,trough=(p.phase+9)%12,slope=Math.cos(2*Math.PI*((TODAY-p.phase)/12));
+  const proj3=pts[NHIST+2].v,projChg=(proj3-cur)/cur*100,margin=(cur-p.cost)/cur*100,volPct=p.vol*100;
+  const baseAvg=hist.slice(0,12).reduce((a,d)=>a+d.v,0)/12,hist12avg=hist.slice(-12).reduce((a,d)=>a+d.v,0)/12;
+  const vsHist=(cur-hist12avg)/hist12avg*100;
+  let fall=40-slope*38+volPct*1.1;fall=clamp(fall,5,95);
+  return{p,cur,prev,mChg,yChg,peak,trough,slope,proj3,projChg,margin,volPct,fall,baseAvg,hist12avg,vsHist,fam:p.fam,days:p.days,cost:p.cost,pt:p.pt,exp:p.exp};
+}
+
+/* ===== subregion aggregates (demo, derived) ===== */
+function rentOf(m){return clamp(Math.round(m.margin+(season==='seca'?6:-3)+(m.slope>0?8:-4)),20,98);}
+function subAgg(sk){
+  const s=SUB[sk];const crops=s.crops.filter(c=>PROD[c]);const ms=crops.map(c=>({c,...metrics(c)}));
+  const avg=a=>a.reduce((x,y)=>x+y,0)/a.length;
+  const rent=Math.round(avg(ms.map(rentOf)));
+  const price=Math.round(avg(ms.map(m=>m.cur)));
+  const risk=Math.round(avg(ms.map(m=>m.fall)));
+  const rnd=prng(hash(sk+'od'));
+  const oferta=clamp(Math.round(48+(season==='seca'?-12:10)+(rnd()-.5)*22),10,95);
+  const demanda=clamp(Math.round(52+(rnd()-.5)*16+(s.dist<60?6:-2)),10,95);
+  const top=ms.slice().sort((a,b)=>rentOf(b)-rentOf(a))[0];
+  return{crops,ms,rent,price,risk,oferta,demanda,top,n:MUNIS[sk].length};
+}
+const METRIC={
+  pt:{label:'Piso térmico',cat:true},
+  rent:{label:'Rentabilidad estimada',min:20,max:95,c1:'#e8efe3',c2:'#1f4632',suf:'%',demo:true,get:a=>a.rent},
+  price:{label:'Precio promedio',c1:'#f6ecd6',c2:'#b8742a',demo:true,money:true,get:a=>a.price},
+  oferta:{label:'Nivel de oferta',min:10,max:95,c1:'#e6eef4',c2:'#33597e',suf:'%',demo:true,get:a=>a.oferta},
+  risk:{label:'Riesgo de caída',min:5,max:95,c1:'#cfe8d4',c2:'#b8502f',suf:'%',demo:true,get:a=>a.risk}
+};
+function metricColor(sk){
+  if(mapMetric==='pt')return PT[SUB[sk].pt].c;
+  const M=METRIC[mapMetric],a=subAgg(sk),v=M.get(a);
+  let min=M.min,max=M.max;
+  if(mapMetric==='price'){const all=Object.keys(SUB).map(k=>subAgg(k).price);min=Math.min(...all);max=Math.max(...all);}
+  const t=clamp((v-min)/(max-min),0,1);return lerpColor(M.c1,M.c2,t);
+}
+
+/* ===== map geometry ===== */
+const SUBGEO={
+  uraba:{cx:140,cy:112,rx:48,ry:34,labelLight:true},
+  norte:{cx:276,cy:118,rx:60,ry:32,labelLight:false},
+  bajocauca:{cx:444,cy:140,rx:54,ry:32,labelLight:true},
+  occidente:{cx:150,cy:208,rx:62,ry:42,labelLight:false},
+  nordeste:{cx:412,cy:244,rx:58,ry:46,labelLight:false},
+  aburra:{cx:272,cy:281,rx:24,ry:22,labelLight:true},
+  oriente:{cx:338,cy:356,rx:54,ry:48,labelLight:false},
+  magdalena:{cx:478,cy:392,rx:48,ry:66,labelLight:true},
+  suroeste:{cx:182,cy:404,rx:68,ry:96,labelLight:false}
+};
+function scatter(n,cx,cy,rx,ry,seed){
+  const pts=[],rnd=prng(seed),ga=2.399963,off=rnd()*6.283;
+  for(let i=0;i<n;i++){const t=(i+0.5)/n,r=Math.sqrt(t),a=off+i*ga;
+    pts.push({x:cx+rx*r*Math.cos(a)*0.94,y:cy+ry*r*Math.sin(a)*0.94});}
+  return pts;
+}
+const POIS=[
+  {id:'cma',type:'may',x:285,y:300,name:'Central Mayorista de Antioquia',muni:'Itagüí',k:'Mayorista',geo:'≈ 6.16° N, 75.61° O (aprox.)',prods:'Frutas, verduras, tubérculos, granos',note:'El mayor mercado mayorista regional; el DANE mide aquí precios para SIPSA.'},
+  {id:'min',type:'min',x:261,y:276,name:'Plaza Minorista José María Villa',muni:'Medellín',k:'Minorista',geo:'≈ 6.25° N, 75.57° O (aprox.)',prods:'Venta al detal de toda la canasta',note:'Principal plaza minorista; referencia del margen mayorista→minorista.'},
+  {id:'rio',type:'reg',x:332,y:348,name:'Acopio Oriente (Rionegro / La Ceja)',muni:'Oriente',k:'Acopio regional',geo:'Posición aprox.',prods:'Papa, hortalizas, fresa, flores',note:'Acopia el altiplano del Oriente antes de Medellín o exportación.'},
+  {id:'sfe',type:'reg',x:150,y:206,name:'Plaza Occidente (Santa Fe de Antioquia)',muni:'Occidente',k:'Plaza regional',geo:'Posición aprox.',prods:'Cítricos, frutales, café',note:'Punto de comercio del occidente cálido-templado.'},
+  {id:'apa',type:'reg',x:150,y:110,name:'Eje bananero (Apartadó / Carepa / Turbo)',muni:'Urabá',k:'Centro exportador',geo:'Posición aprox.',prods:'Banano, plátano (exportación)',note:'Salida exportadora por los puertos de Urabá.'},
+  {id:'cau',type:'reg',x:432,y:135,name:'Plaza Bajo Cauca (Caucasia)',muni:'Bajo Cauca',k:'Centro regional',geo:'Posición aprox.',prods:'Yuca, plátano, arroz',note:'Centralidad del norte cálido y sur de Córdoba.'}
+];
+
+function renderFamBar(){
+  const all=`<div class="famchip ${famFilter==='all'?'on':''}" data-fam="all" style="--c:var(--forest)"><div class="fi" style="background:var(--forest)">∀</div><div><div class="ft">Todas las familias</div><div class="fn">${Object.keys(PROD).length} productos</div></div></div>`;
+  const chips=Object.entries(FAM).map(([k,f])=>{const n=Object.values(PROD).filter(p=>p.fam===k).length;
+    return`<div class="famchip ${famFilter===k?'on':''}" data-fam="${k}" style="--c:${f.c}"><div class="fi" style="background:${f.c}">${f.icon}</div><div><div class="ft">${f.name}</div><div class="fn">${n} productos</div></div></div>`;}).join('');
+  document.getElementById('fambar').innerHTML=all+chips;
+  document.querySelectorAll('.famchip').forEach(el=>el.addEventListener('click',()=>{
+    famFilter=el.dataset.fam;renderFamBar();renderKPIs();renderMunis();renderComparer();
+    if(selSub){renderSide();renderRecs();renderZoneCharts();}
+    const list=prodList();if(!list.includes(selProd)){selProd=list[0];}
+    buildProdSel();renderProduct();
+  }));
+}
+function prodList(){return Object.keys(PROD).filter(n=>famFilter==='all'||PROD[n].fam===famFilter);}
+
+function kpiData(){
+  const names=Object.keys(PROD);const ms=names.map(n=>({n,...metrics(n)}));
+  const sf=season==='lluvia'?1:0.93,N=ms.length;
+  const idxRaw=ms.reduce((a,m)=>a+m.cur/m.baseAvg,0)/N*100;
+  const idxPrev=ms.reduce((a,m)=>a+m.prev/m.baseAvg,0)/N*100;
+  const idxHist=ms.reduce((a,m)=>a+m.hist12avg/m.baseAvg,0)/N*100;
+  const idx=Math.round(idxRaw*sf),idxChgM=(idxRaw-idxPrev)/idxPrev*100,idxVsHist=(idxRaw-idxHist)/idxHist*100;
+  const alerts=ms.filter(m=>m.fall>=60).length+(season==='seca'?1:0);
+  const best=ms.slice().sort((a,b)=>b.margin-a.margin)[0];
+  return{ms,idx,idxChgM,idxVsHist,alerts,best,count:names.length};
+}
+function renderKPIs(){
+  const k=kpiData();
+  const cards=[
+    {gate:true},
+    {key:'municipios',lab:'⬡ Municipios',val:'125',chg:'<span class="flat">9 subregiones</span>',what:'Cobertura territorial total',per:'División oficial vigente'},
+    {key:'indice',lab:'⌁ Índice precios',val:k.idx,chg:(k.idxChgM>=0?'<span class="up">▲ '+pct(k.idxChgM):'<span class="down">▼ '+pct(k.idxChgM))+'</span>',what:'Qué tan caro está el mercado',per:'Mensual · base '+W.baseDesde+'–'+W.baseHasta},
+    {key:'trm',lab:'💱 TRM (COP/USD)',val:'$'+Math.round(TRM).toLocaleString('es-CO'),chg:'<span class="flat">26 may 2026</span>',what:'Tasa oficial peso/dólar',per:'Banrep · Superfinanciera'},
+    {key:'export',lab:'🌎 Export. Hass Ant.',val:'US$177M',chg:'<span class="up">+50,2% 2025</span>',what:'Aguacate Hass exportado',per:'Año 2025 · DIAN/Analdex'},
+    {key:'alertas',lab:'⚠ Alertas de caída',val:k.alerts,chg:'<span class="down">riesgo sobreoferta</span>',what:'Productos con riesgo de baja',per:'Horizonte '+W.projDesde+'–'+W.projHasta},
+    {key:'oportunidad',lab:'★ Mejor margen',val:k.best.n,chg:'<span class="up">'+Math.round(k.best.margin)+'% est.</span>',what:'Cultivo más rentable hoy',per:'Foto del mes · '+W.hoy}
+  ];
+  document.getElementById('kpis').innerHTML=cards.map(c=>{
+    if(c.gate)return`<div class="kpi gate" data-kpi="gate"><div class="lab">📚 Centro de conocimiento</div><div class="gt">Ver propuesta completa</div><div class="gd">Familias, municipios, exportación, modelo IA…</div><div class="more">ABRIR ▸</div></div>`;
+    return`<div class="kpi" data-kpi="${c.key}"><div class="lab">${c.lab}</div><div class="val">${c.val}</div><div class="chg">${c.chg}</div><div class="what">${c.what}</div><div class="per">📅 ${c.per}</div><div class="more">DETALLE ▸</div></div>`;
+  }).join('');
+  document.querySelectorAll('.kpi').forEach(el=>el.addEventListener('click',()=>openKPI(el.dataset.kpi)));
+}
+
+/* ===== MAP rendering ===== */
+function renderMap(){
+  Object.keys(SUB).forEach(sk=>{document.getElementById('r-'+sk).setAttribute('fill',metricColor(sk));});
+  document.querySelectorAll('#map .region').forEach(r=>{r.classList.toggle('sel',r.dataset.key===selSub);r.classList.toggle('dim',selSub&&r.dataset.key!==selSub&&!showAllMunis);});
+  // labels
+  document.getElementById('regionLabels').innerHTML=Object.keys(SUB).map(sk=>{
+    const g=SUBGEO[sk];const cls=g.labelLight?'rlabel':'rlabel';const fill=g.labelLight?'#fffdf8':'#11271a';
+    const nm=SUB[sk].name.replace('Valle de Aburrá','V. Aburrá').replace('Magdalena Medio','Mag. Medio');
+    return`<text class="rlabel" x="${g.cx}" y="${g.cy-g.ry-3}" style="fill:${fill}">${nm}</text>`;
+  }).join('');
+  renderMuniLayer();renderPOIs();renderLegend();
+}
+function renderMuniLayer(){
+  const layer=document.getElementById('muniLayer');let html='';
+  const drawSub=(sk,withLabels)=>{
+    const g=SUBGEO[sk],list=MUNIS[sk],pos=scatter(list.length,g.cx,g.cy,g.rx,g.ry,hash(sk));
+    list.forEach((nm,i)=>{
+      const p=pos[i],col=PT[SUB[sk].pt].c,act=(selMuni===nm);
+      const r=act?5:3.2;
+      html+=`<circle class="mdot" data-muni="${nm}" data-sub="${sk}" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${r}" fill="${col}" stroke="${act?'#fff':'rgba(17,39,26,.5)'}" stroke-width="${act?2:1}"/>`;
+      if(withLabels&&(list.length<=12||act))html+=`<text class="mdotlabel" x="${p.x.toFixed(1)}" y="${(p.y-5).toFixed(1)}">${nm}</text>`;
+    });
+  };
+  if(showAllMunis){Object.keys(SUB).forEach(sk=>drawSub(sk,false));}
+  else if(selSub){drawSub(selSub,true);}
+  layer.innerHTML=html;
+  layer.querySelectorAll('.mdot').forEach(el=>{
+    el.addEventListener('mouseenter',e=>showTip(muniTip(el.dataset.muni,el.dataset.sub),e));
+    el.addEventListener('mousemove',moveTip);el.addEventListener('mouseleave',hideTip);
+    el.addEventListener('click',()=>{selMuni=el.dataset.muni;selectSub(el.dataset.sub,false);});
+  });
+}
+function renderPOIs(){
+  const layer=document.getElementById('poiLayer');
+  layer.innerHTML=POIS.map(p=>{
+    if(p.type==='may')return`<g class="poi" data-poi="${p.id}"><circle cx="${p.x}" cy="${p.y}" r="11" fill="#fffdf8" opacity="0.16"/><circle cx="${p.x}" cy="${p.y}" r="6.5" fill="#1f4632" stroke="#e0a83a" stroke-width="2.5"/></g><text class="poilabel" x="${p.x+2}" y="${p.y+18}">CMA Itagüí</text>`;
+    if(p.type==='min')return`<g class="poi" data-poi="${p.id}"><circle cx="${p.x}" cy="${p.y}" r="5" fill="#1f4632" stroke="#fffdf8" stroke-width="2"/></g><text class="poilabel" x="${p.x-2}" y="${p.y-9}">Minorista</text>`;
+    return`<g class="poi" data-poi="${p.id}"><circle cx="${p.x}" cy="${p.y}" r="4.5" fill="#2c5a44" stroke="#7fb0c9" stroke-width="2"/></g>`;
+  }).join('');
+  layer.querySelectorAll('.poi').forEach(el=>{
+    const p=POIS.find(x=>x.id===el.dataset.poi);
+    el.addEventListener('mouseenter',e=>showTip(poiTip(p),e));
+    el.addEventListener('mousemove',moveTip);el.addEventListener('mouseleave',hideTip);
+    el.addEventListener('click',()=>{renderAbasto();document.getElementById('abastoBody').scrollIntoView({behavior:'smooth',block:'center'});});
+  });
+}
+function renderLegend(){
+  document.getElementById('legTitle').textContent=METRIC[mapMetric].label+(mapMetric==='pt'?'':' '+(METRIC[mapMetric].demo?'(demo)':''));
+  const box=document.getElementById('legendBox');
+  if(mapMetric==='pt'){
+    box.innerHTML=`<div class="legchips">${['calido','templado','frio'].map(k=>`<div class="it"><span class="sw" style="background:${PT[k].c}"></span>${PT[k].label} · ${PT[k].alt}</div>`).join('')}</div>`;
+  }else{
+    const M=METRIC[mapMetric];let min=M.min,max=M.max,fmt=v=>Math.round(v)+(M.suf||'');
+    if(mapMetric==='price'){const all=Object.keys(SUB).map(k=>subAgg(k).price);min=Math.min(...all);max=Math.max(...all);fmt=v=>money(v);}
+    box.innerHTML=`<div style="display:flex;flex-direction:column;gap:3px"><div class="gradbar" style="background:linear-gradient(90deg,${M.c1},${M.c2})"></div><div class="gradlab"><span>${fmt(min)}</span><span>${fmt(max)}</span></div></div>`;
+  }
+}
+
+/* ===== tooltips ===== */
+const tip=document.getElementById('maptip'),mapwrap=document.getElementById('mapwrap');
+function showTip(html,e){tip.innerHTML=html;tip.classList.add('on');moveTip(e);}
+function hideTip(){tip.classList.remove('on');}
+function moveTip(e){const r=mapwrap.getBoundingClientRect();let x=e.clientX-r.left+14,y=e.clientY-r.top+14;
+  const tw=tip.offsetWidth||200,th=tip.offsetHeight||90;
+  if(x+tw>r.width)x=e.clientX-r.left-tw-12;if(y+th>r.height)y=e.clientY-r.top-th-12;
+  tip.style.left=Math.max(4,x)+'px';tip.style.top=Math.max(4,y)+'px';}
+function subTip(sk){
+  const s=SUB[sk],a=subAgg(sk);
+  return`<div class="tk">Subregión</div><div class="tt">${s.name}</div>
+    <div class="trow"><span>Municipios</span><b>${a.n}</b></div>
+    <div class="trow"><span>Clima</span><b>${PT[s.pt].label}</b></div>
+    <div class="trow"><span>Rentabilidad</span><b>${a.rent}%</b></div>
+    <div class="trow"><span>Precio prom.</span><b>${money(a.price)}/kg</b></div>
+    <div class="trow"><span>Oferta · Demanda</span><b>${a.oferta} · ${a.demanda}</b></div>
+    <div class="trow"><span>Riesgo</span><b>${a.risk}%</b></div>
+    <div class="ttags">${s.crops.slice(0,4).map(c=>`<span class="ttag">${c}</span>`).join('')}</div>
+    <div style="font-size:9.5px;color:#9fb89f;margin-top:5px">Clic: ver detalle y gráficas</div>`;
+}
+function muniTip(nm,sk){
+  const s=SUB[sk],fams=PTFAM[s.pt].map(f=>FAM[f].short).join(', ');
+  const prods=s.crops.slice(0,3).join(', ');
+  return`<div class="tk">Municipio · ${s.name}</div><div class="tt">${nm}</div>
+    <div class="trow"><span>Piso térmico</span><b>${PT[s.pt].label}</b></div>
+    <div class="trow"><span>Altitud subreg.</span><b>${s.alt}</b></div>
+    <div class="ttags">${PTFAM[s.pt].map(f=>`<span class="ttag" style="background:${FAM[f].c}33">${FAM[f].icon} ${FAM[f].short}</span>`).join('')}</div>
+    <div style="font-size:11px;margin-top:5px;color:#cfe0cf">Cultivos zona: ${prods}</div>
+    <div style="font-size:9.5px;color:#9fb89f;margin-top:4px">Posición esquemática · clic para localizar</div>`;
+}
+function poiTip(p){
+  return`<div class="tk">${p.k}</div><div class="tt">${p.name}</div>
+    <div class="trow"><span>Municipio</span><b>${p.muni}</b></div>
+    <div style="font-size:11.5px;margin-top:4px;color:#cfe0cf">${p.prods}</div>
+    <div style="font-size:10px;margin-top:5px;color:#bcd0bd">${p.note}</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--gold);margin-top:5px">${p.geo}</div>`;
+}
+
+/* ===== side panel ===== */
+function renderSide(){
+  const ms=document.getElementById('mside');
+  if(!selSub){ms.innerHTML=`<div class="mst">Explora el mapa</div><div class="msd">Pasa el cursor por subregiones, municipios y puntos de abasto. Toca una zona para ver su detalle y actualizar las gráficas.</div><div class="ms-note">Cambia el <b>indicador</b> arriba para recolorear el mapa por rentabilidad, precio, oferta o riesgo.</div>`;return;}
+  const s=SUB[selSub],a=subAgg(selSub);
+  const ptChips=s.pts.map(pt=>`<span class="pt-chip" style="background:${PT[pt].c}">${PT[pt].label}</span>`).join('');
+  const fams=PTFAM[s.pt].map(f=>`<span class="fam-pill" style="background:${FAM[f].c}">${FAM[f].icon} ${FAM[f].short}</span>`).join('');
+  const muniList=MUNIS[selSub].map(m=>`<span class="munichip ${selMuni===m?'act':''}" data-m="${m}">${m}</span>`).join('');
+  const distTxt=s.dist===0?'En el valle':'≈ '+s.dist+' km';
+  const muniHdr=selMuni?`<div class="mst">${selMuni}</div><div class="msd">${s.name} · ${PT[s.pt].label} · municipio</div>`:`<div class="mst">${s.name}</div><div class="msd">${s.desc}</div>`;
+  ms.innerHTML=`${muniHdr}
+    <div>${ptChips}${fams}</div>
+    <div class="msgrid">
+      <div class="msm"><div class="l">Municipios</div><div class="v">${a.n}</div></div>
+      <div class="msm"><div class="l">Rentab. <small>demo</small></div><div class="v up">${a.rent}%</div></div>
+      <div class="msm"><div class="l">Riesgo <small>demo</small></div><div class="v ${a.risk>60?'down':''}">${a.risk}%</div></div>
+      <div class="msm"><div class="l">Precio prom <small>demo</small></div><div class="v" style="font-size:13px">${money(a.price)}</div></div>
+      <div class="msm"><div class="l">Oferta <small>demo</small></div><div class="v">${a.oferta}</div></div>
+      <div class="msm"><div class="l">Demanda <small>demo</small></div><div class="v">${a.demanda}</div></div>
+    </div>
+    <div class="subtag">Cultivos de vocación</div><div class="crops">${s.crops.map(c=>`<span class="crop">${c}</span>`).join('')}</div>
+    <div class="subtag">Municipios (${a.n}) · clic para localizar</div><div class="munichips">${muniList}</div>
+    <div class="ms-note">A centro de abasto: <b>${distTxt}</b>${s.dist>0?' (≈ '+Math.max(1,Math.round(s.dist/55))+' h)':''}. ${s.dist===0?'Flete mínimo.':'Ese flete se descuenta del precio al productor.'}</div>`;
+  ms.querySelectorAll('.munichip').forEach(el=>el.addEventListener('click',()=>{selMuni=el.dataset.m;renderSide();renderMuniLayer();}));
+}
+
+/* ===== linked charts ===== */
+function renderZoneCharts(){
+  const row=document.getElementById('chartRow');
+  const zone=selSub?SUB[selSub].name:'todas las zonas';
+  const a=selSub?subAgg(selSub):null;
+  // 1 rentabilidad por cultivo (zona o familia)
+  let crops=selSub?subAgg(selSub).ms:prodList().map(c=>({c,...metrics(c)}));
+  crops=crops.filter(m=>famFilter==='all'||PROD[m.c].fam===famFilter);
+  if(!crops.length)crops=(selSub?subAgg(selSub).ms:prodList().map(c=>({c,...metrics(c)})));
+  const c1=crops.slice().sort((x,y)=>rentOf(y)-rentOf(x)).slice(0,5);
+  const chart1=c1.map(m=>{const r=rentOf(m);return`<div class="hbar"><div class="hn">${m.c}</div><div class="ht"><div class="hf" style="width:${r}%;background:var(--moss)"></div></div><div class="hv">${r}%</div></div>`;}).join('');
+  // 2 participación por subregión (# municipios real)
+  const subs=Object.keys(SUB).map(k=>({k,n:MUNIS[k].length,name:SUB[k].name})).sort((x,y)=>y.n-x.n);
+  const maxn=subs[0].n;
+  const chart2=subs.slice(0,9).map(s=>`<div class="hbar"><div class="hn">${s.name.replace('Valle de Aburrá','V. Aburrá').replace('Magdalena Medio','Mag. Medio')}</div><div class="ht"><div class="hf" style="width:${s.n/maxn*100}%;background:${s.k===selSub?'var(--gold)':'var(--clay)'}"></div></div><div class="hv">${s.n}</div></div>`).join('');
+  // 3 oferta vs demanda
+  let chart3;
+  if(a){chart3=`<div class="hbar"><div class="hn">Oferta</div><div class="ht"><div class="hf" style="width:${a.oferta}%;background:#33597e"></div></div><div class="hv">${a.oferta}</div></div>
+    <div class="hbar"><div class="hn">Demanda</div><div class="ht"><div class="hf" style="width:${a.demanda}%;background:#2f7a45"></div></div><div class="hv">${a.demanda}</div></div>
+    <div style="font-size:11px;color:var(--ink-soft);margin-top:6px">${a.demanda>a.oferta?'Demanda &gt; oferta: presión al <b>alza</b> del precio.':'Oferta ≥ demanda: presión a la <b>baja</b>.'}</div>`;}
+  else chart3='<div style="font-size:12px;color:var(--ink-soft)">Selecciona una zona en el mapa para ver su balance de oferta y demanda.</div>';
+  // 4 price trend of top product
+  const topName=selSub?subAgg(selSub).top.c:(c1[0]?c1[0].c:'Papa');
+  const spark=sparkline(topName);
+  row.innerHTML=`
+    <div class="minic"><div class="mct"><span>Rentabilidad por cultivo</span><span class="dz">${zone}</span></div>${chart1}</div>
+    <div class="minic"><div class="mct"><span>Participación · # municipios</span><span class="dz">real</span></div>${chart2}</div>
+    <div class="minic"><div class="mct"><span>Oferta vs demanda</span><span class="dz">${zone} · demo</span></div>${chart3}</div>
+    <div class="minic"><div class="mct"><span>Precio: ${topName}</span><span class="dz">24m · demo</span></div>${spark}</div>`;
+}
+function sparkline(name){
+  const {pts}=series(name);const W2=230,H=86,padL=6,padR=6,padT=10,padB=14;
+  const conv=v=>currency==='USD'?v/TRM:v;
+  const xs=i=>padL+(W2-padL-padR)*(i/(pts.length-1));
+  const vals=pts.map(d=>conv(d.v)),min=Math.min(...vals)*.95,max=Math.max(...vals)*1.05,ys=v=>padT+(H-padT-padB)*(1-(conv(v)-min)/(max-min));
+  const hp=pts.filter(d=>!d.proj),pp=pts.filter(d=>d.proj),lastH=hp[hp.length-1];
+  const hd=hp.map((d,i)=>(i?'L':'M')+xs(d.i).toFixed(1)+' '+ys(d.v).toFixed(1)).join(' ');
+  const pd='M'+xs(lastH.i).toFixed(1)+' '+ys(lastH.v).toFixed(1)+' '+pp.map(d=>'L'+xs(d.i).toFixed(1)+' '+ys(d.v).toFixed(1)).join(' ');
+  const area=hd+' L'+xs(lastH.i).toFixed(1)+' '+(H-padB)+' L'+padL+' '+(H-padB)+' Z';
+  return`<svg viewBox="0 0 ${W2} ${H}"><path d="${area}" fill="rgba(31,70,50,.10)"/><path d="${hd}" fill="none" stroke="#1f4632" stroke-width="2" stroke-linejoin="round"/><path d="${pd}" fill="none" stroke="#b8502f" stroke-width="2" stroke-dasharray="4 4"/><circle cx="${xs(lastH.i).toFixed(1)}" cy="${ys(lastH.v).toFixed(1)}" r="2.6" fill="#1f4632"/><text x="${xs(0)}" y="${H-3}" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="#9c6b3f">${MES[pts[0].m]}</text><text x="${xs(pts.length-1)}" y="${H-3}" text-anchor="end" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="#b8502f">proy</text></svg>`;
+}
+
+function renderMapInterp(){
+  document.getElementById('mapInterp').innerHTML=`<b>Cómo leer el mapa:</b> el color de cada subregión refleja el indicador elegido (${METRIC[mapMetric].label.toLowerCase()}). Los <b>puntos</b> son municipios (color = piso térmico) y los <b>círculos con borde</b> son centros de abasto. Pasa el cursor para ver datos y toca una zona para actualizar las gráficas. <b>Nota honesta:</b> las posiciones de municipios son <b>esquemáticas dentro de su subregión real</b>; en producción se usan los centroides oficiales de IGAC/DANE para ubicarlos con precisión.`;
+}
+
+/* ===== selection ===== */
+function selectSub(sk,resetMuni){
+  if(resetMuni!==false&&!showAllMunis)selMuni=null;
+  selSub=sk;
+  renderMap();renderSide();renderRecs();renderZoneCharts();
+  const pool=SUB[sk].crops.filter(c=>PROD[c]&&(famFilter==='all'||PROD[c].fam===famFilter));
+  const match=pool[0]||prodList()[0];
+  if(match){selProd=match;buildProdSel();renderProduct();}
+}
+
+/* ===== recommendations ===== */
+function renderRecs(){
+  if(!selSub){document.getElementById('recBody').innerHTML='<p style="color:var(--ink-soft);font-size:14px">Selecciona una subregión en el mapa para ver el ranking de cultivos recomendados.</p>';return;}
+  const s=SUB[selSub];
+  document.getElementById('rec-title').textContent='¿Qué sembrar ahora? · '+s.name;
+  const famTxt=famFilter==='all'?'todas las familias':FAM[famFilter].short;
+  document.getElementById('rec-sub').textContent='Temporada de '+(season==='lluvia'?'lluvia':'seca')+' · '+famTxt+' · rentabilidad y riesgo (demo).';
+  let pool=s.crops.filter(c=>PROD[c]).filter(c=>famFilter==='all'||PROD[c].fam===famFilter);
+  if(!pool.length)pool=prodList().filter(c=>PROD[c].pt===s.pt).slice(0,5);
+  let items=pool.map(c=>{const m=metrics(c);return{c,rent:rentOf(m),risk:Math.round(m.fall),rising:m.slope>0,m};});
+  items.sort((a,b)=>(b.rent-b.risk*.5)-(a.rent-a.risk*.5));items=items.slice(0,5);
+  if(!items.length){document.getElementById('recBody').innerHTML='<p style="color:var(--ink-soft)">No hay productos de esa familia con vocación clara aquí. Prueba "Todas las familias".</p>';return;}
+  document.getElementById('recBody').innerHTML=items.map((it,i)=>{
+    const sem=it.risk<40?'sem-low':it.risk<65?'sem-mid':'sem-high',semTxt=it.risk<40?'Riesgo bajo':it.risk<65?'Riesgo medio':'Riesgo alto';
+    const expB=it.m.exp?'<span class="badge-exp">🌎 exportable</span>':'';
+    const why=it.rising?`Precio al <b>alza</b> hacia ${MES[it.m.peak]}: sembrar ahora apunta a cosechar caro.`:`Precio a la <b>baja</b> hacia ${MES[it.m.trough]}: margen atractivo, vigilar sobreoferta.`;
+    return`<div class="rec"><div class="rank">${i+1}</div><div class="info"><div class="nm">${it.c} <span class="semaforo ${sem}">${semTxt}</span> ${expB}</div><div class="why">${why}</div><div class="bars"><div class="barbox"><div class="bl"><span>RENTABILIDAD</span><span>${it.rent}%</span></div><div class="track"><div class="fill r" style="width:${it.rent}%"></div></div></div><div class="barbox"><div class="bl"><span>RIESGO DE CAÍDA</span><span>${it.risk}%</span></div><div class="track"><div class="fill k" style="width:${it.risk}%"></div></div></div></div></div></div>`;
+  }).join('')+`<div class="interp"><span class="it-t">Cómo leerlo</span> Verde = rentabilidad proyectada (más alto mejor). Naranja = riesgo de caída (más bajo mejor). El #1 equilibra ambos para esta zona y temporada.</div>`;
+}
+
+/* ===== comparer ===== */
+function renderComparer(){
+  let list=prodList().map(c=>({c,...metrics(c)}));
+  const maxP=Math.max(...list.map(m=>m.cur));
+  list=list.slice().sort((a,b)=>rentOf(b)-rentOf(a));
+  document.getElementById('comparerBody').innerHTML=
+    `<div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:#9c6b3f;margin-bottom:8px">Rentabilidad estimada · ${famFilter==='all'?'todas las familias':FAM[famFilter].short}</div>`+
+    list.map(m=>{const r=rentOf(m);return`<div class="hbar"><div class="hn" style="width:96px">${m.c}</div><div class="ht"><div class="hf" style="width:${r}%;background:${FAM[m.fam].c}"></div></div><div class="hv">${r}%</div></div>`;}).join('')+
+    `<div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:#9c6b3f;margin:14px 0 8px">Precio actual (${currency}/kg)</div>`+
+    list.slice().sort((a,b)=>b.cur-a.cur).map(m=>`<div class="hbar"><div class="hn" style="width:96px">${m.c}</div><div class="ht"><div class="hf" style="width:${m.cur/maxP*100}%;background:var(--clay)"></div></div><div class="hv" style="width:54px">${money(m.cur)}</div></div>`).join('')+
+    `<div class="interp"><span class="it-t">Nota</span> Barras de color por familia. Cifras ilustrativas con motor consistente; se reemplazan con SIPSA/EVA reales.</div>`;
+}
+
+/* ===== municipality browser ===== */
+function muniData(){const arr=[];Object.entries(MUNIS).forEach(([sk,list])=>list.forEach(m=>arr.push({name:m,sub:sk,pt:SUB[sk].pt})));return arr;}
+function renderMunis(){
+  const q=(document.getElementById('muniSearch').value||'').toLowerCase().trim();
+  const fSub=document.getElementById('muniSub').value,fPt=document.getElementById('muniPt').value;
+  let arr=muniData().filter(m=>{if(q&&!m.name.toLowerCase().includes(q))return false;if(fSub&&m.sub!==fSub)return false;if(fPt&&m.pt!==fPt)return false;if(famFilter!=='all'&&!PTFAM[m.pt].includes(famFilter))return false;return true;});
+  arr.sort((a,b)=>a.name.localeCompare(b.name));
+  document.getElementById('muniCount').textContent=arr.length+' de 125 municipios';
+  document.getElementById('muniGrid').innerHTML=arr.map(m=>{const fams=PTFAM[m.pt].map(f=>`<span class="dot-f" style="background:${FAM[f].c}" title="${FAM[f].short}"></span>`).join('');
+    return`<div class="muni" data-sub="${m.sub}" data-m="${m.name}"><div class="mn">${m.name}</div><div class="ms">${SUB[m.sub].name} · <span style="color:${PT[m.pt].c};font-weight:600">${PT[m.pt].label}</span></div><div class="mf">${fams}</div></div>`;
+  }).join('')||'<p style="color:var(--ink-soft);grid-column:1/-1">Sin municipios con esos filtros.</p>';
+  document.querySelectorAll('.muni').forEach(el=>el.addEventListener('click',()=>{
+    selMuni=el.dataset.m;showAllMunis=false;document.getElementById('muniToggle').classList.remove('on');
+    selectSub(el.dataset.sub,false);document.getElementById('mapwrap').scrollIntoView({behavior:'smooth',block:'center'});
+  }));
+}
+
+/* ===== product explorer ===== */
+let selProd='Papa';
+function buildProdSel(){const sel=document.getElementById('prodSel');sel.innerHTML=prodList().map(p=>`<option ${p===selProd?'selected':''}>${p}</option>`).join('');sel.onchange=e=>{selProd=e.target.value;renderProduct();};}
+function renderProduct(){
+  const m=metrics(selProd),f=FAM[m.fam];
+  const harvest=dateAfter(m.days),winEnd=dateAfter(m.days+45);
+  document.getElementById('cyclebox').innerHTML=`<h5>Si siembras hoy (${W.hoyFull}) · familia ${f.short} · ${PT[m.pt].label}</h5>
+    <div class="cycle-track">
+      <div class="cyc" style="background:var(--moss)"><div class="cyl">SIEMBRA</div><div class="cyv">${W.hoyFull}</div></div>
+      <div class="cyc" style="background:var(--clay)"><div class="cyl">CICLO</div><div class="cyv">${m.days} días<br>(~${(m.days/30).toFixed(1)} meses)</div></div>
+      <div class="cyc" style="background:var(--gold);color:#3a2c08"><div class="cyl">COSECHA EST.</div><div class="cyv">${dMonthYear(harvest)}</div></div>
+      <div class="cyc" style="background:var(--terra)"><div class="cyl">VENTANA VENTA</div><div class="cyv">${dMonthYear(harvest)}–${dMonthYear(winEnd)}</div></div>
+    </div>`;
+  const chips=[
+    {l:'Precio actual',v:money(m.cur),c:'',pp:W.hoy},
+    {l:'Var. mensual',v:pct(m.mChg),c:m.mChg>=0?'up':'down',pp:W.hoy+' vs '+W.mesAnt},
+    {l:'Var. anual',v:pct(m.yChg),c:m.yChg>=0?'up':'down',pp:W.hoy+' vs '+W.anioAnt},
+    {l:'Vs. histórico',v:pct(m.vsHist),c:m.vsHist>=0?'up':'down',pp:'prom. 12m'},
+    {l:'Volatilidad',v:Math.round(m.volPct)+'%',c:'',pp:'últimos 24m'},
+    {l:'Margen est.',v:Math.round(m.margin)+'%',c:m.margin>40?'up':'',pp:'precio−costo'},
+    {l:'Mejor mes venta',v:MES[m.peak],c:'',pp:'estacional'},
+    {l:'Exportable',v:m.exp?'Sí 🌎':'No',c:m.exp?'up':'',pp:m.exp?'ver panel export':'mercado interno'}
+  ];
+  document.getElementById('pchips').innerHTML=chips.map(c=>`<div class="pchip"><div class="pl">${c.l}</div><div class="pv ${c.c}">${c.v}</div><div class="pp">${c.pp}</div></div>`).join('');
+  document.getElementById('curPrice').textContent=money(m.cur)+' /kg';
+  const ce=document.getElementById('curChg');ce.innerHTML=(m.mChg>=0?'▲ ':'▼ ')+pct(m.mChg)+' vs '+W.mesAnt;ce.className='chg '+(m.mChg>=0?'up':'down');
+  drawChart(selProd);
+  const advice=m.slope>0?`Como el precio va <b>al alza</b> hacia ${MES[m.peak]}, sembrar hoy apunta a cosechar (≈${dMonthYear(harvest)}) cuando esté más caro.`:`Como tiende a <b>bajar</b> hacia ${MES[m.trough]}, conviene asegurar venta anticipada o un sustituto.`;
+  const expTxt=m.exp?` Es <b>exportable</b>: revisa el panel de exportación y el efecto de la TRM.`:'';
+  document.getElementById('prodInterp').innerHTML=`<span class="it-t">Lectura (hoy: ${W.hoyFull})</span> Serie <b>${W.histDesde}–${W.histHasta}</b>. Si siembras hoy, cosechas hacia <b>${dMonthYear(harvest)}</b> (ciclo ${m.days} d). Precio más alto en <b>${MES[m.peak]}</b> y más bajo en <b>${MES[m.trough]}</b>; proyección a 3 meses ≈ <b>${pct(m.projChg)}</b>. ${advice}${expTxt} <i>(Cifras ilustrativas; TRM real.)</i>`;
+}
+function drawChart(name){
+  const {pts}=series(name);const W2=560,H=230,padL=58,padR=14,padT=16,padB=30;
+  const xs=i=>padL+(W2-padL-padR)*(i/(pts.length-1)),conv=v=>currency==='USD'?v/TRM:v;
+  const vals=pts.map(d=>conv(d.v)).concat(pts.filter(d=>d.proj).map(d=>conv(d.hi)));
+  const min=Math.min(...vals)*.92,max=Math.max(...vals)*1.04,ys=v=>padT+(H-padT-padB)*(1-(conv(v)-min)/(max-min));
+  const hp=pts.filter(d=>!d.proj),lastH=hp[hp.length-1],pp=pts.filter(d=>d.proj);
+  const histD=hp.map((d,i)=>(i?'L':'M')+xs(d.i).toFixed(1)+' '+ys(d.v).toFixed(1)).join(' ');
+  const projD='M'+xs(lastH.i).toFixed(1)+' '+ys(lastH.v).toFixed(1)+' '+pp.map(d=>'L'+xs(d.i).toFixed(1)+' '+ys(d.v).toFixed(1)).join(' ');
+  const bandTop=pp.map(d=>'L'+xs(d.i).toFixed(1)+' '+ys(d.hi).toFixed(1)).join(' ');
+  const bandBot=pp.slice().reverse().map(d=>'L'+xs(d.i).toFixed(1)+' '+ys(d.lo).toFixed(1)).join(' ');
+  const bandD='M'+xs(lastH.i).toFixed(1)+' '+ys(lastH.v).toFixed(1)+' '+bandTop+' '+bandBot+' Z';
+  const fmtAxis=v=>currency==='USD'?'$'+v.toFixed(v<10?1:0):'$'+Math.round(v/10)*10;
+  let grid='';for(let g=0;g<=3;g++){const v=min+(max-min)*g/3,y=padT+(H-padT-padB)*(1-(v-min)/(max-min));grid+=`<line x1="${padL}" y1="${y}" x2="${W2-padR}" y2="${y}" stroke="#e3dccb"/><text x="${padL-8}" y="${y+3}" text-anchor="end" font-family="IBM Plex Mono,monospace" font-size="9" fill="#9c6b3f">${fmtAxis(v)}</text>`;}
+  let xl='';pts.forEach((d,i)=>{if(i%4===0||i===pts.length-1)xl+=`<text x="${xs(d.i)}" y="${H-14}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8.5" fill="#9c6b3f">${MES[d.m]}</text>`;const yr=Y0+Math.floor((M0+(i-(NHIST-1)))/12);if(d.m===0||i===0)xl+=`<text x="${xs(d.i)}" y="${H-3}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" font-weight="500" fill="#1f4632">${yr}</text>`;});
+  const tx=xs(lastH.i),projX=(tx+xs(pts.length-1))/2;
+  document.getElementById('chart').innerHTML=`${grid}<rect x="${tx}" y="${padT}" width="${xs(pts.length-1)-tx}" height="${H-padT-padB}" fill="rgba(184,80,47,.05)"/><text x="${projX}" y="${padT+9}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="#b8502f" letter-spacing="1">PROYECCIÓN</text><path d="${bandD}" fill="rgba(184,80,47,.15)"/><line x1="${tx}" y1="${padT}" x2="${tx}" y2="${H-padB}" stroke="#b8502f" stroke-dasharray="3 3" opacity=".6"/><text x="${tx}" y="${padT-5}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" font-weight="500" fill="#b8502f">HOY · ${W.hoy}</text><path d="${histD}" fill="none" stroke="#1f4632" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/><path d="${projD}" fill="none" stroke="#b8502f" stroke-width="2.4" stroke-dasharray="6 5" stroke-linecap="round"/><circle cx="${tx}" cy="${ys(lastH.v)}" r="4" fill="#1f4632"/>${xl}`;
+}
+
+/* ===== export & abasto ===== */
+function renderExport(){
+  const dests=[{n:'Países Bajos',v:35.8},{n:'EE. UU.',v:15.0},{n:'Reino Unido',v:6.0},{n:'España',v:7.9},{n:'Alemania',v:2.8},{n:'Otros',v:32.5}];
+  const maxd=Math.max(...dests.map(d=>d.v));
+  document.getElementById('exportBody').innerHTML=`
+    <div class="exp-hero">
+      <div class="exp-c"><div class="el">Aguacate Hass · Antioquia 2025 <span class="real-tag">REAL</span></div><div class="ev">US$177,4 M</div><div class="ed">≈ 47% del total nacional · +50,2% vs 2024</div></div>
+      <div class="exp-c"><div class="el">Hass nacional 2025 <span class="real-tag">REAL</span></div><div class="ev">US$375 M</div><div class="ed">201.479 t · +45,6% volumen</div></div>
+      <div class="exp-c"><div class="el">Producción aguacate Ant. 2024 <span class="real-tag">REAL</span></div><div class="ev">1,67 M t</div><div class="ed">Antioquia, líder nacional</div></div>
+      <div class="exp-c"><div class="el">Banano <span class="real-tag">REAL</span></div><div class="ev">Fruta #1</div><div class="ed">Eje Urabá · 1ª fruta de exportación</div></div>
+    </div>
+    <div class="grid-2" style="margin-top:0">
+      <div class="kc-card"><h4 style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#9c6b3f;margin-bottom:10px">Destinos del Hass colombiano 2025 <span class="real-tag">REAL</span></h4>
+        ${dests.map(d=>`<div class="dest-row"><div class="dn">${d.n}</div><div class="dt"><div class="df" style="width:${d.v/maxd*100}%"></div></div><div class="dv">${d.v}%</div></div>`).join('')}
+        <div style="font-size:11px;color:var(--ink-soft);margin-top:6px">Europa concentra &gt;60% del total. Países Bajos es el mayor comprador. <i>(EE.UU./R.Unido aprox. para ilustrar el resto.)</i></div></div>
+      <div class="kc-card"><h4 style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#9c6b3f;margin-bottom:10px">Local vs nacional vs exportación <span class="demo-tag">DEMO</span></h4>
+        <div class="dest-row"><div class="dn">Plaza local</div><div class="dt"><div class="df" style="width:45%;background:#9c6b3f"></div></div><div class="dv">menor</div></div>
+        <div class="dest-row"><div class="dn">Mayorista nac.</div><div class="dt"><div class="df" style="width:68%;background:#c9892c"></div></div><div class="dv">medio</div></div>
+        <div class="dest-row"><div class="dn">Exportación</div><div class="dt"><div class="df" style="width:100%;background:#2f7a45"></div></div><div class="dv">mayor</div></div>
+        <div style="font-size:11.5px;color:var(--ink-soft);margin-top:8px">La exportación suele pagar más, pero exige calidad, certificaciones (ICA, GLOBALG.A.P.), volumen y logística. La <b>TRM</b> (hoy $${Math.round(TRM).toLocaleString('es-CO')}) define cuántos pesos recibe el exportador por dólar.</div></div>
+    </div>
+    <div class="interp"><span class="it-t">Cómo exponerlo</span> Antioquia ya es <b>líder agroexportador</b> (Hass y banano). La oportunidad: replicar el modelo en pasifloras (gulupa, maracuyá) y otras frutas. Empresas y volúmenes por empresa: DIAN/Legiscomex/Cámaras — no se inventan aquí.</div>`;
+}
+function renderAbasto(){
+  const list=[
+    {i:'●',n:'Central Mayorista de Antioquia',d:'Itagüí (Valle de Aburrá). El mayor mercado mayorista regional; el DANE mide aquí precios para SIPSA.',geo:'≈ 6.16° N, 75.61° O (aprox.) · MAYORISTA',tag:'REAL'},
+    {i:'○',n:'Plaza Minorista José María Villa',d:'Medellín (Valle de Aburrá). Principal plaza minorista; referencia del margen mayorista→minorista.',geo:'≈ 6.25° N, 75.57° O (aprox.) · MINORISTA',tag:'REAL'},
+    {i:'+',n:'Plazas y centros regionales',d:'Cada subregión tiene plazas locales (Rionegro, Santa Fe de Antioquia, Apartadó, Caucasia…) que acopian antes de enviar al Valle de Aburrá o a exportación.',geo:'Georreferencia exacta a cargar desde Gobernación/IGAC',tag:'GAP'}
+  ];
+  document.getElementById('abastoBody').innerHTML=list.map(a=>`<div class="abasto"><div class="ab-i">${a.i}</div><div><div class="ab-n">${a.n} ${a.tag==='REAL'?'<span class="real-tag">VERIFICADO</span>':'<span class="demo-tag">A COMPLETAR</span>'}</div><div class="ab-d">${a.d}</div><div class="ab-geo">${a.geo}</div></div></div>`).join('')+`<div class="interp"><span class="it-t">Nota de georreferencia</span> Las coordenadas son <b>aproximadas</b> para ubicar el punto. En producción se geocodifican con precisión y se trazan rutas y distancias reales a cada municipio productor.</div>`;
+}
+
+/* ===== modal ===== */
+const overlay=document.getElementById('overlay'),modalTitle=document.getElementById('modalTitle'),modalBody=document.getElementById('modalBody');
+function openModal(t,h){modalTitle.textContent=t;modalBody.innerHTML=h;overlay.classList.add('on');modalBody.scrollTop=0;}
+function closeModal(){overlay.classList.remove('on');}
+document.getElementById('modalClose').addEventListener('click',closeModal);
+overlay.addEventListener('click',e=>{if(e.target===overlay)closeModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+function cmpCard(l,v,c,d){return`<div class="cmpc"><div class="cl">${l}</div><div class="cv ${c}">${v}</div><div class="cd">${d}</div></div>`;}
+function brkBar(n,v,mx,sfx){return`<div class="brk"><div class="bn">${n}</div><div class="bt"><div class="bf" style="width:${Math.round(v/mx*100)}%"></div></div><div class="bv">${v}${sfx||''}</div></div>`;}
+function ficha(o){const row=(k,v)=>`<div class="fr"><div class="fk">${k}</div><div class="fv">${v}</div></div>`;return`<div class="ficha">${row('📊 Qué mide',o.mide)}${row('🧮 Cómo se calcula',o.calculo)}${row('📅 Periodo',o.periodo)}${o.base?row('🎯 Periodo base',o.base):''}${row('⚖ Se compara contra',o.compara)}${row('★ Por qué importa',o.importa)}</div>`;}
+function openKPI(key){
+  if(key==='gate'){openKnowledge();return;}
+  const k=kpiData();
+  if(key==='municipios'){const rows=Object.entries(MUNIS).map(([sk,l])=>brkBar(SUB[sk].name,l.length,23,'')).join('');
+    openModal('Cobertura de municipios',`<div class="kd-hero"><div class="kd-icon">⬡</div><div><div class="kk">Territorio</div><h3>125 municipios · 9 subregiones</h3><p>Cobertura administrativa completa de Antioquia. Cada municipio se ubica en su subregión oficial y hereda su clima predominante.</p></div><div class="kd-big"><div class="b">125</div><div class="s flat" style="color:var(--ink-soft)">municipios</div></div></div>${ficha({mide:'Cuántos municipios cubre el análisis y su reparto por subregión.',calculo:'Conteo según la división oficial (Ordenanza 41/1975).',periodo:'División vigente.',compara:'No aplica.',importa:'Garantiza que ningún municipio agrícola quede fuera.'})}<div class="kd-sec"><h4>Municipios por subregión</h4>${rows}</div>`);}
+  else if(key==='indice'){openModal('Índice de precios',`<div class="kd-hero"><div class="kd-icon">⌁</div><div><div class="kk">Mercado</div><h3>Índice de precios</h3><p>Nivel promedio de precios en base 100.</p></div><div class="kd-big"><div class="b">${k.idx}</div><div class="s ${k.idxChgM>=0?'up':'down'}">${pct(k.idxChgM)} vs ${W.mesAnt}</div></div></div>${ficha({mide:'Qué tan caro está el mercado en conjunto.',calculo:'Promedio de (precio actual ÷ precio base) × 100.',periodo:'Mensual · '+W.hoy+'.',base:'Base 100 = '+W.baseDesde+'–'+W.baseHasta+'.',compara:'Mes anterior y promedio 12 meses.',importa:'Resume en una cifra si el mercado está caro o barato.'})}<div class="cmp">${cmpCard('vs mes anterior',pct(k.idxChgM),k.idxChgM>=0?'up':'down','Frente a '+W.mesAnt)}${cmpCard('vs prom. 12m',pct(k.idxVsHist),k.idxVsHist>=0?'up':'down',W.h12Desde+'–'+W.h12Hasta)}${cmpCard('Temporada',season==='lluvia'?'Lluvia':'Seca',season==='lluvia'?'up':'down',season==='lluvia'?'menos oferta':'más oferta')}</div>`);}
+  else if(key==='trm'){const m=metrics('Aguacate Hass');openModal('TRM · peso/dólar',`<div class="kd-hero"><div class="kd-icon">💱</div><div><div class="kk">Monetario</div><h3>TRM oficial COP/USD</h3><p>Cuántos pesos vale un dólar. Clave para exportables.</p></div><div class="kd-big"><div class="b">$${Math.round(TRM).toLocaleString('es-CO')}</div><div class="s flat" style="color:var(--ink-soft)">26 may 2026</div></div></div>${ficha({mide:'El valor oficial de 1 dólar en pesos.',calculo:'La publica a diario la Superintendencia Financiera.',periodo:'Diaria · 26 may 2026.',compara:'Su serie histórica.',importa:'TRM alta favorece al exportador; TRM baja lo reduce.'})}<div class="cmp">${cmpCard('Aguacate (COP)','$'+Math.round(m.cur).toLocaleString('es-CO'),'flat','por kg, demo')}${cmpCard('Aguacate (USD)','US$'+(m.cur/TRM).toFixed(2),'flat','a TRM hoy')}${cmpCard('TRM','$'+Math.round(TRM).toLocaleString('es-CO'),'flat','editable')}</div><div class="kd-sec"><h4>Ajustar TRM (simulación)</h4><input id="trmInput" type="range" min="3200" max="4400" step="10" value="${Math.round(TRM)}" style="width:100%"><div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-soft)"><span>$3.200</span><span id="trmVal" style="color:var(--forest-deep);font-weight:600">$${Math.round(TRM).toLocaleString('es-CO')}</span><span>$4.400</span></div><p style="font-size:12px;color:var(--ink-soft);margin-top:8px">Mueve la TRM y observa el cambio en los precios USD. Fuente real: <b>Banco de la República</b>.</p></div>`);
+    const ti=document.getElementById('trmInput');if(ti)ti.addEventListener('input',e=>{TRM=+e.target.value;document.getElementById('trmVal').textContent='$'+TRM.toLocaleString('es-CO');renderKPIs();renderProduct();renderExport();renderMap();renderSide();renderZoneCharts();renderComparer();renderBanner();});}
+  else if(key==='export'){openModal('Exportación · aguacate Hass',`<div class="kd-hero"><div class="kd-icon">🌎</div><div><div class="kk">Comercio exterior · 2025</div><h3>Antioquia, líder en Hass</h3><p>Aportó cerca de la mitad de las exportaciones nacionales de aguacate Hass en 2025.</p></div><div class="kd-big"><div class="b">US$177M</div><div class="s up">+50,2%</div></div></div>${ficha({mide:'Valor exportado de aguacate Hass por Antioquia.',calculo:'Cifras DIAN con análisis de Analdex/Corpohass.',periodo:'Año 2025.',compara:'Año 2024 (+50,2%).',importa:'Muestra el potencial agroexportador real.'})}<div class="cmp">${cmpCard('Antioquia','US$177,4 M','up','≈47% nacional')}${cmpCard('Nacional','US$375 M','up','201.479 t')}${cmpCard('Destino #1','P. Bajos','flat','35,8%')}</div><div class="interp"><span class="it-t">Para exponer</span> Dato <b>real y verificado</b>. Ver panel "Mercado de exportación" abajo para destinos y canales.</div>`);}
+  else if(key==='alertas'){const risky=k.ms.filter(m=>m.fall>=50).sort((a,b)=>b.fall-a.fall);const rows=risky.map(m=>`<div class="brk"><div class="bn">${m.n}</div><div class="bt"><div class="bf" style="width:${m.fall}%;background:var(--bad)"></div></div><div class="bv" style="color:var(--bad)">${Math.round(m.fall)}%</div></div>`).join('');
+    openModal('Alertas de caída de precio',`<div class="kd-hero"><div class="kd-icon">⚠</div><div><div class="kk">Riesgo</div><h3>Alertas de caída</h3><p>Productos con mayor probabilidad de que su precio baje.</p></div><div class="kd-big"><div class="b" style="color:var(--bad)">${k.alerts}</div><div class="s down">en riesgo</div></div></div>${ficha({mide:'Riesgo de que el precio baje en el horizonte de cosecha.',calculo:'Combina dirección estacional y volatilidad.',periodo:'Horizonte '+W.projDesde+'–'+W.projHasta+'.',compara:'Nivel actual vs trayectoria esperada.',importa:'Evita cosechar cuando el precio está bajo.'})}<div class="kd-sec"><h4>Probabilidad de caída por producto</h4>${rows||'<p style="margin:0;color:var(--ink-soft)">Sin alertas relevantes.</p>'}</div>`);}
+  else if(key==='oportunidad'){const ranked=k.ms.slice().sort((a,b)=>b.margin-a.margin).slice(0,8),b=k.best;const rows=ranked.map(m=>brkBar(m.n,Math.round(m.margin),100,'%')).join('');
+    openModal('Mejor oportunidad de margen',`<div class="kd-hero"><div class="kd-icon">★</div><div><div class="kk">Rentabilidad</div><h3>Mejor margen estimado</h3><p>Cultivo con mayor margen bruto hoy.</p></div><div class="kd-big"><div class="b" style="font-size:24px">${b.n}</div><div class="s up">${Math.round(b.margin)}%</div></div></div>${ficha({mide:'Qué cultivo deja mayor margen por kilo hoy.',calculo:'(precio − costo) ÷ precio, en %.',periodo:'Foto del mes ('+W.hoy+').',compara:'Todos los productos.',importa:'Primera señal de rentabilidad; cruzar con riesgo y zona.'})}<div class="cmp">${cmpCard('Precio',money(b.cur),'flat','/kg')}${cmpCard('Costo',money(b.cost),'flat','/kg')}${cmpCard('Margen',Math.round(b.margin)+'%','up','del precio')}</div><div class="kd-sec"><h4>Ranking por margen</h4>${rows}</div>`);}
+}
+function openKnowledge(){
+  openModal('Propuesta completa del proyecto',document.getElementById('kcTemplate').innerHTML);
+  const famHtml=Object.entries(FAM).map(([k,f])=>{const prods=Object.keys(PROD).filter(n=>PROD[n].fam===k);return`<div class="kc-card"><h4 style="color:${f.c}">${f.icon} ${f.name}</h4><p style="margin:0"><b>Productos:</b> ${prods.join(', ')}.<br><b>Pisos térmicos:</b> ${Object.keys(PTFAM).filter(pt=>PTFAM[pt].includes(k)).map(pt=>PT[pt].label).join(', ')}.</p></div>`;}).join('');
+  const fEl=modalBody.querySelector('#kcFamilias');if(fEl)fEl.innerHTML=famHtml;
+  const mEl=modalBody.querySelector('#kcMunis');if(mEl)mEl.innerHTML='<table class="kctbl"><thead><tr><th>Subregión</th><th>Municipios</th><th>Clima</th></tr></thead><tbody>'+Object.entries(MUNIS).map(([sk,l])=>`<tr><td><b>${SUB[sk].name}</b></td><td>${l.length}</td><td>${PT[SUB[sk].pt].label}</td></tr>`).join('')+'</tbody></table>';
+  const tabs=modalBody.querySelectorAll('#kcTabs button'),panes=modalBody.querySelectorAll('.kc-pane');
+  tabs.forEach(b=>b.addEventListener('click',()=>{tabs.forEach(x=>x.classList.remove('on'));b.classList.add('on');panes.forEach(p=>p.classList.toggle('on',p.dataset.pane===b.dataset.p));modalBody.scrollTop=0;}));
+}
+
+/* ===== banner + glossary ===== */
+function renderBanner(){
+  const chips=[
+    {l:'Mes actual',v:W.hoyFull},{l:'Ventana histórica',v:W.histDesde+' – '+W.histHasta},
+    {l:'Proyección',v:W.projDesde+' – '+W.projHasta},{l:'Periodo base',v:W.baseDesde+' – '+W.baseHasta},
+    {l:'TRM (COP/USD)',v:'$'+Math.round(TRM).toLocaleString('es-CO')+' · 26 may 2026'},{l:'Cobertura',v:'125 municipios · 9 subregiones'}
+  ];
+  document.getElementById('pbChips').innerHTML=chips.map(c=>`<div class="pc"><span>${c.l}</span><b>${c.v}</b></div>`).join('');
+}
+function openGlossary(){
+  const r=(k,v)=>`<div class="fr"><div class="fk">${k}</div><div class="fv">${v}</div></div>`;
+  openModal('Periodos y definiciones',`<div class="kd-hero"><div class="kd-icon">ℹ</div><div><div class="kk">Guía para exponer</div><h3>Cómo leer este tablero</h3><p>Referencia rápida de fechas, periodos, moneda e indicadores.</p></div></div>
+    <div class="kd-sec"><h4>📅 Calendario y moneda</h4><div class="ficha">${r('Mes actual','<b>'+W.hoyFull+'</b> — el punto "HOY".')}${r('Ventana histórica','<b>'+W.histDesde+' a '+W.histHasta+'</b> (24 meses).')}${r('Proyección','<b>'+W.projDesde+' a '+W.projHasta+'</b> (6 meses).')}${r('Periodo base','<b>'+W.baseDesde+' a '+W.baseHasta+'</b> (índice=100).')}${r('TRM','$'+Math.round(TRM).toLocaleString('es-CO')+' · 26 may 2026 (Superfinanciera/Banrep).')}</div></div>
+    <div class="kd-sec"><h4>🗺 Indicadores del mapa</h4><div class="ficha">${r('Piso térmico','Clima por altitud (real): cálido, templado, frío.')}${r('Rentabilidad','Margen estimado promedio de la zona (demo).')}${r('Precio prom.','Precio medio de los cultivos de la zona (demo).')}${r('Oferta','Nivel relativo de oferta estimada (demo).')}${r('Riesgo','Probabilidad de caída de precio (demo).')}</div></div>
+    <div class="interp"><span class="it-t">Datos</span> Conviven datos <b>reales</b> (territorio, exportación, TRM) y <b>demo</b> (precios/proyecciones/posiciones de municipios, marcados). Al conectar SIPSA/EVA/IDEAM/DIAN/IGAC, cifras y posiciones se vuelven exactas.</div>`);
+}
+
+/* ===== events ===== */
+document.querySelectorAll('#map .region').forEach(el=>{
+  el.addEventListener('mouseenter',e=>showTip(subTip(el.dataset.key),e));
+  el.addEventListener('mousemove',moveTip);el.addEventListener('mouseleave',hideTip);
+  el.addEventListener('click',()=>{selMuni=null;selectSub(el.dataset.key,true);});
+});
+document.querySelectorAll('#metricSeg button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#metricSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');mapMetric=b.dataset.m;renderMap();renderMapInterp();}));
+document.getElementById('muniToggle').addEventListener('click',function(){showAllMunis=!showAllMunis;this.classList.toggle('on',showAllMunis);renderMap();});
+document.querySelectorAll('#seasonSeg button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#seasonSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');season=b.dataset.s;renderKPIs();renderMap();renderSide();renderRecs();renderProduct();renderZoneCharts();renderComparer();}));
+document.querySelectorAll('#curSeg button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#curSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');currency=b.dataset.c;renderProduct();renderKPIs();renderMap();renderSide();renderZoneCharts();renderComparer();renderBanner();}));
+document.getElementById('muniSearch').addEventListener('input',renderMunis);
+document.getElementById('muniSub').addEventListener('change',renderMunis);
+document.getElementById('muniPt').addEventListener('change',renderMunis);
+document.getElementById('glossaryBtn').addEventListener('click',openGlossary);
+
+/* ===== init ===== */
+function fillMuniSub(){document.getElementById('muniSub').innerHTML='<option value="">Todas las subregiones</option>'+Object.keys(SUB).map(k=>`<option value="${k}">${SUB[k].name}</option>`).join('');}
+renderFamBar();renderBanner();renderKPIs();fillMuniSub();buildProdSel();renderProduct();renderExport();renderAbasto();renderMunis();renderComparer();
+renderMap();renderMapInterp();renderSide();renderZoneCharts();
+selectSub('oriente',true);
+</script>
+</body>
+</html>

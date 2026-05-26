@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propuesta · Analítica Agrícola Predictiva para Antioquia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Hanken+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f3ea;
+    --paper:#fffdf8;
+    --ink:#221c12;
+    --ink-soft:#5b5343;
+    --line:#e3dccb;
+    --forest:#1f4632;
+    --forest-deep:#15301f;
+    --moss:#4a7a4e;
+    --harvest:#cf8a2c;
+    --terra:#b8502f;
+    --clay:#9c6b3f;
+    --gold:#e0a83a;
+    /* pisos térmicos */
+    --pt-calido:#d9622b;
+    --pt-templado:#e0a83a;
+    --pt-frio:#3f7d5a;
+    --pt-paramo:#5b7c93;
+    --shadow:0 1px 2px rgba(34,28,18,.05),0 8px 30px rgba(34,28,18,.07);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Hanken Grotesk',-apple-system,system-ui,sans-serif;
+    font-size:17px;line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 28px}
+
+  /* ---- top bar ---- */
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(246,243,234,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .topbar .inner{max-width:1080px;margin:0 auto;padding:11px 28px;display:flex;align-items:center;gap:18px;justify-content:space-between}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:600;letter-spacing:-.01em}
+  .brand .dot{width:26px;height:26px;border-radius:7px;background:var(--forest);position:relative;flex:none}
+  .brand .dot::after{content:"";position:absolute;inset:6px 6px auto 6px;height:4px;border-radius:3px;background:var(--gold)}
+  .brand .dot::before{content:"";position:absolute;inset:auto 7px 6px 7px;height:8px;border-radius:0 0 5px 5px;background:var(--terra)}
+  .navlinks{display:flex;gap:4px;flex-wrap:wrap}
+  .navlinks a{font-size:13.5px;color:var(--ink-soft);text-decoration:none;padding:6px 10px;border-radius:7px;font-weight:500}
+  .navlinks a:hover{background:var(--paper);color:var(--forest)}
+  @media(max-width:860px){.navlinks{display:none}}
+
+  /* ---- hero ---- */
+  .hero{padding:78px 0 54px;position:relative;overflow:hidden}
+  .hero::before{content:"";position:absolute;top:-120px;right:-160px;width:520px;height:520px;border-radius:50%;
+    background:radial-gradient(circle at 30% 30%,rgba(207,138,44,.18),transparent 62%);pointer-events:none}
+  .kicker{font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--terra);font-weight:500}
+  h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(38px,6vw,68px);line-height:1.02;letter-spacing:-.02em;margin:18px 0 0;max-width:18ch}
+  h1 em{font-style:italic;color:var(--forest)}
+  .lede{font-size:clamp(18px,2.3vw,22px);color:var(--ink-soft);max-width:62ch;margin-top:24px;line-height:1.5}
+  .meta-row{display:flex;gap:28px;flex-wrap:wrap;margin-top:34px;padding-top:26px;border-top:1px solid var(--line)}
+  .meta-row .m{font-size:13.5px}
+  .meta-row .m b{display:block;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--clay);font-weight:500;margin-bottom:3px}
+
+  /* ---- sections ---- */
+  section{padding:46px 0;border-top:1px solid var(--line)}
+  .sec-num{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--terra);letter-spacing:.1em}
+  h2{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(27px,4vw,40px);line-height:1.08;letter-spacing:-.015em;margin:8px 0 20px;max-width:24ch}
+  h3{font-family:'Fraunces',serif;font-weight:600;font-size:22px;letter-spacing:-.01em;margin:30px 0 10px;color:var(--forest-deep)}
+  h4{font-size:13px;font-family:'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--clay);margin:22px 0 8px;font-weight:500}
+  p{margin:0 0 14px;max-width:72ch}
+  p.big{font-size:19px}
+  a.inl{color:var(--forest);text-decoration:underline;text-decoration-color:var(--gold);text-underline-offset:3px;text-decoration-thickness:1.5px}
+  strong{font-weight:600;color:var(--forest-deep)}
+  ul,ol{margin:0 0 16px;padding-left:22px;max-width:72ch}
+  li{margin-bottom:7px}
+  li::marker{color:var(--terra)}
+
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:24px 26px;box-shadow:var(--shadow)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr}}
+
+  .pill{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;padding:3px 9px;border-radius:20px;background:#efe7d4;color:var(--clay);margin:0 4px 4px 0}
+
+  /* tables */
+  .tbl{width:100%;border-collapse:collapse;font-size:14.5px;margin:8px 0 6px}
+  .tbl th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--clay);font-weight:500;padding:9px 12px;border-bottom:2px solid var(--line);vertical-align:bottom}
+  .tbl td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.45}
+  .tbl tr:hover td{background:#fbf8f1}
+  .tbl .src{font-weight:600;color:var(--forest-deep)}
+  .tbl small{color:var(--ink-soft);font-size:12.5px}
+  .tag-real{display:inline-block;font-size:10px;font-family:'IBM Plex Mono',monospace;background:#e3efe5;color:#2f6b43;padding:2px 7px;border-radius:5px;letter-spacing:.04em}
+  .tag-gap{display:inline-block;font-size:10px;font-family:'IBM Plex Mono',monospace;background:#f6e6dd;color:#a8502f;padding:2px 7px;border-radius:5px;letter-spacing:.04em}
+
+  .note{background:#fbf3e6;border-left:3px solid var(--gold);padding:14px 18px;border-radius:0 10px 10px 0;font-size:15px;color:var(--ink-soft);margin:16px 0}
+  .note b{color:var(--forest-deep)}
+
+  /* pisos térmicos scale */
+  .pt-scale{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-radius:14px;overflow:hidden;border:1px solid var(--line);margin:16px 0}
+  .pt-scale .band{padding:18px 16px;color:#fff}
+  .pt-scale .band h5{font-family:'Fraunces',serif;font-size:18px;margin-bottom:2px}
+  .pt-scale .band .alt{font-family:'IBM Plex Mono',monospace;font-size:11.5px;opacity:.9}
+  .pt-scale .band p{font-size:12.5px;line-height:1.4;margin:8px 0 0;color:rgba(255,255,255,.92);max-width:none}
+  @media(max-width:760px){.pt-scale{grid-template-columns:1fr 1fr}}
+
+  /* steps */
+  .phase{display:flex;gap:18px;padding:18px 0;border-bottom:1px dashed var(--line)}
+  .phase:last-child{border-bottom:none}
+  .phase .ph-n{flex:none;width:46px;height:46px;border-radius:12px;background:var(--forest);color:var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:20px;font-weight:600}
+  .phase .ph-b h3{margin:0 0 4px}
+  .phase .ph-b .dur{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--terra);letter-spacing:.05em}
+
+  .kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:10px}
+  @media(max-width:760px){.kpi-grid{grid-template-columns:1fr 1fr}}
+  .kpi{background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:16px 17px}
+  .kpi .kn{font-family:'Fraunces',serif;font-weight:600;font-size:16px;color:var(--forest-deep);line-height:1.15}
+  .kpi .kd{font-size:13px;color:var(--ink-soft);margin-top:5px;line-height:1.4}
+  .kpi .kf{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--terra);margin-top:8px}
+
+  figure{margin:22px 0}
+  figcaption{font-size:13px;color:var(--ink-soft);margin-top:8px;font-style:italic}
+  svg{display:block;max-width:100%;height:auto}
+
+  .cta{background:var(--forest);color:#f6f3ea;border-radius:18px;padding:34px 34px;margin:10px 0;box-shadow:var(--shadow)}
+  .cta h3{color:var(--gold);margin-top:0}
+  .cta p{color:rgba(246,243,234,.86)}
+
+  footer{padding:40px 0 70px;border-top:1px solid var(--line);color:var(--ink-soft);font-size:13.5px}
+  footer a{color:var(--forest)}
+  .refs{font-size:13px;line-height:1.7;columns:2;column-gap:36px}
+  .refs div{break-inside:avoid;margin-bottom:9px}
+  @media(max-width:700px){.refs{columns:1}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="inner">
+    <div class="brand"><span class="dot"></span> AgroVisión Antioquia</div>
+    <nav class="navlinks">
+      <a href="#problema">Problema</a>
+      <a href="#solucion">Solución</a>
+      <a href="#fuentes">Fuentes</a>
+      <a href="#variables">Variables</a>
+      <a href="#kpis">KPIs</a>
+      <a href="#modelo">Modelo IA</a>
+      <a href="#mapa">Geoespacial</a>
+      <a href="#dashboard">Dashboard</a>
+      <a href="#roadmap">Roadmap</a>
+    </nav>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">Propuesta de prototipo · Analítica · IA · Inteligencia de mercados</div>
+    <h1>Sembrar con datos, no con <em>incertidumbre</em>.</h1>
+    <p class="lede">Una plataforma de analítica agrícola predictiva para Antioquia que cruza precios de las centrales de abasto, producción municipal, pisos térmicos y clima para responder una sola pregunta: <strong>¿qué conviene sembrar, cuándo y en qué zona?</strong></p>
+    <div class="meta-row">
+      <div class="m"><b>Ámbito</b>Departamento de Antioquia · 9 subregiones</div>
+      <div class="m"><b>Enfoque</b>Predicción de precios y rentabilidad por cultivo</div>
+      <div class="m"><b>Datos</b>100% fuentes públicas verificadas</div>
+      <div class="m"><b>Estado</b>Propuesta + prototipo navegable</div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- 1. PROBLEMA -->
+<section id="problema">
+  <div class="sec-num">01 / Diagnóstico</div>
+  <h2>El problema y la oportunidad</h2>
+  <p class="big">Muchos agricultores en Antioquia siembran los mismos productos todo el año, sin información del comportamiento del mercado. Pero el precio de un producto agrícola no es estable: sube y baja según la <strong>época del año, la oferta disponible, la demanda, la zona, el clima y el abastecimiento</strong> que llega a las centrales.</p>
+  <p>El resultado es un patrón conocido: cuando todos cosechan lo mismo al tiempo, la plaza se sobreoferta, el precio se desploma y el productor vende por debajo del costo. La decisión de siembra se toma hoy, pero su rentabilidad se define meses después —en el momento de la cosecha— bajo condiciones de mercado que nadie le ayudó a anticipar.</p>
+
+  <div class="grid3" style="margin-top:24px">
+    <div class="card">
+      <h4>Síntoma</h4>
+      <p style="margin:0">Siembra repetitiva y simultánea → sobreoferta estacional → caída de precios y pérdidas.</p>
+    </div>
+    <div class="card">
+      <h4>Causa raíz</h4>
+      <p style="margin:0">Asimetría de información: los datos de precios y abastecimiento existen y son públicos, pero no están traducidos a decisiones de siembra por zona y temporada.</p>
+    </div>
+    <div class="card">
+      <h4>Oportunidad</h4>
+      <p style="margin:0">Colombia publica diariamente precios de las centrales y producción por municipio. Cruzarlos con clima y pisos térmicos permite <strong>proyectar</strong> qué será rentable.</p>
+    </div>
+  </div>
+
+  <div class="note"><b>Premisa de honestidad de datos.</b> Esta propuesta no inventa cifras. Todas las fuentes citadas en la sección 03 fueron verificadas y están activas. Cuando un dato no esté disponible públicamente con la granularidad ideal, se señala explícitamente como <span class="tag-gap">VACÍO</span> y se propone cómo obtenerlo (ver sección 11).</p></div>
+</section>
+
+<!-- 2. SOLUCIÓN -->
+<section id="solucion">
+  <div class="sec-num">02 / Visión</div>
+  <h2>Solución propuesta para el prototipo</h2>
+  <p class="big">Una plataforma de tres capas que convierte datos públicos dispersos en recomendaciones accionables de siembra, cosecha y comercialización, con un mapa de Antioquia como punto de entrada.</p>
+
+  <figure>
+    <svg viewBox="0 0 980 360" role="img" aria-label="Arquitectura de la solución en tres capas">
+      <defs>
+        <style>
+          .lbl{font-family:'IBM Plex Mono',monospace;font-size:11px;fill:#9c6b3f;letter-spacing:.06em}
+          .box{fill:#fffdf8;stroke:#e3dccb;stroke-width:1.5;rx:12}
+          .ttl{font-family:'Fraunces',serif;font-size:16px;fill:#15301f;font-weight:600}
+          .sub{font-family:'Hanken Grotesk',sans-serif;font-size:12px;fill:#5b5343}
+          .flow{stroke:#cf8a2c;stroke-width:2;fill:none;marker-end:url(#arr)}
+        </style>
+        <marker id="arr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#cf8a2c"/></marker>
+      </defs>
+
+      <text x="20" y="26" class="lbl">CAPA 1 — INGESTA</text>
+      <rect x="14" y="38" width="250" height="280" rx="14" fill="#f3ede0" stroke="#e3dccb"/>
+      <g>
+        <rect x="34" y="60" width="210" height="40" rx="9" class="box"/><text x="48" y="85" class="sub">SIPSA · DANE — precios mayoristas</text>
+        <rect x="34" y="108" width="210" height="40" rx="9" class="box"/><text x="48" y="133" class="sub">Central Mayorista Antioquia</text>
+        <rect x="34" y="156" width="210" height="40" rx="9" class="box"/><text x="48" y="181" class="sub">EVA — producción municipal</text>
+        <rect x="34" y="204" width="210" height="40" rx="9" class="box"/><text x="48" y="229" class="sub">IDEAM — clima · IGAC — suelos</text>
+        <rect x="34" y="252" width="210" height="40" rx="9" class="box"/><text x="48" y="277" class="sub">DANE Geoportal — cartografía</text>
+      </g>
+
+      <path class="flow" d="M268 178 L356 178"/>
+
+      <text x="368" y="26" class="lbl">CAPA 2 — ANALÍTICA &amp; IA</text>
+      <rect x="362" y="38" width="250" height="280" rx="14" fill="#eef3ec" stroke="#dbe6d6"/>
+      <rect x="382" y="66" width="210" height="52" rx="9" class="box"/><text x="396" y="90" class="ttl" style="font-size:14px">Limpieza &amp; modelo de datos</text><text x="396" y="108" class="sub">normalización · series de tiempo</text>
+      <rect x="382" y="128" width="210" height="52" rx="9" class="box"/><text x="396" y="152" class="ttl" style="font-size:14px">Ingeniería de variables</text><text x="396" y="170" class="sub">estacionalidad · clima · oferta</text>
+      <rect x="382" y="190" width="210" height="52" rx="9" class="box"/><text x="396" y="214" class="ttl" style="font-size:14px">Modelos predictivos</text><text x="396" y="232" class="sub">precio · rentabilidad · riesgo</text>
+      <rect x="382" y="252" width="210" height="52" rx="9" class="box"/><text x="396" y="276" class="ttl" style="font-size:14px">Motor de recomendación</text><text x="396" y="294" class="sub">qué sembrar / cuándo / dónde</text>
+
+      <path class="flow" d="M616 178 L704 178"/>
+
+      <text x="716" y="26" class="lbl">CAPA 3 — EXPERIENCIA</text>
+      <rect x="710" y="38" width="256" height="280" rx="14" fill="#f3ede0" stroke="#e3dccb"/>
+      <rect x="730" y="66" width="216" height="56" rx="9" class="box"/><text x="744" y="90" class="ttl" style="font-size:14px">Mapa de Antioquia</text><text x="744" y="108" class="sub">subregiones · pisos térmicos</text>
+      <rect x="730" y="132" width="216" height="56" rx="9" class="box"/><text x="744" y="156" class="ttl" style="font-size:14px">Tablero de precios</text><text x="744" y="174" class="sub">actual · histórico · proyectado</text>
+      <rect x="730" y="198" width="216" height="56" rx="9" class="box"/><text x="744" y="222" class="ttl" style="font-size:14px">Recomendaciones &amp; alertas</text><text x="744" y="240" class="sub">ranking de rentabilidad</text>
+      <rect x="730" y="264" width="216" height="42" rx="9" class="box"/><text x="744" y="290" class="sub">Web responsive · app móvil futura</text>
+    </svg>
+    <figcaption>Arquitectura conceptual del prototipo. La ingesta automatiza la captura de fuentes públicas; la capa analítica entrena los modelos; la experiencia entrega decisiones simples al agricultor.</figcaption>
+  </figure>
+
+  <p>El usuario final no ve algoritmos: ve un <strong>mapa de su departamento</strong>, toca su subregión y obtiene una respuesta directa —“en tu zona y para esta temporada, estos cultivos tienen la mejor rentabilidad proyectada, y este es el riesgo de que el precio caiga”—. Toda la complejidad analítica queda detrás de esa interacción.</p>
+</section>
+
+<!-- 3. FUENTES -->
+<section id="fuentes">
+  <div class="sec-num">03 / Materia prima</div>
+  <h2>Fuentes públicas recomendadas</h2>
+  <p>Estas fuentes fueron verificadas como activas. Constituyen una base suficiente para el prototipo sin necesidad de comprar datos. Las marcadas <span class="tag-real">DISPONIBLE</span> tienen acceso directo; las <span class="tag-gap">VACÍO</span> requieren gestión adicional (sección 11).</p>
+
+  <h3>Precios y abastecimiento de mercado</h3>
+  <table class="tbl">
+    <thead><tr><th style="width:24%">Fuente</th><th>Qué aporta</th><th style="width:16%">Formato</th><th style="width:13%">Estado</th></tr></thead>
+    <tbody>
+      <tr><td class="src">SIPSA — DANE<br><small>Sist. de Información de Precios y Abastecimiento</small></td><td>Precios mayoristas diarios y boletines semanales de ~700 productos en mercados mayoristas del país; componentes de precios, abastecimiento e insumos. Incluye geovisor.</td><td>Web, boletín, geoportal, microdatos</td><td><span class="tag-real">DISPONIBLE</span></td></tr>
+      <tr><td class="src">Central Mayorista de Antioquia<br><small>Itagüí — la plaza más relevante del Valle de Aburrá</small></td><td>Planilla de precios de venta mayorista (mínimo/máximo por rondas), actualizada a diario por producto y presentación. El DANE mide allí para SIPSA.</td><td>Excel (.xlsx), PDF, app móvil</td><td><span class="tag-real">DISPONIBLE</span></td></tr>
+      <tr><td class="src">Agronet — MADR<br><small>Observatorio de Información Rural y Agropecuaria</small></td><td>Publica boletines de la CMA, estadísticas del sector, EVA y series históricas de precios.</td><td>Web, PDF, estadísticas</td><td><span class="tag-real">DISPONIBLE</span></td></tr>
+      <tr><td class="src">Plaza Minorista José María Villa<br><small>Medellín</small></td><td>Referencia de precios minoristas para estimar el margen mayorista→minorista en el Valle de Aburrá.</td><td>Indirecto / boletines</td><td><span class="tag-gap">PARCIAL</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Producción, áreas y calendarios de cultivo</h3>
+  <table class="tbl">
+    <thead><tr><th style="width:24%">Fuente</th><th>Qué aporta</th><th style="width:16%">Formato</th><th style="width:13%">Estado</th></tr></thead>
+    <tbody>
+      <tr><td class="src">EVA — Evaluaciones Agropecuarias Municipales<br><small>UPRA · Agronet · datos.gov.co</small></td><td><strong>Pieza clave.</strong> Por municipio: área sembrada, área cosechada, producción, rendimiento, <strong>calendarios de siembra y cosecha</strong>, precios en primer mercado y costos de producción de cultivos transitorios y permanentes. API abierta.</td><td>CSV, API Socrata</td><td><span class="tag-real">DISPONIBLE</span></td></tr>
+      <tr><td class="src">datos.gov.co<br><small>Portal de Datos Abiertos de Colombia</small></td><td>Aloja EVA y múltiples datasets agropecuarios con API programática (Socrata) para ingesta automatizada.</td><td>CSV, JSON, API</td><td><span class="tag-real">DISPONIBLE</span></td></tr>
+      <tr><td class="src">Secretaría de Agricultura de Antioquia<br><small>Gobernación · Anuario Estadístico Agropecuario</small></td><td>Contexto departamental, Mesa de Abastecimiento, producción regional y prioridades de política.</td><td>Web, anuario PDF</td><td><span class="tag-real">DISPONIBLE</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Clima, pisos térmicos y cartografía</h3>
+  <table class="tbl">
+    <thead><tr><th style="width:24%">Fuente</th><th>Qué aporta</th><th style="width:16%">Formato</th><th style="width:13%">Estado</th></tr></thead>
+    <tbody>
+      <tr><td class="src">IDEAM<br><small>Hidrología, Meteorología y Estudios Ambientales</small></td><td>Datos abiertos de pronóstico por municipio (temperatura, lluvia, viento, humedad), atlas climatológico, catálogo de estaciones y series hidrometeorológicas (DHIME).</td><td>CSV/TXT, atlas, API</td><td><span class="tag-real">DISPONIBLE</span></td></tr>
+      <tr><td class="src">IGAC<br><small>Instituto Geográfico Agustín Codazzi</small></td><td>Zonificación climática (Caldas–Lang), pisos térmicos, suelos y aptitud, cartografía base.</td><td>Shapefile, geoservicios</td><td><span class="tag-real">DISPONIBLE</span></td></tr>
+      <tr><td class="src">DANE Geoportal<br><small>Marco Geoestadístico Nacional</small></td><td>Límites municipales y departamentales para construir el mapa interactivo de Antioquia.</td><td>Shapefile, GeoJSON</td><td><span class="tag-real">DISPONIBLE</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="note"><b>Regla de oro de ingesta.</b> Priorizar fuentes que ofrezcan API o descarga estructurada (SIPSA, EVA vía Socrata, IDEAM, planilla Excel de la CMA) sobre las que solo publican PDF. Los PDF se incorporan en una fase posterior con extracción automatizada.</div>
+</section>
+
+<!-- 4. VARIABLES -->
+<section id="variables">
+  <div class="sec-num">04 / Insumos del modelo</div>
+  <h2>Variables clave del modelo</h2>
+  <p>Agrupadas por familia. La combinación de variables de mercado con variables geo-climáticas es lo que diferencia esta solución de un simple visor de precios.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h4>Identificación del producto</h4>
+      <p style="margin:0 0 6px">Producto, grupo (fruta, hortaliza, tubérculo…), variedad, presentación y unidad de comercialización, calidad.</p>
+    </div>
+    <div class="card">
+      <h4>Temporales</h4>
+      <p style="margin:0 0 6px">Fecha, semana epidemiológica/agrícola, mes, trimestre, temporada (lluvia/seca), año, festivos y temporadas de alta demanda.</p>
+    </div>
+    <div class="card">
+      <h4>Precio y mercado</h4>
+      <p style="margin:0 0 6px">Precio mayorista mín./máx., precio de primer mercado (finca), precio minorista, central de abasto de origen, volumen abastecido.</p>
+    </div>
+    <div class="card">
+      <h4>Geográficas</h4>
+      <p style="margin:0 0 6px">Municipio, subregión, altitud, latitud/longitud, distancia y tiempo a la central de abasto, vías y conectividad.</p>
+    </div>
+    <div class="card">
+      <h4>Climáticas y edáficas</h4>
+      <p style="margin:0 0 6px">Piso térmico, temperatura media, precipitación, fenómeno ENSO (Niño/Niña), tipo y aptitud de suelo.</p>
+    </div>
+    <div class="card">
+      <h4>Oferta, demanda y logística</h4>
+      <p style="margin:0 0 6px">Área sembrada/cosechada (EVA), rendimiento (ton/ha), calendario de cosecha, abastecimiento SIPSA-A como proxy de oferta, costos de producción.</p>
+    </div>
+  </div>
+
+  <h4 style="margin-top:26px">Variables derivadas (ingeniería de características)</h4>
+  <p>El verdadero valor predictivo aparece al construir: <span class="pill">rezagos de precio (t-1, t-7, t-30)</span><span class="pill">medias móviles</span><span class="pill">volatilidad rodante</span><span class="pill">índice de estacionalidad por producto</span><span class="pill">ratio precio/costo</span><span class="pill">desviación vs. promedio histórico</span><span class="pill">tendencia de abastecimiento</span><span class="pill">días estimados a cosecha</span><span class="pill">señal climática anticipada</span></p>
+</section>
+
+<!-- 5. KPIS -->
+<section id="kpis">
+  <div class="sec-num">05 / Medición</div>
+  <h2>KPIs agrícolas y comerciales</h2>
+  <p>Los indicadores que el tablero debe mostrar y que el modelo debe optimizar. Se dividen en indicadores de mercado, de rentabilidad y de riesgo.</p>
+
+  <h4>Mercado</h4>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kn">Precio promedio mayorista</div><div class="kd">Por producto y central, $/kg o $/unidad.</div><div class="kf">SIPSA · CMA</div></div>
+    <div class="kpi"><div class="kn">Variación % de precio</div><div class="kd">Semanal, mensual e interanual.</div><div class="kf">Serie histórica</div></div>
+    <div class="kpi"><div class="kn">Volatilidad</div><div class="kd">Coeficiente de variación del precio en ventana móvil.</div><div class="kf">Derivado</div></div>
+    <div class="kpi"><div class="kn">Índice de estacionalidad</div><div class="kd">Qué tan caro/barato está un mes vs. su promedio anual.</div><div class="kf">Derivado</div></div>
+    <div class="kpi"><div class="kn">Índice de abastecimiento</div><div class="kd">Volumen que llega a la central (proxy de oferta).</div><div class="kf">SIPSA-A</div></div>
+    <div class="kpi"><div class="kn">Brecha precio actual vs. histórico</div><div class="kd">Señal de sobre/sub-valoración.</div><div class="kf">Derivado</div></div>
+  </div>
+
+  <h4 style="margin-top:22px">Rentabilidad</h4>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kn">Margen bruto estimado</div><div class="kd">Precio de venta − costo de producción por kg.</div><div class="kf">EVA costos + precio</div></div>
+    <div class="kpi"><div class="kn">Rentabilidad por hectárea</div><div class="kd">Margen × rendimiento (ton/ha) proyectado.</div><div class="kf">EVA + modelo</div></div>
+    <div class="kpi"><div class="kn">Rentabilidad proyectada a cosecha</div><div class="kd">Con precio estimado en la fecha futura de cosecha.</div><div class="kf">Modelo IA</div></div>
+  </div>
+
+  <h4 style="margin-top:22px">Riesgo</h4>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kn">Probabilidad de caída de precio</div><div class="kd">Riesgo de que el precio baje en el horizonte de cosecha.</div><div class="kf">Modelo IA</div></div>
+    <div class="kpi"><div class="kn">Riesgo de sobreoferta</div><div class="kd">Concentración de siembras simultáneas según EVA.</div><div class="kf">EVA + calendarios</div></div>
+    <div class="kpi"><div class="kn">Intervalo de confianza del precio</div><div class="kd">Banda alta/baja de la proyección.</div><div class="kf">Modelo IA</div></div>
+  </div>
+</section>
+
+<!-- 6. MODELO -->
+<section id="modelo">
+  <div class="sec-num">06 / Inteligencia</div>
+  <h2>Propuesta de modelo predictivo con IA</h2>
+  <p class="big">El núcleo es un problema de <strong>predicción de series de tiempo con variables exógenas</strong>: estimar el precio futuro de cada producto y, a partir de ahí, derivar rentabilidad, temporada óptima y riesgo.</p>
+
+  <figure>
+    <svg viewBox="0 0 980 230" role="img" aria-label="Pipeline del modelo predictivo">
+      <defs>
+        <style>
+          .pb{fill:#fffdf8;stroke:#e3dccb;stroke-width:1.5}
+          .pt{font-family:'Fraunces',serif;font-size:15px;fill:#15301f;font-weight:600}
+          .ps{font-family:'Hanken Grotesk';font-size:11.5px;fill:#5b5343}
+          .pl{font-family:'IBM Plex Mono',monospace;font-size:10px;fill:#9c6b3f;letter-spacing:.05em}
+          .pf{stroke:#1f4632;stroke-width:2;fill:none;marker-end:url(#arr2)}
+        </style>
+        <marker id="arr2" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#1f4632"/></marker>
+      </defs>
+      <rect x="10" y="60" width="165" height="100" rx="12" class="pb"/><text x="26" y="92" class="pt">Datos &amp; features</text><text x="26" y="112" class="ps">rezagos · estacionalidad</text><text x="26" y="128" class="ps">clima · oferta EVA</text><text x="26" y="50" class="pl">ENTRADA</text>
+      <path class="pf" d="M178 110 L214 110"/>
+      <rect x="216" y="40" width="180" height="64" rx="12" class="pb"/><text x="232" y="66" class="pt" style="font-size:14px">Línea base</text><text x="232" y="86" class="ps">SARIMA / Prophet</text><text x="232" y="30" class="pl">ESTACIONALIDAD</text>
+      <rect x="216" y="118" width="180" height="64" rx="12" class="pb"/><text x="232" y="144" class="pt" style="font-size:14px">Gradient boosting</text><text x="232" y="164" class="ps">XGBoost / LightGBM</text><text x="232" y="200" class="pl">PRECIO + EXÓGENAS</text>
+      <path class="pf" d="M400 72 L470 100"/>
+      <path class="pf" d="M400 150 L470 120"/>
+      <rect x="472" y="78" width="172" height="64" rx="12" class="pb" style="stroke:#cf8a2c;stroke-width:2"/><text x="488" y="104" class="pt" style="font-size:14px">Precio proyectado</text><text x="488" y="124" class="ps">+ intervalo de confianza</text><text x="488" y="68" class="pl">SALIDA NÚCLEO</text>
+      <path class="pf" d="M646 110 L688 110"/>
+      <rect x="690" y="30" width="280" height="50" rx="11" class="pb"/><text x="706" y="60" class="ps">→ Rentabilidad esperada (× rendimiento − costo)</text>
+      <rect x="690" y="86" width="280" height="50" rx="11" class="pb"/><text x="706" y="116" class="ps">→ Mejor temporada de siembra / cosecha</text>
+      <rect x="690" y="142" width="280" height="50" rx="11" class="pb"/><text x="706" y="172" class="ps">→ Riesgo de caída + sustitutos rentables</text>
+    </svg>
+    <figcaption>Pipeline propuesto: la predicción de precio alimenta los cálculos derivados de rentabilidad, temporada y riesgo.</figcaption>
+  </figure>
+
+  <h3>Estrategia por niveles de madurez</h3>
+  <ul>
+    <li><strong>Nivel 1 — Línea base estadística.</strong> Descomposición estacional y modelos clásicos (SARIMA, Holt-Winters, Prophet) por producto. Captura el patrón anual y da una referencia honesta contra la cual medir.</li>
+    <li><strong>Nivel 2 — Aprendizaje supervisado con exógenas.</strong> Gradient boosting (XGBoost/LightGBM) usando rezagos de precio, clima, abastecimiento, estacionalidad y geografía. Permite explicar qué variables mueven el precio (importancia de características).</li>
+    <li><strong>Nivel 3 — Modelos temporales profundos.</strong> Cuando haya suficiente histórico, redes recurrentes/temporales (LSTM, Temporal Fusion Transformer) para capturar dinámicas no lineales y multi-producto.</li>
+  </ul>
+
+  <h3>Las siete preguntas, resueltas por el modelo</h3>
+  <table class="tbl">
+    <thead><tr><th style="width:42%">Pregunta del agricultor</th><th>Cómo la responde</th></tr></thead>
+    <tbody>
+      <tr><td>¿Qué producto será más rentable por temporada?</td><td>Ranking de rentabilidad proyectada = precio estimado × rendimiento − costo, por mes y subregión.</td></tr>
+      <tr><td>¿Qué producto varía más con oferta y demanda?</td><td>Volatilidad histórica + sensibilidad del precio al abastecimiento (elasticidad estimada).</td></tr>
+      <tr><td>¿Qué cultivo conviene según la zona?</td><td>Filtro por subregión + aptitud de piso térmico cruzado con rentabilidad proyectada.</td></tr>
+      <tr><td>¿Qué sembrar hoy para cosechar la próxima temporada?</td><td>Días a cosecha (EVA) → fecha futura → precio proyectado a esa fecha → rentabilidad esperada.</td></tr>
+      <tr><td>¿Cómo se comportan compra y venta en las centrales?</td><td>Series de precio mín./máx. por central y márgenes mayorista–minorista.</td></tr>
+      <tr><td>¿Cuál es el riesgo de caída de precio?</td><td>Clasificador de probabilidad de descenso en el horizonte de cosecha + bandas de confianza.</td></tr>
+      <tr><td>¿Hay un sustituto más rentable?</td><td>Productos del mismo piso térmico y ventana de siembra con mejor rentabilidad/riesgo.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Validación</h3>
+  <p>Validación con <strong>backtesting tipo walk-forward</strong> (entrenar con pasado, predecir futuro real ya conocido), métricas MAPE y RMSE por producto, y comparación obligatoria contra la línea base. Una proyección solo se muestra al usuario si supera al modelo ingenuo "el precio de mañana es el de hoy".</p>
+  <div class="note"><b>Transparencia ante todo.</b> El prototipo siempre muestra la incertidumbre (banda alta/baja) y nunca presenta una predicción como certeza. La IA recomienda; el agricultor decide.</div>
+</section>
+
+<!-- 7. MAPA / GEO -->
+<section id="mapa">
+  <div class="sec-num">07 / Territorio</div>
+  <h2>Visualización geoespacial de Antioquia</h2>
+  <p>El mapa es el corazón de la experiencia. Antioquia se organiza en <strong>nueve subregiones</strong>, cada una con una vocación agrícola marcada por su piso térmico. El visor permite seleccionar una subregión y ver sus cultivos recomendados, sus pisos térmicos y su relación con los centros de comercialización.</p>
+
+  <h4>Pisos térmicos (clasificación de Caldas, según altitud)</h4>
+  <div class="pt-scale">
+    <div class="band" style="background:var(--pt-calido)"><h5>Cálido</h5><div class="alt">0 – 1.000 m</div><p>Plátano, banano, yuca, cacao, frutales tropicales. Urabá y Bajo Cauca.</p></div>
+    <div class="band" style="background:var(--pt-templado)"><h5>Templado</h5><div class="alt">1.000 – 2.000 m</div><p>Café, aguacate, cítricos, caña panelera. Suroeste y Occidente.</p></div>
+    <div class="band" style="background:var(--pt-frio)"><h5>Frío</h5><div class="alt">2.000 – 3.000 m</div><p>Papa, hortalizas, fresa, lácteos. Oriente y Norte.</p></div>
+    <div class="band" style="background:var(--pt-paramo)"><h5>Páramo</h5><div class="alt">&gt; 3.000 m</div><p>Zona de protección; producción muy limitada y regulada.</p></div>
+  </div>
+
+  <h3>Qué debe mostrar el mapa</h3>
+  <ul>
+    <li><strong>Zonas agrícolas por subregión y municipio</strong>, coloreadas por piso térmico dominante.</li>
+    <li><strong>Centros de distribución y venta</strong>: la Central Mayorista de Antioquia (Itagüí) y la Plaza Minorista de Medellín como nodos de comercialización.</li>
+    <li><strong>Relación producción ↔ comercialización</strong>: líneas que conectan zonas productoras con los centros de abasto, con distancia y tiempo de transporte.</li>
+    <li><strong>Capa de recomendación</strong>: al elegir una subregión, los cultivos sugeridos para la temporada con su rentabilidad proyectada.</li>
+    <li><strong>Indicadores de precio</strong> actual, histórico y proyectado por producto seleccionado.</li>
+  </ul>
+  <p>En producción, el mapa se construye con la cartografía oficial del <strong>DANE Geoportal</strong> e <strong>IGAC</strong> (GeoJSON de límites municipales y capa de pisos térmicos), renderizada con una librería como Leaflet, Mapbox GL o D3-geo.</p>
+</section>
+
+<!-- 8. DASHBOARD -->
+<section id="dashboard">
+  <div class="sec-num">08 / Producto</div>
+  <h2>Estructura del informe / aplicación y primera idea del dashboard</h2>
+  <p>Se entrega, junto a esta propuesta, un <strong>prototipo navegable e interactivo</strong> del dashboard (archivo aparte). Está construido con datos ilustrativos claramente marcados como demostrativos; en producción se conectan las fuentes reales de la sección 03.</p>
+
+  <h3>Estructura de pantallas</h3>
+  <ol>
+    <li><strong>Vista general (Home).</strong> Mapa de Antioquia + tira de KPIs + alerta de la temporada ("¿Qué sembrar ahora?").</li>
+    <li><strong>Detalle de subregión.</strong> Pisos térmicos, cultivos recomendados, centro de abasto más cercano, distancia.</li>
+    <li><strong>Explorador de producto.</strong> Precio actual / histórico / proyectado con banda de confianza, estacionalidad y volatilidad.</li>
+    <li><strong>Comparador de rentabilidad.</strong> Ranking de cultivos por margen proyectado y riesgo, filtrable por zona y temporada.</li>
+    <li><strong>Centro de recomendaciones y alertas.</strong> Señales de "buen momento para sembrar/cosechar" y "riesgo de caída de precio".</li>
+  </ol>
+
+  <div class="cta">
+    <h3>→ Abrir el prototipo interactivo</h3>
+    <p>El segundo archivo entregado (<b>dashboard_agroanalitica_antioquia.html</b>) contiene el mapa interactivo de las 9 subregiones, el explorador de precios y el motor de recomendación, todo navegable. Es una maqueta funcional para mostrar a agricultores, gremios y entidades.</p>
+  </div>
+</section>
+
+<!-- 9. ANÁLISIS -->
+<section id="analisis">
+  <div class="sec-num">09 / Método</div>
+  <h2>Análisis recomendado para proyectar cultivos</h2>
+  <p>La secuencia analítica que da soporte al modelo y al tablero, en orden de ejecución:</p>
+  <ol>
+    <li><strong>Exploración de series de precio (EDA).</strong> Limpieza, detección de atípicos, completitud y consolidación por producto y central.</li>
+    <li><strong>Descomposición estacional.</strong> Separar tendencia, estacionalidad y ruido para identificar los meses caros y baratos de cada producto.</li>
+    <li><strong>Análisis oferta–precio.</strong> Correlación entre abastecimiento (SIPSA-A) y precio para estimar la sensibilidad de cada cultivo a la sobreoferta.</li>
+    <li><strong>Mapeo de calendarios de cosecha (EVA).</strong> Detectar ventanas de baja oferta donde sembrar hoy implica cosechar cuando hay menos competencia.</li>
+    <li><strong>Clustering de productos.</strong> Agrupar cultivos por comportamiento de precio (estables, estacionales, volátiles) para definir estrategias por perfil.</li>
+    <li><strong>Análisis geoespacial.</strong> Cruzar zonas productoras, pisos térmicos y distancia a centros de abasto para entender costos logísticos y ventajas de zona.</li>
+    <li><strong>Modelado predictivo y backtesting.</strong> Entrenar, validar walk-forward y comparar contra línea base antes de exponer cualquier proyección.</li>
+  </ol>
+</section>
+
+<!-- 10. ROADMAP -->
+<section id="roadmap">
+  <div class="sec-num">10 / Ejecución</div>
+  <h2>Roadmap por fases</h2>
+  <div class="card">
+    <div class="phase"><div class="ph-n">0</div><div class="ph-b"><div class="dur">Semanas 1–3</div><h3>Ingesta y base de datos</h3><p style="margin:0">Conectores a SIPSA, planilla CMA, EVA (Socrata) e IDEAM. Modelo de datos unificado y primer histórico consolidado.</p></div></div>
+    <div class="phase"><div class="ph-n">1</div><div class="ph-b"><div class="dur">Semanas 4–7</div><h3>Dashboard descriptivo (MVP)</h3><p style="margin:0">Mapa de Antioquia, KPIs y explorador de precios histórico/actual. Ya entrega valor sin IA.</p></div></div>
+    <div class="phase"><div class="ph-n">2</div><div class="ph-b"><div class="dur">Semanas 8–13</div><h3>Modelos predictivos</h3><p style="margin:0">Línea base + gradient boosting de precio, validación walk-forward, cálculo de rentabilidad y riesgo.</p></div></div>
+    <div class="phase"><div class="ph-n">3</div><div class="ph-b"><div class="dur">Semanas 14–18</div><h3>Recomendador y alertas</h3><p style="margin:0">Motor "qué sembrar / cuándo / dónde", sustitutos y alertas de caída de precio. Validación con agricultores.</p></div></div>
+    <div class="phase"><div class="ph-n">4</div><div class="ph-b"><div class="dur">Continuo</div><h3>Escalado y validación en campo</h3><p style="margin:0">App móvil, reentrenamiento automático, convenios con CMA, gremios y UMATA municipales.</p></div></div>
+  </div>
+</section>
+
+<!-- 11. GAPS -->
+<section id="vacios">
+  <div class="sec-num">11 / Honestidad de datos</div>
+  <h2>Supuestos, vacíos de datos y cómo cerrarlos</h2>
+  <p>No todo el dato ideal existe públicamente con la granularidad perfecta. Estos son los vacíos identificados y la ruta para cerrarlos —sin inventar nada en el camino—.</p>
+  <table class="tbl">
+    <thead><tr><th style="width:34%">Vacío</th><th>Cómo obtenerlo / aproximarlo</th></tr></thead>
+    <tbody>
+      <tr><td class="src">Demanda real por producto <span class="tag-gap">VACÍO</span></td><td>No se mide directamente. Se aproxima con el volumen de abastecimiento de SIPSA-A y con la dinámica del precio (proxy de presión de demanda).</td></tr>
+      <tr><td class="src">Costos de producción granulares <span class="tag-gap">PARCIAL</span></td><td>EVA tiene módulo de costos pero con cobertura parcial. Complementar con fichas técnicas de gremios y encuestas a productores por subregión.</td></tr>
+      <tr><td class="src">Precio en finca / primer mercado <span class="tag-gap">PARCIAL</span></td><td>Disponible en EVA para algunos cultivos; ampliar vía convenios con cooperativas y UMATA.</td></tr>
+      <tr><td class="src">Georreferenciación de fincas <span class="tag-gap">VACÍO</span></td><td>No es público a nivel predial. Se trabaja a nivel municipal/subregional y se enriquece con registro voluntario de usuarios.</td></tr>
+      <tr><td class="src">Precios históricos en PDF <span class="tag-gap">FRICCIÓN</span></td><td>Boletines antiguos de la CMA en PDF: extracción automatizada (parsing de tablas) en fase posterior.</td></tr>
+    </tbody>
+  </table>
+  <p>Mientras tanto, el prototipo opera con <strong>datos ilustrativos marcados como demostrativos</strong> para mostrar la experiencia completa. Ninguno de esos números debe interpretarse como un dato real de mercado.</p>
+</section>
+
+</main>
+
+<footer class="wrap">
+  <p style="max-width:none"><strong>Fuentes consultadas y verificadas (públicas):</strong></p>
+  <div class="refs">
+    <div>SIPSA — DANE · Sistema de Información de Precios y Abastecimiento del Sector Agropecuario. dane.gov.co · geoportal.dane.gov.co</div>
+    <div>Central Mayorista de Antioquia (Itagüí) · planillas de precios. lamayorista.com.co</div>
+    <div>Agronet — Ministerio de Agricultura y Desarrollo Rural. agronet.gov.co</div>
+    <div>EVA — Evaluaciones Agropecuarias Municipales · UPRA. upra.gov.co · datos.gov.co</div>
+    <div>Portal de Datos Abiertos de Colombia (API Socrata). datos.gov.co</div>
+    <div>IDEAM · pronósticos, atlas climatológico y datos hidrometeorológicos. ideam.gov.co · pronosticosyalertas.gov.co</div>
+    <div>IGAC · zonificación climática Caldas–Lang, suelos y cartografía. igac.gov.co</div>
+    <div>Gobernación de Antioquia · Secretaría de Agricultura y Desarrollo Rural. antioquia.gov.co</div>
+  </div>
+  <p style="margin-top:22px;max-width:none">Documento de propuesta · AgroVisión Antioquia · Prototipo de analítica agrícola predictiva. Las cifras del prototipo son ilustrativas; los datos reales provienen de las fuentes citadas.</p>
+</footer>
+
+</body>
+</html>
