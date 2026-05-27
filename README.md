@@ -32,13 +32,14 @@ agrovision-antioquia/
 
 ## 🧭 Qué incluye el tablero
 
-- **Mapa analítico interactivo:** 9 subregiones coloreables por indicador (piso térmico, rentabilidad, precio, oferta, riesgo), 125 municipios localizados dentro de su subregión, puntos de comercialización (Central Mayorista, Plaza Minorista, acopios regionales), *tooltips* al pasar el cursor y **gráficas vinculadas** que cambian al seleccionar una zona.
-- **Filtro por familia agrícola:** Frutales y Pasifloras · Tubérculos y Plátanos · Granos, Cereales y Oleaginosas · Hortalizas, Verduras y Flores.
-- **Calculador siembra → cosecha → venta** con ciclo del cultivo y ventana comercial.
-- **Precios COP / USD** con TRM oficial editable.
-- **Panel de exportación** con cifras reales 2025.
-- **Explorador de los 125 municipios** (búsqueda y filtros).
-- **Centro de conocimiento** (propuesta completa, modelo de IA, fuentes, roadmap).
+- **El producto gobierna toda la página:** al elegir un producto (chips o selector), se actualizan KPIs, hero, gráficas, panel de exportación y comparador.
+- **Mapa analítico interactivo:** 9 subregiones coloreables por indicador (piso térmico, rentabilidad, precio, oferta, riesgo), 125 municipios localizados, puntos de comercialización, *tooltips* al pasar el cursor y **gráficas vinculadas** que cambian al seleccionar una zona.
+- **Simulador predictivo de siembra:** ingresas fecha, municipio, producto, temporada y punto de venta, y devuelve viabilidad (0–100), cosecha estimada, ventana de venta, precio esperado, riesgo, impacto logístico y **alternativa más rentable**.
+- **Filtro por familia agrícola** con resaltado: Frutales y Pasifloras · Tubérculos y Plátanos · Granos, Cereales y Oleaginosas · Hortalizas, Verduras y Flores.
+- **Selectores muy visuales:** moneda **COP/USD** (con tema de color verde/azul), **temporada** (lluvia/seca) y **clima** (cálido/templado/frío) que reestiman viabilidad y recomendaciones.
+- **Panel de exportación dinámico por producto** (no solo Hass): destinos, potencial, comparación de canales, gremios de referencia y riesgos.
+- **Ribbon de “análisis activo”** que informa qué cambió tras cada acción.
+- **Precios COP / USD** con TRM oficial editable, y **Centro de conocimiento** (propuesta completa, modelo de IA, fuentes, roadmap).
 
 ---
 

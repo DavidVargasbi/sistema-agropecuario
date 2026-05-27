@@ -36,6 +36,96 @@
   .seg button.on{background:var(--forest);color:#f4f1e8}
   .seg .lbl{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:var(--terra);align-self:center;padding:0 6px 0 4px;text-transform:uppercase}
 
+  /* ===== currency theming (strong visual feedback) ===== */
+  #curSeg{transition:.2s}
+  body.cur-COP #curSeg{border-color:#2f7a45;box-shadow:0 0 0 2px rgba(47,122,69,.22),var(--shadow)}
+  body.cur-COP #curSeg button.on{background:#2f7a45}
+  body.cur-USD #curSeg{border-color:#2f6090;box-shadow:0 0 0 2px rgba(47,96,144,.24),var(--shadow)}
+  body.cur-USD #curSeg button.on{background:#2f6090}
+  .cur-flash{animation:curflash .5s ease}
+  @keyframes curflash{0%{background:rgba(224,168,58,.0)}40%{background:rgba(224,168,58,.22)}100%{background:transparent}}
+  .moneyval{transition:color .2s}
+  body.cur-USD .moneyval{color:#2f6090}
+  body.cur-COP .moneyval{color:var(--forest-deep)}
+
+  /* ===== climate selector ===== */
+  #climateSeg button[data-cl="calido"].on{background:var(--pt-calido)}
+  #climateSeg button[data-cl="templado"].on{background:var(--pt-templado);color:#3a2c08}
+  #climateSeg button[data-cl="frio"].on{background:var(--pt-frio)}
+
+  /* ===== live analysis ribbon ===== */
+  .liveflow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--forest-deep);color:#dCe8d8;border-radius:13px;padding:9px 15px;margin-bottom:14px;box-shadow:var(--shadow);font-size:12.5px}
+  .liveflow .pulse{width:9px;height:9px;border-radius:50%;background:#5fd08a;flex:none;box-shadow:0 0 0 0 rgba(95,208,138,.7);animation:pulse 1.8s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(95,208,138,.6)}70%{box-shadow:0 0 0 9px rgba(95,208,138,0)}100%{box-shadow:0 0 0 0 rgba(95,208,138,0)}}
+  .liveflow .lf-msg{font-weight:500;color:#fff}
+  .liveflow .lf-tag{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:#9fd0ad;background:rgba(95,208,138,.12);padding:3px 8px;border-radius:6px}
+  .liveflow .lf-sep{opacity:.4}
+
+  /* ===== product hero bar ===== */
+  .prodhero{display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:linear-gradient(120deg,var(--forest),var(--forest-deep));color:#eef3ec;border-radius:16px;padding:16px 20px;margin-bottom:16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .prodhero::after{content:"";position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;background:var(--ph-accent,rgba(224,168,58,.16));opacity:.5}
+  .prodhero .ph-ic{width:54px;height:54px;border-radius:14px;background:var(--ph-accent,var(--gold));display:flex;align-items:center;justify-content:center;font-size:28px;flex:none;z-index:1}
+  .prodhero .ph-main{z-index:1;min-width:180px;flex:1}
+  .prodhero .ph-k{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+  .prodhero .ph-n{font-family:'Fraunces',serif;font-weight:600;font-size:27px;line-height:1.05;color:#fff;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .prodhero .ph-fam{font-size:12px;font-weight:600;padding:3px 9px;border-radius:7px;color:#fff}
+  .prodhero .ph-d{font-size:12.5px;color:#cfe0cf;margin-top:4px}
+  .prodhero .ph-stats{display:flex;gap:9px;flex-wrap:wrap;z-index:1}
+  .prodhero .ph-s{background:rgba(255,253,248,.10);border:1px solid rgba(255,253,248,.16);border-radius:10px;padding:8px 12px;min-width:84px}
+  .prodhero .ph-s .l{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.05em;text-transform:uppercase;color:#a9c3aa}
+  .prodhero .ph-s .v{font-family:'Fraunces',serif;font-weight:600;font-size:17px;color:#fff;margin-top:2px;line-height:1}
+  .prodhero .ph-s .v.up{color:#7ee0a0} .prodhero .ph-s .v.down{color:#ffb59c}
+  .prodhero .ph-cta{z-index:1;display:flex;gap:7px;flex-wrap:wrap}
+  .ph-btn{background:var(--gold);color:#3a2c08;border:none;border-radius:9px;padding:8px 13px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:.15s}
+  .ph-btn:hover{background:#ecb852}
+  .ph-btn.ghost{background:rgba(255,253,248,.12);color:#fff}
+  .ph-btn.ghost:hover{background:rgba(255,253,248,.22)}
+  .prodpicker{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+  .prodpicker .pp-lbl{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--clay);margin-right:4px}
+  .prodtag{font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:9px;border:1px solid var(--line);background:var(--paper);color:var(--ink-soft);cursor:pointer;transition:.13s;display:flex;align-items:center;gap:6px}
+  .prodtag:hover{border-color:var(--clay);color:var(--forest-deep)}
+  .prodtag.on{background:var(--c,var(--forest));border-color:var(--c,var(--forest));color:#fff}
+  .prodtag .pd{width:8px;height:8px;border-radius:50%;background:var(--c,var(--forest))}
+  .prodtag.on .pd{background:#fff}
+
+  /* ===== predictive simulator ===== */
+  .simgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:900px){.simgrid{grid-template-columns:1fr}}
+  .simform{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .simfield{display:flex;flex-direction:column;gap:4px}
+  .simfield.wide{grid-column:1/-1}
+  .simfield label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:var(--clay)}
+  .simfield input,.simfield select{font-family:inherit;font-size:13.5px;color:var(--forest-deep);background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:9px 11px;width:100%}
+  .simfield input:focus,.simfield select:focus{outline:none;border-color:var(--moss);box-shadow:0 0 0 2px rgba(74,122,78,.18)}
+  .simrun{grid-column:1/-1;background:var(--forest);color:#f4f1e8;border:none;border-radius:11px;padding:12px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center;gap:8px}
+  .simrun:hover{background:var(--forest-deep)}
+  .simout{background:linear-gradient(160deg,#fffdf8,#f3ede0);border:1px solid var(--line);border-radius:14px;padding:0;overflow:hidden;display:flex;flex-direction:column}
+  .simverdict{padding:15px 17px;color:#fff;display:flex;align-items:center;gap:13px}
+  .simverdict .sv-ic{width:40px;height:40px;border-radius:11px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:22px;flex:none}
+  .simverdict .sv-t{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;opacity:.85}
+  .simverdict .sv-v{font-family:'Fraunces',serif;font-weight:600;font-size:21px;line-height:1.05}
+  .simverdict .sv-score{margin-left:auto;text-align:right}
+  .simverdict .sv-score .n{font-family:'Fraunces',serif;font-weight:600;font-size:30px;line-height:1}
+  .simverdict .sv-score .l{font-size:10px;opacity:.85}
+  .sim-good{background:linear-gradient(120deg,#2f7a45,#1f5a32)}
+  .sim-mid{background:linear-gradient(120deg,#c9892c,#a86f1c)}
+  .sim-bad{background:linear-gradient(120deg,#b8502f,#933c20)}
+  .simbody{padding:15px 17px}
+  .simtl{display:flex;gap:0;border-radius:9px;overflow:hidden;border:1px solid var(--line);margin-bottom:13px}
+  .simtl .st{flex:1;padding:9px 7px;text-align:center;color:#fff}
+  .simtl .st .sl{font-size:8.5px;font-family:'IBM Plex Mono',monospace;opacity:.92}
+  .simtl .st .sv{font-family:'Fraunces',serif;font-weight:600;font-size:13px;margin-top:2px;line-height:1.1}
+  .simrows{display:flex;flex-direction:column;gap:8px}
+  .simr{display:flex;align-items:flex-start;gap:9px;font-size:13px;line-height:1.4}
+  .simr .si{flex:none;width:22px;height:22px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;background:#efe7d4;color:var(--forest-deep)}
+  .simr .sk{font-weight:600;color:var(--forest-deep)}
+  .simalt{margin-top:13px;background:#eef3ec;border-left:3px solid var(--moss);border-radius:0 10px 10px 0;padding:11px 13px;font-size:12.5px;color:#34503c}
+  .simalt b{color:var(--forest-deep)}
+  .simplaceholder{padding:34px 20px;text-align:center;color:var(--ink-soft);font-size:13.5px}
+  .gauge{display:flex;gap:7px;margin-top:10px}
+  .gauge .gseg{flex:1;height:7px;border-radius:4px;background:#e3dccb}
+  .gauge .gseg.fill{background:var(--gerr,var(--moss))}
+
   .help{display:flex;align-items:center;gap:12px;background:linear-gradient(100deg,#fbf3e6,#fffdf8);border:1px solid var(--line);border-radius:13px;padding:12px 16px;margin-bottom:14px;box-shadow:var(--shadow)}
   .help .hi{flex:none;width:32px;height:32px;border-radius:9px;background:var(--gold);color:#3a2c08;display:flex;align-items:center;justify-content:center;font-size:18px}
   .help p{font-size:13.5px;color:var(--ink-soft);margin:0}
@@ -316,8 +406,9 @@
     </div>
     <div class="controls">
       <span class="demo-badge">◆ PROTOTIPO · DATOS MIXTOS</span>
-      <div class="seg" id="curSeg"><span class="lbl">Moneda</span><button data-c="COP" class="on">COP</button><button data-c="USD">USD</button></div>
+      <div class="seg" id="curSeg"><span class="lbl">Moneda</span><button data-c="COP" class="on">$ COP</button><button data-c="USD">US$ USD</button></div>
       <div class="seg" id="seasonSeg"><span class="lbl">Temporada</span><button data-s="lluvia" class="on">Lluvia</button><button data-s="seca">Seca</button></div>
+      <div class="seg" id="climateSeg"><span class="lbl">Clima</span><button data-cl="todos" class="on">Todos</button><button data-cl="calido">Cálido</button><button data-cl="templado">Templado</button><button data-cl="frio">Frío</button></div>
     </div>
   </header>
 
@@ -331,7 +422,20 @@
     <button class="pb-btn" id="glossaryBtn">ℹ Periodos y definiciones</button>
   </div>
 
+  <div class="liveflow" id="liveflow">
+    <span class="pulse"></span>
+    <span class="lf-tag">Análisis activo</span>
+    <span class="lf-msg" id="lfMsg">Sistema listo.</span>
+    <span class="lf-sep">·</span>
+    <span id="lfCtx"></span>
+  </div>
+
   <div class="fambar" id="fambar"></div>
+
+  <!-- PRODUCT PICKER + HERO (product drives the whole page) -->
+  <div class="prodpicker" id="prodPicker"></div>
+  <div class="prodhero" id="prodHero"></div>
+
   <div class="kpis" id="kpis"></div>
 
   <!-- ===== INTERACTIVE ANALYTICAL MAP ===== -->
@@ -420,6 +524,33 @@
     </div>
   </div>
 
+  <!-- PREDICTIVE SOWING SIMULATOR -->
+  <div class="panel full">
+    <div class="head">
+      <div class="t">🧪 Simulador predictivo de siembra</div>
+      <div class="d">Ingresa fecha, municipio, producto, clima y punto de venta. El sistema estima viabilidad, cosecha, ventana de venta, precio, riesgo y una alternativa más rentable. <span class="demo-tag">MODELO DEMO</span></div>
+    </div>
+    <div class="body">
+      <div class="simgrid">
+        <div>
+          <div class="simform" id="simForm">
+            <div class="simfield"><label>Fecha de siembra</label><input type="date" id="simDate"></div>
+            <div class="simfield"><label>Producto agrícola</label><select id="simProd"></select></div>
+            <div class="simfield"><label>Subregión</label><select id="simSub"></select></div>
+            <div class="simfield"><label>Municipio</label><select id="simMuni"></select></div>
+            <div class="simfield"><label>Temporada</label><select id="simSeason"><option value="lluvia">Lluvia</option><option value="seca">Seca</option></select></div>
+            <div class="simfield"><label>Punto de venta / distribución</label><select id="simAbasto"></select></div>
+            <button class="simrun" id="simRun">⚡ Generar análisis predictivo</button>
+          </div>
+          <div style="font-size:11px;color:var(--ink-soft);margin-top:10px;line-height:1.45">El piso térmico se infiere del municipio elegido. La familia agrícola se deriva del producto. Resultado <b>estimado</b> con motor consistente; en producción usa EVA/SIPSA/IDEAM y el modelo de IA.</div>
+        </div>
+        <div class="simout" id="simOut">
+          <div class="simplaceholder">⬅ Completa el formulario y pulsa <b>Generar análisis</b> para ver la predicción de viabilidad, cosecha, venta, precio, riesgo y alternativa.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- PRODUCT EXPLORER -->
   <div class="grid-2">
     <div class="panel">
@@ -456,8 +587,8 @@
   <!-- EXPORT -->
   <div class="panel full">
     <div class="head">
-      <div class="t">Mercado de exportación · Antioquia <span class="real-tag">DATOS REALES 2025</span></div>
-      <div class="d">Cifras oficiales de comercio exterior. La comparación local/nacional/internacional por producto es ilustrativa.</div>
+      <div class="t" id="exportTitle">Mercado de exportación</div>
+      <div class="d" id="exportDesc">Se actualiza con el producto seleccionado. Las cifras de aguacate Hass y banano son reales 2025; el resto es ilustrativo.</div>
     </div>
     <div class="body" id="exportBody"></div>
   </div>
@@ -592,6 +723,7 @@ const NHIST=24,NPROJ=6,TODAY=4;const Y0=2026,M0=4,DAY0=26;
 function dlabel(off){const t=M0+off,y=Y0+Math.floor(t/12),m=((t%12)+12)%12;return MES[m].toLowerCase()+' '+y;}
 function dateAfter(days){const d=new Date(Y0,M0,DAY0);d.setDate(d.getDate()+Math.round(days));return d;}
 function dMonthYear(d){return MESL[d.getMonth()]+' '+d.getFullYear();}
+function dPretty(d){return d.getDate()+' '+MESL[d.getMonth()]+' '+d.getFullYear();}
 const W={histDesde:dlabel(-(NHIST-1)),histHasta:dlabel(0),hoy:dlabel(0),projDesde:dlabel(1),projHasta:dlabel(NPROJ),baseDesde:dlabel(-(NHIST-1)),baseHasta:dlabel(-(NHIST-12)),h12Desde:dlabel(-11),h12Hasta:dlabel(0),mesAnt:dlabel(-1),anioAnt:dlabel(-12),hoyFull:'26 mayo 2026'};
 let TRM=3667.06;
 
@@ -603,7 +735,44 @@ function hx(c){c=c.replace('#','');return[parseInt(c.slice(0,2),16),parseInt(c.s
 function lerpColor(c1,c2,t){const a=hx(c1),b=hx(c2);return'rgb('+Math.round(lerp(a[0],b[0],t))+','+Math.round(lerp(a[1],b[1],t))+','+Math.round(lerp(a[2],b[2],t))+')';}
 function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
 
-let season='lluvia',selSub=null,selMuni=null,famFilter='all',currency='COP',mapMetric='pt',showAllMunis=false;
+let season='lluvia',selSub=null,selMuni=null,famFilter='all',currency='COP',mapMetric='pt',showAllMunis=false,climate='todos',selProd='Papa';
+
+/* product display metadata (icons + exporter/destination data; real where noted) */
+const PMETA={
+  'Papa':{icon:'🥔',accent:'rgba(176,125,46,.30)'},
+  'Aguacate Hass':{icon:'🥑',accent:'rgba(63,125,90,.32)'},
+  'Plátano':{icon:'🍌',accent:'rgba(176,125,46,.30)'},
+  'Banano':{icon:'🍌',accent:'rgba(224,168,58,.30)'},
+  'Tomate':{icon:'🍅',accent:'rgba(184,80,47,.30)'},
+  'Café':{icon:'☕',accent:'rgba(122,92,142,.32)'},
+  'Cebolla':{icon:'🧅',accent:'rgba(63,125,90,.28)'},
+  'Zanahoria':{icon:'🥕',accent:'rgba(217,98,43,.30)'},
+  'Fríjol':{icon:'🫘',accent:'rgba(122,92,142,.30)'},
+  'Yuca':{icon:'🥔',accent:'rgba(176,125,46,.28)'},
+  'Cítricos':{icon:'🍊',accent:'rgba(217,98,43,.30)'},
+  'Cacao':{icon:'🍫',accent:'rgba(122,92,142,.32)'},
+  'Mora':{icon:'🫐',accent:'rgba(122,92,142,.30)'},
+  'Fresa':{icon:'🍓',accent:'rgba(184,80,47,.30)'},
+  'Maracuyá':{icon:'🍈',accent:'rgba(224,168,58,.30)'},
+  'Gulupa':{icon:'🟣',accent:'rgba(122,92,142,.30)'},
+  'Maíz':{icon:'🌽',accent:'rgba(224,168,58,.30)'},
+  'Flores':{icon:'🌸',accent:'rgba(63,125,90,.30)'},
+  'Tomate de árbol':{icon:'🍅',accent:'rgba(184,80,47,.28)'},
+  'Arracacha':{icon:'🥔',accent:'rgba(176,125,46,.28)'}
+};
+/* export intelligence: REAL for hass/banano/cafe/flores/cacao headline facts; others modeled */
+const PEXPORT={
+  'Aguacate Hass':{real:true,potential:'Muy alto',dests:[['Países Bajos',35.8],['EE. UU.',15.0],['España',7.9],['Reino Unido',6.0],['Alemania',2.8],['Otros',32.5]],headline:'Antioquia lideró: US$177,4 M en 2025 (~47% nacional, +50,2%).',firms:'Cartama, Westfalia Fruit Colombia, Green SuperFood, entre otras (verificar en DIAN/Cámaras).',note:'Dato nacional real 2025: 201.479 t, US$375 M.'},
+  'Banano':{real:true,potential:'Muy alto',dests:[['UE (varios)',55],['EE. UU.',22],['Reino Unido',10],['Otros',13]],headline:'1ª fruta de exportación; eje productor y exportador en Urabá.',firms:'Comercializadoras de Urabá (Augura agrupa al gremio); verificar empresas en DIAN.',note:'Urabá es uno de los principales puertos bananeros del país.'},
+  'Café':{real:true,potential:'Alto',dests:[['EE. UU.',45],['UE',30],['Japón',8],['Otros',17]],headline:'Café de Antioquia con tradición exportadora (FNC).',firms:'Federación Nacional de Cafeteros y exportadores privados.',note:'Precio interno ligado a bolsa de NY + diferencial de calidad.'},
+  'Flores':{real:true,potential:'Alto',dests:[['EE. UU.',70],['UE',12],['Japón',6],['Otros',12]],headline:'Colombia es 2º exportador mundial de flores; Oriente antioqueño es polo clave.',firms:'Asocolflores agrupa al gremio; varias fincas exportadoras en Rionegro/La Ceja.',note:'Picos de demanda: San Valentín y Día de la Madre.'},
+  'Cacao':{real:true,potential:'Medio-alto',dests:[['UE',50],['EE. UU.',20],['Otros',30]],headline:'Cacao fino de aroma con demanda creciente en chocolatería premium.',firms:'Casa Luker, Compañía Nacional de Chocolates y exportadores regionales.',note:'Magdalena Medio y Urabá con potencial de expansión.'},
+  'Gulupa':{real:false,potential:'Alto',dests:[['UE',75],['Otros',25]],headline:'Pasiflora de alto valor; Europa es el destino principal.',firms:'Exportadoras de frutas exóticas (verificar en DIAN/ProColombia).',note:'Requiere admisibilidad y manejo poscosecha cuidadoso.'},
+  'Maracuyá':{real:false,potential:'Medio',dests:[['UE',45],['EE. UU.',25],['Otros',30]],headline:'Demanda creciente como pulpa/jugo y fruta fresca.',firms:'Procesadoras de pulpa y exportadoras de exóticas.',note:'Más competitivo procesado que en fresco.'},
+  'Plátano':{real:false,potential:'Medio',dests:[['EE. UU.',50],['UE',30],['Otros',20]],headline:'Exportación principalmente hacia mercados con diáspora latina.',firms:'Comercializadoras de Urabá y eje cafetero.',note:'Compite con el mercado interno, muy grande.'}
+};
+
+/* base export window data (used as anchor for non-exportable comparison) */
 
 function money(cop){if(currency==='USD'){const u=cop/TRM;return'US$'+u.toLocaleString('es-CO',{maximumFractionDigits:u<10?2:0});}return'$'+Math.round(cop).toLocaleString('es-CO');}
 
@@ -693,9 +862,11 @@ function renderFamBar(){
   document.getElementById('fambar').innerHTML=all+chips;
   document.querySelectorAll('.famchip').forEach(el=>el.addEventListener('click',()=>{
     famFilter=el.dataset.fam;renderFamBar();renderKPIs();renderMunis();renderComparer();
-    if(selSub){renderSide();renderRecs();renderZoneCharts();}
-    const list=prodList();if(!list.includes(selProd)){selProd=list[0];}
-    buildProdSel();renderProduct();
+    if(selSub){renderSide();renderRecs();}
+    const list=prodList();
+    if(!list.includes(selProd)){selectProduct(list[0]);}
+    else{buildProdSel();renderProdPicker();renderProdHero();renderProduct();renderZoneCharts();}
+    setLiveMsg(famFilter==='all'?'Filtro: todas las familias. '+list.length+' productos disponibles.':'Familia activa: '+FAM[famFilter].name+'. '+list.length+' productos resaltados.');
   }));
 }
 function prodList(){return Object.keys(PROD).filter(n=>famFilter==='all'||PROD[n].fam===famFilter);}
@@ -712,10 +883,10 @@ function kpiData(){
   return{ms,idx,idxChgM,idxVsHist,alerts,best,count:names.length};
 }
 function renderKPIs(){
-  const k=kpiData();
+  const k=kpiData();const pm=metrics(selProd);
   const cards=[
     {gate:true},
-    {key:'municipios',lab:'⬡ Municipios',val:'125',chg:'<span class="flat">9 subregiones</span>',what:'Cobertura territorial total',per:'División oficial vigente'},
+    {key:'producto',lab:'🌱 Producto · '+selProd,val:money(pm.cur),chg:(pm.mChg>=0?'<span class="up">▲ '+pct(pm.mChg):'<span class="down">▼ '+pct(pm.mChg))+'</span>',what:'Precio del producto activo (/kg)',per:'Cambia al elegir producto'},
     {key:'indice',lab:'⌁ Índice precios',val:k.idx,chg:(k.idxChgM>=0?'<span class="up">▲ '+pct(k.idxChgM):'<span class="down">▼ '+pct(k.idxChgM))+'</span>',what:'Qué tan caro está el mercado',per:'Mensual · base '+W.baseDesde+'–'+W.baseHasta},
     {key:'trm',lab:'💱 TRM (COP/USD)',val:'$'+Math.round(TRM).toLocaleString('es-CO'),chg:'<span class="flat">26 may 2026</span>',what:'Tasa oficial peso/dólar',per:'Banrep · Superfinanciera'},
     {key:'export',lab:'🌎 Export. Hass Ant.',val:'US$177M',chg:'<span class="up">+50,2% 2025</span>',what:'Aguacate Hass exportado',per:'Año 2025 · DIAN/Analdex'},
@@ -901,10 +1072,10 @@ function renderMapInterp(){
 function selectSub(sk,resetMuni){
   if(resetMuni!==false&&!showAllMunis)selMuni=null;
   selSub=sk;
-  renderMap();renderSide();renderRecs();renderZoneCharts();
+  renderMap();renderSide();renderRecs();
   const pool=SUB[sk].crops.filter(c=>PROD[c]&&(famFilter==='all'||PROD[c].fam===famFilter));
   const match=pool[0]||prodList()[0];
-  if(match){selProd=match;buildProdSel();renderProduct();}
+  if(match&&match!==selProd){selectProduct(match);}else{renderZoneCharts();renderProdHero();}
 }
 
 /* ===== recommendations ===== */
@@ -958,8 +1129,21 @@ function renderMunis(){
 }
 
 /* ===== product explorer ===== */
-let selProd='Papa';
-function buildProdSel(){const sel=document.getElementById('prodSel');sel.innerHTML=prodList().map(p=>`<option ${p===selProd?'selected':''}>${p}</option>`).join('');sel.onchange=e=>{selProd=e.target.value;renderProduct();};}
+function buildProdSel(){const sel=document.getElementById('prodSel');sel.innerHTML=prodList().map(p=>`<option ${p===selProd?'selected':''}>${p}</option>`).join('');sel.onchange=e=>{selectProduct(e.target.value);};}
+
+/* ===== selectProduct: the product drives the whole page ===== */
+function selectProduct(name){
+  selProd=name;
+  buildProdSel();
+  renderProdPicker();
+  renderProdHero();
+  renderProduct();
+  renderKPIs();
+  renderExport();
+  renderComparer();
+  renderZoneCharts();
+  setLiveMsg('Producto activo: '+name+'. Página actualizada (precios, KPIs, exportación, gráficas).');
+}
 function renderProduct(){
   const m=metrics(selProd),f=FAM[m.fam];
   const harvest=dateAfter(m.days),winEnd=dateAfter(m.days+45);
@@ -988,6 +1172,144 @@ function renderProduct(){
   const expTxt=m.exp?` Es <b>exportable</b>: revisa el panel de exportación y el efecto de la TRM.`:'';
   document.getElementById('prodInterp').innerHTML=`<span class="it-t">Lectura (hoy: ${W.hoyFull})</span> Serie <b>${W.histDesde}–${W.histHasta}</b>. Si siembras hoy, cosechas hacia <b>${dMonthYear(harvest)}</b> (ciclo ${m.days} d). Precio más alto en <b>${MES[m.peak]}</b> y más bajo en <b>${MES[m.trough]}</b>; proyección a 3 meses ≈ <b>${pct(m.projChg)}</b>. ${advice}${expTxt} <i>(Cifras ilustrativas; TRM real.)</i>`;
 }
+
+/* ===== live flow ===== */
+let lfTimer=null;
+function setLiveMsg(msg){
+  const el=document.getElementById('lfMsg');if(!el)return;
+  el.textContent=msg;el.parentElement.classList.remove('cur-flash');void el.parentElement.offsetWidth;
+  clearTimeout(lfTimer);
+  lfTimer=setTimeout(()=>{el.textContent='Analizando '+selProd+' · '+(famFilter==='all'?'todas las familias':FAM[famFilter].short)+' · '+(selSub?SUB[selSub].name:'Antioquia')+'…';},4200);
+}
+function renderLiveCtx(){
+  const el=document.getElementById('lfCtx');if(!el)return;
+  el.innerHTML=`<b style="color:#fff">${selProd}</b> · ${currency} · ${season==='lluvia'?'lluvia':'seca'} · ${climate==='todos'?'todos los climas':PT[climate].label} · ${selSub?SUB[selSub].name:'sin zona'}`;
+}
+
+/* ===== product picker (quick chips) ===== */
+function renderProdPicker(){
+  const wrap=document.getElementById('prodPicker');
+  const list=prodList();
+  wrap.innerHTML='<span class="pp-lbl">Producto:</span>'+list.map(p=>{
+    const f=FAM[PROD[p].fam];
+    return `<button class="prodtag ${p===selProd?'on':''}" data-p="${p}" style="--c:${f.c}"><span class="pd"></span>${PMETA[p]?PMETA[p].icon:''} ${p}</button>`;
+  }).join('');
+  wrap.querySelectorAll('.prodtag').forEach(b=>b.addEventListener('click',()=>selectProduct(b.dataset.p)));
+}
+
+/* ===== product hero (full snapshot of selected product) ===== */
+function renderProdHero(){
+  const m=metrics(selProd),f=FAM[m.fam],meta=PMETA[selProd]||{icon:'🌱',accent:'rgba(224,168,58,.2)'};
+  const harvest=dateAfter(m.days);
+  const bestZones=Object.keys(SUB).filter(sk=>SUB[sk].crops.includes(selProd));
+  const zoneTxt=bestZones.length?bestZones.slice(0,3).map(sk=>SUB[sk].name).join(', '):'según piso térmico '+PT[m.pt].label.toLowerCase();
+  const hero=document.getElementById('prodHero');
+  hero.style.setProperty('--ph-accent',meta.accent);
+  hero.innerHTML=`
+    <div class="ph-ic">${meta.icon}</div>
+    <div class="ph-main">
+      <div class="ph-k">Producto activo · familia</div>
+      <div class="ph-n">${selProd} <span class="ph-fam" style="background:${f.c}">${f.icon} ${f.short}</span></div>
+      <div class="ph-d">Piso térmico ${PT[m.pt].label} · ciclo ${m.days} d (~${(m.days/30).toFixed(1)} m) · cosecha si siembras hoy ≈ <b style="color:#fff">${dMonthYear(harvest)}</b> · zonas: ${zoneTxt}</div>
+    </div>
+    <div class="ph-stats">
+      <div class="ph-s"><div class="l">Precio hoy</div><div class="v">${money(m.cur)}</div></div>
+      <div class="ph-s"><div class="l">Var. mensual</div><div class="v ${m.mChg>=0?'up':'down'}">${pct(m.mChg)}</div></div>
+      <div class="ph-s"><div class="l">Margen est.</div><div class="v ${m.margin>40?'up':''}">${Math.round(m.margin)}%</div></div>
+      <div class="ph-s"><div class="l">Riesgo caída</div><div class="v ${m.fall>=60?'down':''}">${Math.round(m.fall)}%</div></div>
+      <div class="ph-s"><div class="l">Exportable</div><div class="v ${m.exp?'up':''}">${m.exp?'Sí 🌎':'No'}</div></div>
+    </div>
+    <div class="ph-cta">
+      <button class="ph-btn" id="phSim">🧪 Simular siembra</button>
+      <button class="ph-btn ghost" id="phExp">🌎 Ver exportación</button>
+    </div>`;
+  const sim=document.getElementById('phSim');if(sim)sim.addEventListener('click',()=>{prefillSimWithProduct();document.getElementById('simForm').scrollIntoView({behavior:'smooth',block:'center'});});
+  const exp=document.getElementById('phExp');if(exp)exp.addEventListener('click',()=>{document.getElementById('exportBody').scrollIntoView({behavior:'smooth',block:'center'});});
+  renderLiveCtx();
+}
+
+/* ===== predictive simulator ===== */
+function fillSimSelectors(){
+  const sp=document.getElementById('simProd');sp.innerHTML=Object.keys(PROD).map(p=>`<option ${p===selProd?'selected':''}>${p}</option>`).join('');
+  const ss=document.getElementById('simSub');ss.innerHTML=Object.keys(SUB).map(k=>`<option value="${k}" ${k===selSub?'selected':''}>${SUB[k].name}</option>`).join('');
+  fillSimMunis();
+  const sa=document.getElementById('simAbasto');sa.innerHTML=POIS.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  const sd=document.getElementById('simDate');if(sd&&!sd.value)sd.value=`${Y0}-${String(M0+1).padStart(2,'0')}-${String(DAY0).padStart(2,'0')}`;
+  document.getElementById('simSeason').value=season;
+}
+function fillSimMunis(){
+  const sk=document.getElementById('simSub').value||'oriente';
+  const sm=document.getElementById('simMuni');sm.innerHTML=MUNIS[sk].map(m=>`<option>${m}</option>`).join('');
+}
+function prefillSimWithProduct(){const sp=document.getElementById('simProd');if(sp){sp.value=selProd;}}
+function runSimulator(){
+  const date=document.getElementById('simDate').value;
+  const prod=document.getElementById('simProd').value;
+  const sk=document.getElementById('simSub').value;
+  const muni=document.getElementById('simMuni').value;
+  const seas=document.getElementById('simSeason').value;
+  const abId=document.getElementById('simAbasto').value;
+  const ab=POIS.find(p=>p.id===abId)||POIS[0];
+  const m=metrics(prod),s=SUB[sk],f=FAM[m.fam];
+  const startD=date?new Date(date+'T00:00:00'):new Date(Y0,M0,DAY0);
+  const harvest=new Date(startD);harvest.setDate(harvest.getDate()+m.days);
+  const winEnd=new Date(harvest);winEnd.setDate(winEnd.getDate()+45);
+  const harvestMonth=harvest.getMonth();
+  /* score components (0..100) */
+  // climate fit: product pt vs subregion pt
+  const climFit=(m.pt===s.pt)?100:( (m.pt==='templado'&&s.pt!=='paramo')||(s.pt==='templado')?70:42 );
+  // price timing: is harvest near the product's seasonal peak?
+  const peak=m.peak;let dist=Math.abs(harvestMonth-peak);if(dist>6)dist=12-dist;const timing=Math.round(100-(dist/6)*70); // 30..100
+  // season effect
+  const seasonScore=seas==='seca'?64:54;
+  // risk inverse
+  const riskScore=Math.round(100-m.fall);
+  // margin
+  const marginScore=clamp(Math.round(m.margin*1.4),20,100);
+  // logistics: distance to abasto
+  const distKm=s.dist;const logScore=clamp(Math.round(100-distKm/4),35,100);
+  const score=Math.round(climFit*0.24+timing*0.22+marginScore*0.20+riskScore*0.18+seasonScore*0.08+logScore*0.08);
+  const verdict=score>=68?{c:'sim-good',ic:'✅',t:'Viable',d:'Condiciones favorables'}:score>=50?{c:'sim-mid',ic:'⚠️',t:'Viable con cautela',d:'Revisa los puntos amarillos'}:{c:'sim-bad',ic:'⛔',t:'Poco favorable',d:'Considera la alternativa'};
+  // expected price at harvest (use series month value)
+  const {pts}=series(prod);const projAtHarvest=pts.find(p=>p.m===harvestMonth&&p.proj)||pts.filter(p=>p.m===harvestMonth).pop()||pts[pts.length-1];
+  const expPrice=projAtHarvest?projAtHarvest.v:m.cur;
+  // alternative: best-margin product viable in same pt
+  const alts=Object.keys(PROD).filter(p=>p!==prod&&PROD[p].pt===s.pt).map(p=>({p,...metrics(p)})).sort((a,b)=>rentOf(b)-rentOf(a));
+  const alt=alts[0];
+  const climFitTxt=climFit>=85?'óptimo':climFit>=65?'aceptable':'subóptimo';
+  const timingTxt=timing>=75?'cosecharías cerca del pico de precio':timing>=50?'precio intermedio en cosecha':'cosecharías en temporada de precio bajo';
+  const out=document.getElementById('simOut');
+  const gsegs=n=>{let h='';for(let i=0;i<10;i++)h+=`<div class="gseg ${i<Math.round(n/10)?'fill':''}" style="--gerr:${n>=68?'#2f7a45':n>=50?'#c9892c':'#b8502f'}"></div>`;return h;};
+  out.innerHTML=`
+    <div class="simverdict ${verdict.c}">
+      <div class="sv-ic">${verdict.ic}</div>
+      <div><div class="sv-t">Viabilidad</div><div class="sv-v">${verdict.t}</div></div>
+      <div class="sv-score"><div class="n">${score}</div><div class="l">/100 · ${verdict.d}</div></div>
+    </div>
+    <div class="simbody">
+      <div class="simtl">
+        <div class="st" style="background:var(--moss)"><div class="sl">SIEMBRA</div><div class="sv">${dPretty(startD)}</div></div>
+        <div class="st" style="background:var(--clay)"><div class="sl">CICLO</div><div class="sv">${m.days} d</div></div>
+        <div class="st" style="background:var(--gold);color:#3a2c08"><div class="sl">COSECHA EST.</div><div class="sv">${dMonthYear(harvest)}</div></div>
+        <div class="st" style="background:var(--terra)"><div class="sl">VENTANA VENTA</div><div class="sv">${dMonthYear(harvest)}–${dMonthYear(winEnd)}</div></div>
+      </div>
+      <div class="simrows">
+        <div class="simr"><div class="si">${f.icon}</div><div><span class="sk">${prod}</span> en <span class="sk">${muni}</span> (${s.name}). Piso térmico ${PT[s.pt].label} — ajuste climático <b>${climFitTxt}</b>.</div></div>
+        <div class="simr"><div class="si">💰</div><div>Precio esperado en cosecha ≈ <span class="sk">${money(expPrice)}/kg</span>; ${timingTxt}.</div></div>
+        <div class="simr"><div class="si">📈</div><div>Margen estimado <span class="sk">${Math.round(m.margin)}%</span> · riesgo de caída <span class="sk">${Math.round(m.fall)}%</span> · temporada ${seas} (${seas==='seca'?'menos oferta, mejor precio':'más oferta, vigilar precio'}).</div></div>
+        <div class="simr"><div class="si">🚚</div><div>Venta sugerida: <span class="sk">${ab.name}</span> — ${s.dist===0?'en el mismo valle (flete mínimo)':'≈ '+s.dist+' km (~'+Math.max(1,Math.round(s.dist/55))+' h); el flete reduce el precio neto'}.</div></div>
+        ${m.exp?`<div class="simr"><div class="si">🌎</div><div>Producto <b>exportable</b>: revisa el panel de exportación; con TRM $${Math.round(TRM).toLocaleString('es-CO')} equivale a ≈ <span class="sk">US$${(expPrice/TRM).toFixed(2)}/kg</span>.</div></div>`:''}
+      </div>
+      <div class="gauge">${gsegs(score)}</div>
+      ${alt?`<div class="simalt">💡 <b>Alternativa más rentable</b> en piso ${PT[s.pt].label}: <b>${alt.p}</b> (rentabilidad estimada ${rentOf(alt)}% vs ${rentOf(metricsObj(prod))}% de ${prod}). ${rentOf(alt)>rentOf(metricsObj(prod))?'Podría dejar mejor margen esta temporada.':'Tu elección ya es competitiva.'}</div>`:''}
+      <div style="font-size:10.5px;color:var(--ink-soft);margin-top:10px">Resultado <b>estimado</b> con motor de demostración (clima, estacionalidad, margen, riesgo, logística). En producción: EVA + SIPSA + IDEAM + modelo de IA.</div>
+    </div>`;
+  // sync main product with simulated one
+  if(prod!==selProd)selectProduct(prod);
+  setLiveMsg('Simulación lista para '+prod+' en '+muni+': viabilidad '+score+'/100.');
+}
+function metricsObj(name){return metrics(name);}
+
 function drawChart(name){
   const {pts}=series(name);const W2=560,H=230,padL=58,padR=14,padT=16,padB=30;
   const xs=i=>padL+(W2-padL-padR)*(i/(pts.length-1)),conv=v=>currency==='USD'?v/TRM:v;
@@ -1006,28 +1328,56 @@ function drawChart(name){
   document.getElementById('chart').innerHTML=`${grid}<rect x="${tx}" y="${padT}" width="${xs(pts.length-1)-tx}" height="${H-padT-padB}" fill="rgba(184,80,47,.05)"/><text x="${projX}" y="${padT+9}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="#b8502f" letter-spacing="1">PROYECCIÓN</text><path d="${bandD}" fill="rgba(184,80,47,.15)"/><line x1="${tx}" y1="${padT}" x2="${tx}" y2="${H-padB}" stroke="#b8502f" stroke-dasharray="3 3" opacity=".6"/><text x="${tx}" y="${padT-5}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" font-weight="500" fill="#b8502f">HOY · ${W.hoy}</text><path d="${histD}" fill="none" stroke="#1f4632" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/><path d="${projD}" fill="none" stroke="#b8502f" stroke-width="2.4" stroke-dasharray="6 5" stroke-linecap="round"/><circle cx="${tx}" cy="${ys(lastH.v)}" r="4" fill="#1f4632"/>${xl}`;
 }
 
-/* ===== export & abasto ===== */
+/* ===== export (product-driven) & abasto ===== */
 function renderExport(){
-  const dests=[{n:'Países Bajos',v:35.8},{n:'EE. UU.',v:15.0},{n:'Reino Unido',v:6.0},{n:'España',v:7.9},{n:'Alemania',v:2.8},{n:'Otros',v:32.5}];
-  const maxd=Math.max(...dests.map(d=>d.v));
-  document.getElementById('exportBody').innerHTML=`
+  const m=metrics(selProd),f=FAM[m.fam];
+  const E=PEXPORT[selProd];
+  document.getElementById('exportTitle').innerHTML=`Mercado de exportación · ${selProd} ${E&&E.real?'<span class="real-tag">DATOS REALES</span>':'<span class="demo-tag">MODELADO</span>'}`;
+  document.getElementById('exportDesc').textContent=E?'Inteligencia de mercado para el producto seleccionado.':'Este producto se orienta hoy al mercado interno; abajo, su comparación de canales.';
+  const body=document.getElementById('exportBody');
+
+  if(!m.exp || !E){
+    // non-exportable: focus on internal market, honest about it
+    const alt=Object.keys(PROD).filter(p=>PROD[p].exp&&PROD[p].pt===m.pt).map(p=>({p,...metrics(p)})).sort((a,b)=>b.margin-a.margin)[0];
+    body.innerHTML=`
+      <div class="exp-hero">
+        <div class="exp-c"><div class="el">Orientación de ${selProd} <span class="demo-tag">DEMO</span></div><div class="ev" style="font-size:18px">Mercado interno</div><div class="ed">Hoy se comercializa sobre todo nacional/local</div></div>
+        <div class="exp-c"><div class="el">Precio interno hoy</div><div class="ev">${money(m.cur)}</div><div class="ed">por kg · ${currency}</div></div>
+        <div class="exp-c"><div class="el">Mejor mes de venta</div><div class="ev" style="font-size:18px">${MES[m.peak]}</div><div class="ed">pico estacional estimado</div></div>
+        <div class="exp-c"><div class="el">Potencial exportador</div><div class="ev" style="font-size:18px">Bajo / indirecto</div><div class="ed">vía procesamiento o nicho</div></div>
+      </div>
+      <div class="interp"><span class="it-t">Lectura honesta</span> <b>${selProd}</b> no aparece hoy entre los grandes renglones de exportación agrícola de Antioquia. Su mejor ruta de valor suele ser el <b>mercado nacional</b> y la venta en el momento estacional adecuado. ${alt?`Si buscas exportar desde el mismo piso térmico (${PT[m.pt].label}), el referente exportable más rentable es <b>${alt.p}</b>.`:''} Para datos de exportación por producto y empresa: <b>DIAN, Legiscomex, ProColombia</b>.</div>`;
+    return;
+  }
+
+  const maxd=Math.max(...E.dests.map(d=>d[1]));
+  const localCop=m.cur, expUsd=(m.cur*1.35); // export typically pays a premium (illustrative multiplier)
+  body.innerHTML=`
     <div class="exp-hero">
-      <div class="exp-c"><div class="el">Aguacate Hass · Antioquia 2025 <span class="real-tag">REAL</span></div><div class="ev">US$177,4 M</div><div class="ed">≈ 47% del total nacional · +50,2% vs 2024</div></div>
-      <div class="exp-c"><div class="el">Hass nacional 2025 <span class="real-tag">REAL</span></div><div class="ev">US$375 M</div><div class="ed">201.479 t · +45,6% volumen</div></div>
-      <div class="exp-c"><div class="el">Producción aguacate Ant. 2024 <span class="real-tag">REAL</span></div><div class="ev">1,67 M t</div><div class="ed">Antioquia, líder nacional</div></div>
-      <div class="exp-c"><div class="el">Banano <span class="real-tag">REAL</span></div><div class="ev">Fruta #1</div><div class="ed">Eje Urabá · 1ª fruta de exportación</div></div>
+      <div class="exp-c"><div class="el">Potencial exportador ${E.real?'<span class="real-tag">REAL</span>':'<span class="demo-tag">EST.</span>'}</div><div class="ev" style="font-size:19px">${E.potential}</div><div class="ed">${selProd}</div></div>
+      <div class="exp-c"><div class="el">Precio local hoy</div><div class="ev moneyval">${money(localCop)}</div><div class="ed">por kg · mercado interno</div></div>
+      <div class="exp-c"><div class="el">Equivalente USD</div><div class="ev">US$${(localCop/TRM).toFixed(2)}</div><div class="ed">a TRM $${Math.round(TRM).toLocaleString('es-CO')}</div></div>
+      <div class="exp-c"><div class="el">Destino #1</div><div class="ev" style="font-size:18px">${E.dests[0][0]}</div><div class="ed">${E.dests[0][1]}% del mercado</div></div>
     </div>
+    <div class="interp" style="margin-top:0;margin-bottom:14px"><span class="it-t">Titular ${E.real?'(real)':'(estimado)'}</span> ${E.headline} ${E.note?'<br><span style="font-size:12px;color:var(--ink-soft)">'+E.note+'</span>':''}</div>
     <div class="grid-2" style="margin-top:0">
-      <div class="kc-card"><h4 style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#9c6b3f;margin-bottom:10px">Destinos del Hass colombiano 2025 <span class="real-tag">REAL</span></h4>
-        ${dests.map(d=>`<div class="dest-row"><div class="dn">${d.n}</div><div class="dt"><div class="df" style="width:${d.v/maxd*100}%"></div></div><div class="dv">${d.v}%</div></div>`).join('')}
-        <div style="font-size:11px;color:var(--ink-soft);margin-top:6px">Europa concentra &gt;60% del total. Países Bajos es el mayor comprador. <i>(EE.UU./R.Unido aprox. para ilustrar el resto.)</i></div></div>
+      <div class="kc-card"><h4 style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#9c6b3f;margin-bottom:10px">Países destino · ${selProd} ${E.real?'<span class="real-tag">REAL</span>':'<span class="demo-tag">EST.</span>'}</h4>
+        ${E.dests.map(d=>`<div class="dest-row"><div class="dn">${d[0]}</div><div class="dt"><div class="df" style="width:${d[1]/maxd*100}%"></div></div><div class="dv">${d[1]}%</div></div>`).join('')}
+        <div style="font-size:11px;color:var(--ink-soft);margin-top:6px">${E.real?'Participación según fuentes oficiales de comercio exterior.':'Distribución estimada; verificar con Trade Map / ProColombia.'}</div></div>
       <div class="kc-card"><h4 style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#9c6b3f;margin-bottom:10px">Local vs nacional vs exportación <span class="demo-tag">DEMO</span></h4>
-        <div class="dest-row"><div class="dn">Plaza local</div><div class="dt"><div class="df" style="width:45%;background:#9c6b3f"></div></div><div class="dv">menor</div></div>
-        <div class="dest-row"><div class="dn">Mayorista nac.</div><div class="dt"><div class="df" style="width:68%;background:#c9892c"></div></div><div class="dv">medio</div></div>
-        <div class="dest-row"><div class="dn">Exportación</div><div class="dt"><div class="df" style="width:100%;background:#2f7a45"></div></div><div class="dv">mayor</div></div>
-        <div style="font-size:11.5px;color:var(--ink-soft);margin-top:8px">La exportación suele pagar más, pero exige calidad, certificaciones (ICA, GLOBALG.A.P.), volumen y logística. La <b>TRM</b> (hoy $${Math.round(TRM).toLocaleString('es-CO')}) define cuántos pesos recibe el exportador por dólar.</div></div>
+        <div class="dest-row"><div class="dn">Plaza local</div><div class="dt"><div class="df" style="width:45%;background:#9c6b3f"></div></div><div class="dv">${money(localCop*0.82)}</div></div>
+        <div class="dest-row"><div class="dn">Mayorista nac.</div><div class="dt"><div class="df" style="width:68%;background:#c9892c"></div></div><div class="dv">${money(localCop)}</div></div>
+        <div class="dest-row"><div class="dn">Exportación</div><div class="dt"><div class="df" style="width:100%;background:#2f7a45"></div></div><div class="dv">${money(expUsd)}</div></div>
+        <div style="font-size:11.5px;color:var(--ink-soft);margin-top:8px">La exportación suele pagar más, pero exige calidad, certificaciones (ICA, GLOBALG.A.P.), volumen y logística. <b>TRM</b> $${Math.round(TRM).toLocaleString('es-CO')} define los pesos por dólar. <i>(Comparación ilustrativa.)</i></div></div>
     </div>
-    <div class="interp"><span class="it-t">Cómo exponerlo</span> Antioquia ya es <b>líder agroexportador</b> (Hass y banano). La oportunidad: replicar el modelo en pasifloras (gulupa, maracuyá) y otras frutas. Empresas y volúmenes por empresa: DIAN/Legiscomex/Cámaras — no se inventan aquí.</div>`;
+    <div class="grid-2" style="margin-top:14px">
+      <div class="kc-card"><h4 style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#9c6b3f;margin-bottom:8px">Empresas / gremios de referencia <span class="demo-tag">VERIFICAR</span></h4>
+        <p style="font-size:13px;color:var(--ink);margin:0;line-height:1.5">${E.firms}</p>
+        <p style="font-size:11px;color:var(--ink-soft);margin:8px 0 0">No se afirman volúmenes por empresa: esos datos se confirman en <b>DIAN / Legiscomex / Cámaras de Comercio</b>.</p></div>
+      <div class="kc-card"><h4 style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#9c6b3f;margin-bottom:8px">Oportunidades y riesgos</h4>
+        <div class="simr" style="margin-bottom:7px"><div class="si">✅</div><div style="font-size:13px">Oportunidad: ${E.potential.toLowerCase().includes('alto')?'demanda internacional sólida y creciente':'nichos de valor y procesamiento'}.</div></div>
+        <div class="simr"><div class="si">⚠️</div><div style="font-size:13px">Riesgos: admisibilidad fitosanitaria, logística en frío, estándares de calidad y volatilidad de la TRM.</div></div></div>
+    </div>`;
 }
 function renderAbasto(){
   const list=[
@@ -1051,11 +1401,24 @@ function ficha(o){const row=(k,v)=>`<div class="fr"><div class="fk">${k}</div><d
 function openKPI(key){
   if(key==='gate'){openKnowledge();return;}
   const k=kpiData();
+  if(key==='producto'){
+    const m=metrics(selProd),f=FAM[m.fam],harvest=dateAfter(m.days);
+    const zones=Object.keys(SUB).filter(sk=>SUB[sk].crops.includes(selProd)).map(sk=>SUB[sk].name);
+    const E=PEXPORT[selProd];
+    openModal(selProd+' · detalle del producto',`<div class="kd-hero"><div class="kd-icon">${PMETA[selProd]?PMETA[selProd].icon:'🌱'}</div><div><div class="kk">Producto · ${f.name}</div><h3>${selProd}</h3><p>Piso térmico ${PT[m.pt].label} · ciclo ${m.days} días · ${m.exp?'con potencial exportador':'orientado al mercado interno'}.</p></div><div class="kd-big"><div class="b">${money(m.cur)}</div><div class="s ${m.mChg>=0?'up':'down'}">${pct(m.mChg)} vs ${W.mesAnt}</div></div></div>
+      ${ficha({mide:'Precio, ciclo, ventana de venta y potencial del producto activo.',calculo:'Motor de series estacional + costos EVA (demo).',periodo:'Hoy '+W.hoy+'; cosecha ≈ '+dMonthYear(harvest)+'.',compara:'Mes anterior, año anterior y promedio histórico.',importa:'Resume si conviene sembrarlo ahora y dónde venderlo.'})}
+      <div class="cmp">${cmpCard('Precio hoy',money(m.cur),'flat','/kg')}${cmpCard('Var. anual',pct(m.yChg),m.yChg>=0?'up':'down','vs '+W.anioAnt)}${cmpCard('Margen est.',Math.round(m.margin)+'%',m.margin>40?'up':'flat','precio−costo')}</div>
+      <div class="cmp">${cmpCard('Cosecha si siembras hoy',dMonthYear(harvest),'flat','ciclo '+m.days+' d')}${cmpCard('Mejor mes venta',MES[m.peak],'up','pico estacional')}${cmpCard('Riesgo caída',Math.round(m.fall)+'%',m.fall>=60?'down':'flat','próx. meses')}</div>
+      <div class="kd-sec"><h4>Zonas recomendadas</h4><p style="margin:0">${zones.length?zones.join(' · '):'Según piso térmico '+PT[m.pt].label+' (ver explorador de municipios).'}</p></div>
+      ${m.exp&&E?`<div class="interp"><span class="it-t">Exportación</span> ${E.headline} Destino #1: <b>${E.dests[0][0]}</b> (${E.dests[0][1]}%). Ver panel de exportación abajo.</div>`:`<div class="interp"><span class="it-t">Mercado</span> Se comercializa sobre todo en el mercado interno; revisa el mejor mes de venta y la zona más cercana al abasto.</div>`}
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><button class="ph-btn" onclick="document.getElementById('simForm').scrollIntoView({behavior:'smooth',block:'center'});document.getElementById('modalClose').click();">🧪 Simular siembra de ${selProd}</button></div>`);
+    return;
+  }
   if(key==='municipios'){const rows=Object.entries(MUNIS).map(([sk,l])=>brkBar(SUB[sk].name,l.length,23,'')).join('');
     openModal('Cobertura de municipios',`<div class="kd-hero"><div class="kd-icon">⬡</div><div><div class="kk">Territorio</div><h3>125 municipios · 9 subregiones</h3><p>Cobertura administrativa completa de Antioquia. Cada municipio se ubica en su subregión oficial y hereda su clima predominante.</p></div><div class="kd-big"><div class="b">125</div><div class="s flat" style="color:var(--ink-soft)">municipios</div></div></div>${ficha({mide:'Cuántos municipios cubre el análisis y su reparto por subregión.',calculo:'Conteo según la división oficial (Ordenanza 41/1975).',periodo:'División vigente.',compara:'No aplica.',importa:'Garantiza que ningún municipio agrícola quede fuera.'})}<div class="kd-sec"><h4>Municipios por subregión</h4>${rows}</div>`);}
   else if(key==='indice'){openModal('Índice de precios',`<div class="kd-hero"><div class="kd-icon">⌁</div><div><div class="kk">Mercado</div><h3>Índice de precios</h3><p>Nivel promedio de precios en base 100.</p></div><div class="kd-big"><div class="b">${k.idx}</div><div class="s ${k.idxChgM>=0?'up':'down'}">${pct(k.idxChgM)} vs ${W.mesAnt}</div></div></div>${ficha({mide:'Qué tan caro está el mercado en conjunto.',calculo:'Promedio de (precio actual ÷ precio base) × 100.',periodo:'Mensual · '+W.hoy+'.',base:'Base 100 = '+W.baseDesde+'–'+W.baseHasta+'.',compara:'Mes anterior y promedio 12 meses.',importa:'Resume en una cifra si el mercado está caro o barato.'})}<div class="cmp">${cmpCard('vs mes anterior',pct(k.idxChgM),k.idxChgM>=0?'up':'down','Frente a '+W.mesAnt)}${cmpCard('vs prom. 12m',pct(k.idxVsHist),k.idxVsHist>=0?'up':'down',W.h12Desde+'–'+W.h12Hasta)}${cmpCard('Temporada',season==='lluvia'?'Lluvia':'Seca',season==='lluvia'?'up':'down',season==='lluvia'?'menos oferta':'más oferta')}</div>`);}
   else if(key==='trm'){const m=metrics('Aguacate Hass');openModal('TRM · peso/dólar',`<div class="kd-hero"><div class="kd-icon">💱</div><div><div class="kk">Monetario</div><h3>TRM oficial COP/USD</h3><p>Cuántos pesos vale un dólar. Clave para exportables.</p></div><div class="kd-big"><div class="b">$${Math.round(TRM).toLocaleString('es-CO')}</div><div class="s flat" style="color:var(--ink-soft)">26 may 2026</div></div></div>${ficha({mide:'El valor oficial de 1 dólar en pesos.',calculo:'La publica a diario la Superintendencia Financiera.',periodo:'Diaria · 26 may 2026.',compara:'Su serie histórica.',importa:'TRM alta favorece al exportador; TRM baja lo reduce.'})}<div class="cmp">${cmpCard('Aguacate (COP)','$'+Math.round(m.cur).toLocaleString('es-CO'),'flat','por kg, demo')}${cmpCard('Aguacate (USD)','US$'+(m.cur/TRM).toFixed(2),'flat','a TRM hoy')}${cmpCard('TRM','$'+Math.round(TRM).toLocaleString('es-CO'),'flat','editable')}</div><div class="kd-sec"><h4>Ajustar TRM (simulación)</h4><input id="trmInput" type="range" min="3200" max="4400" step="10" value="${Math.round(TRM)}" style="width:100%"><div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-soft)"><span>$3.200</span><span id="trmVal" style="color:var(--forest-deep);font-weight:600">$${Math.round(TRM).toLocaleString('es-CO')}</span><span>$4.400</span></div><p style="font-size:12px;color:var(--ink-soft);margin-top:8px">Mueve la TRM y observa el cambio en los precios USD. Fuente real: <b>Banco de la República</b>.</p></div>`);
-    const ti=document.getElementById('trmInput');if(ti)ti.addEventListener('input',e=>{TRM=+e.target.value;document.getElementById('trmVal').textContent='$'+TRM.toLocaleString('es-CO');renderKPIs();renderProduct();renderExport();renderMap();renderSide();renderZoneCharts();renderComparer();renderBanner();});}
+    const ti=document.getElementById('trmInput');if(ti)ti.addEventListener('input',e=>{TRM=+e.target.value;document.getElementById('trmVal').textContent='$'+TRM.toLocaleString('es-CO');renderKPIs();renderProduct();renderProdHero();renderExport();renderMap();renderSide();renderZoneCharts();renderComparer();renderBanner();});}
   else if(key==='export'){openModal('Exportación · aguacate Hass',`<div class="kd-hero"><div class="kd-icon">🌎</div><div><div class="kk">Comercio exterior · 2025</div><h3>Antioquia, líder en Hass</h3><p>Aportó cerca de la mitad de las exportaciones nacionales de aguacate Hass en 2025.</p></div><div class="kd-big"><div class="b">US$177M</div><div class="s up">+50,2%</div></div></div>${ficha({mide:'Valor exportado de aguacate Hass por Antioquia.',calculo:'Cifras DIAN con análisis de Analdex/Corpohass.',periodo:'Año 2025.',compara:'Año 2024 (+50,2%).',importa:'Muestra el potencial agroexportador real.'})}<div class="cmp">${cmpCard('Antioquia','US$177,4 M','up','≈47% nacional')}${cmpCard('Nacional','US$375 M','up','201.479 t')}${cmpCard('Destino #1','P. Bajos','flat','35,8%')}</div><div class="interp"><span class="it-t">Para exponer</span> Dato <b>real y verificado</b>. Ver panel "Mercado de exportación" abajo para destinos y canales.</div>`);}
   else if(key==='alertas'){const risky=k.ms.filter(m=>m.fall>=50).sort((a,b)=>b.fall-a.fall);const rows=risky.map(m=>`<div class="brk"><div class="bn">${m.n}</div><div class="bt"><div class="bf" style="width:${m.fall}%;background:var(--bad)"></div></div><div class="bv" style="color:var(--bad)">${Math.round(m.fall)}%</div></div>`).join('');
     openModal('Alertas de caída de precio',`<div class="kd-hero"><div class="kd-icon">⚠</div><div><div class="kk">Riesgo</div><h3>Alertas de caída</h3><p>Productos con mayor probabilidad de que su precio baje.</p></div><div class="kd-big"><div class="b" style="color:var(--bad)">${k.alerts}</div><div class="s down">en riesgo</div></div></div>${ficha({mide:'Riesgo de que el precio baje en el horizonte de cosecha.',calculo:'Combina dirección estacional y volatilidad.',periodo:'Horizonte '+W.projDesde+'–'+W.projHasta+'.',compara:'Nivel actual vs trayectoria esperada.',importa:'Evita cosechar cuando el precio está bajo.'})}<div class="kd-sec"><h4>Probabilidad de caída por producto</h4>${rows||'<p style="margin:0;color:var(--ink-soft)">Sin alertas relevantes.</p>'}</div>`);}
@@ -1092,22 +1455,43 @@ function openGlossary(){
 document.querySelectorAll('#map .region').forEach(el=>{
   el.addEventListener('mouseenter',e=>showTip(subTip(el.dataset.key),e));
   el.addEventListener('mousemove',moveTip);el.addEventListener('mouseleave',hideTip);
-  el.addEventListener('click',()=>{selMuni=null;selectSub(el.dataset.key,true);});
+  el.addEventListener('click',()=>{selMuni=null;selectSub(el.dataset.key,true);setLiveMsg('Zona activa: '+SUB[el.dataset.key].name+'. Recomendaciones y gráficas actualizadas.');});
 });
-document.querySelectorAll('#metricSeg button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#metricSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');mapMetric=b.dataset.m;renderMap();renderMapInterp();}));
-document.getElementById('muniToggle').addEventListener('click',function(){showAllMunis=!showAllMunis;this.classList.toggle('on',showAllMunis);renderMap();});
-document.querySelectorAll('#seasonSeg button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#seasonSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');season=b.dataset.s;renderKPIs();renderMap();renderSide();renderRecs();renderProduct();renderZoneCharts();renderComparer();}));
-document.querySelectorAll('#curSeg button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#curSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');currency=b.dataset.c;renderProduct();renderKPIs();renderMap();renderSide();renderZoneCharts();renderComparer();renderBanner();}));
+document.querySelectorAll('#metricSeg button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#metricSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');mapMetric=b.dataset.m;renderMap();renderMapInterp();setLiveMsg('Mapa coloreado por: '+METRIC[mapMetric].label+'.');}));
+document.getElementById('muniToggle').addEventListener('click',function(){showAllMunis=!showAllMunis;this.classList.toggle('on',showAllMunis);renderMap();setLiveMsg(showAllMunis?'Mostrando los 125 municipios en el mapa.':'Mostrando municipios de la zona seleccionada.');});
+document.querySelectorAll('#seasonSeg button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#seasonSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');season=b.dataset.s;renderKPIs();renderMap();renderSide();renderRecs();renderProduct();renderProdHero();renderZoneCharts();renderComparer();renderBanner();setLiveMsg('Temporada de '+(season==='lluvia'?'lluvia':'seca')+': viabilidad, oferta y precios reestimados.');}));
+document.querySelectorAll('#curSeg button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#curSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');currency=b.dataset.c;
+  document.body.classList.remove('cur-COP','cur-USD');document.body.classList.add('cur-'+currency);
+  renderProduct();renderProdHero();renderKPIs();renderMap();renderSide();renderZoneCharts();renderComparer();renderBanner();renderExport();
+  setLiveMsg('Moneda: '+(currency==='COP'?'pesos colombianos (COP)':'dólares (USD)')+'. Todos los valores convertidos.');
+}));
+document.querySelectorAll('#climateSeg button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#climateSeg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');climate=b.dataset.cl;
+  renderProdPicker();renderMunis();renderComparer();renderProdHero();
+  if(climate!=='todos'){
+    // if current product doesn't fit the climate, suggest switching
+    const fit=prodList().filter(p=>PROD[p].pt===climate);
+    setLiveMsg('Clima '+PT[climate].label+': '+fit.length+' productos recomendados para ese piso térmico. '+(PROD[selProd].pt===climate?selProd+' encaja.':'Considera '+(fit[0]||'otro')+'.'));
+  }else{setLiveMsg('Mostrando todos los climas.');}
+  renderLiveCtx();
+}));
 document.getElementById('muniSearch').addEventListener('input',renderMunis);
 document.getElementById('muniSub').addEventListener('change',renderMunis);
 document.getElementById('muniPt').addEventListener('change',renderMunis);
 document.getElementById('glossaryBtn').addEventListener('click',openGlossary);
+/* simulator events */
+document.getElementById('simSub').addEventListener('change',fillSimMunis);
+document.getElementById('simRun').addEventListener('click',runSimulator);
 
 /* ===== init ===== */
 function fillMuniSub(){document.getElementById('muniSub').innerHTML='<option value="">Todas las subregiones</option>'+Object.keys(SUB).map(k=>`<option value="${k}">${SUB[k].name}</option>`).join('');}
-renderFamBar();renderBanner();renderKPIs();fillMuniSub();buildProdSel();renderProduct();renderExport();renderAbasto();renderMunis();renderComparer();
+document.body.classList.add('cur-COP');
+renderFamBar();renderBanner();renderKPIs();fillMuniSub();buildProdSel();renderProdPicker();renderProdHero();renderProduct();renderExport();renderAbasto();renderMunis();renderComparer();
 renderMap();renderMapInterp();renderSide();renderZoneCharts();
+fillSimSelectors();
 selectSub('oriente',true);
+setLiveMsg('Sistema listo. Selecciona un producto, una familia, un clima o una zona y todo se actualiza.');
 </script>
 </body>
 </html>
