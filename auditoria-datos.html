@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auditoría de datos · AgroData Antioquia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Hanken+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f4f1e8;--paper:#fffdf8;--ink:#221c12;--ink-soft:#5b5343;--line:#e3dccb;--forest:#1f4632;--forest-deep:#11271a;--moss:#4a7a4e;--gold:#e0a83a;--terra:#b8502f;--clay:#9c6b3f;--good:#2f7a45;--bad:#b8502f;--warn:#c9892c;--shadow:0 1px 2px rgba(34,28,18,.05),0 10px 34px rgba(17,39,26,.10);}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:'Hanken Grotesk',system-ui,sans-serif;font-size:15px;line-height:1.55}
+  .wrap{max-width:1180px;margin:0 auto;padding:30px 24px 60px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:14px}
+  .brand .dot{width:42px;height:42px;border-radius:11px;background:var(--forest);position:relative;flex:none}
+  .brand .dot::after{content:"";position:absolute;inset:9px 9px auto 9px;height:6px;border-radius:3px;background:var(--gold)}
+  .brand .dot::before{content:"";position:absolute;inset:auto 10px 9px 10px;height:11px;border-radius:0 0 7px 7px;background:var(--terra)}
+  h1{font-family:'Fraunces',serif;font-weight:600;font-size:30px;line-height:1.05;color:var(--forest-deep)}
+  .subt{color:var(--ink-soft);font-size:13.5px;margin-top:3px}
+  .meta{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--terra);letter-spacing:.05em;text-align:right}
+  .meta b{color:var(--forest-deep);display:block;font-size:13px;letter-spacing:0;font-weight:600;font-family:'Hanken Grotesk',sans-serif}
+
+  .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+  @media(max-width:780px){.summary{grid-template-columns:1fr 1fr}}
+  .sc{background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:14px 16px;box-shadow:var(--shadow)}
+  .sc .l{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft)}
+  .sc .v{font-family:'Fraunces',serif;font-weight:600;font-size:30px;line-height:1;margin-top:6px}
+  .sc .d{font-size:11.5px;color:var(--ink-soft);margin-top:4px;line-height:1.4}
+  .sc.good .v{color:var(--good)} .sc.warn .v{color:var(--warn)} .sc.bad .v{color:var(--bad)} .sc.neutral .v{color:var(--forest-deep)}
+
+  .panel{background:var(--paper);border:1px solid var(--line);border-radius:15px;padding:22px 24px;margin-bottom:20px;box-shadow:var(--shadow)}
+  .panel h2{font-family:'Fraunces',serif;font-weight:600;font-size:21px;color:var(--forest-deep);margin-bottom:4px}
+  .panel .pd{font-size:13px;color:var(--ink-soft);margin-bottom:14px}
+  .panel h3{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--clay);margin:18px 0 9px}
+
+  table{width:100%;border-collapse:collapse;font-size:13px;background:#fffdf8;border:1px solid var(--line);border-radius:11px;overflow:hidden}
+  th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#9c6b3f;padding:10px 12px;background:#faf6ec;border-bottom:2px solid var(--line);vertical-align:bottom}
+  td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.45}
+  tr:last-child td{border-bottom:none}
+  td b{color:var(--forest-deep)}
+  td a{color:var(--terra);text-decoration:none;border-bottom:1px dotted var(--terra)}
+  td a:hover{color:var(--forest-deep);border-color:var(--forest-deep)}
+  td .src{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--ink-soft);display:block;margin-top:2px;line-height:1.35;word-break:break-word}
+  .scroll{overflow-x:auto;border-radius:11px}
+
+  .tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.04em;padding:3px 7px;border-radius:5px;font-weight:500;white-space:nowrap}
+  .tag-real{background:#e3efe5;color:#2f6b43}
+  .tag-demo{background:#f6e6dd;color:#a8502f}
+  .tag-warn{background:#fbf0d8;color:#9a6b15}
+  .tag-fix{background:#f3d6ce;color:#7a2e15;font-weight:700}
+  .tag-est{background:#e7eef6;color:#33597e}
+
+  .alert{background:linear-gradient(120deg,#fef0e8,#fffdf8);border:1px solid #f3d6ce;border-left:4px solid var(--bad);border-radius:11px;padding:14px 16px;margin:10px 0 16px;font-size:13.5px}
+  .alert .at{font-family:'Fraunces',serif;font-weight:600;font-size:15px;color:var(--bad);margin-bottom:5px}
+  .ok{background:linear-gradient(120deg,#eef3ec,#fffdf8);border:1px solid #cfe0cf;border-left:4px solid var(--good);border-radius:11px;padding:14px 16px;margin:10px 0 16px;font-size:13.5px}
+  .ok .at{font-family:'Fraunces',serif;font-weight:600;font-size:15px;color:var(--good);margin-bottom:5px}
+  .note{background:#faf6ec;border:1px solid var(--line);border-radius:11px;padding:13px 15px;margin:10px 0;font-size:13px;color:var(--ink-soft);line-height:1.55}
+  .note b{color:var(--forest-deep)}
+
+  .lgnd{display:flex;gap:14px;flex-wrap:wrap;background:#faf6ec;border:1px solid var(--line);border-radius:11px;padding:11px 14px;margin-bottom:16px;font-size:12px;color:var(--ink-soft)}
+  .lgnd b{color:var(--forest-deep)}
+
+  .foot{text-align:center;font-size:12px;color:var(--ink-soft);margin-top:24px;line-height:1.7}
+  .foot b{color:var(--forest-deep)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="brand">
+    <span class="dot"></span>
+    <div>
+      <h1>Auditoría de datos · AgroData Antioquia</h1>
+      <div class="subt">Verificación de fiabilidad antes de la próxima ronda de mejoras del prototipo</div>
+    </div>
+  </div>
+  <div class="meta">
+    <b>3 de junio de 2026</b>
+    Documento de verificación interna<br>
+    Prototipo auditado: <b style="display:inline">index.html v4</b>
+  </div>
+</header>
+
+<div class="summary">
+  <div class="sc good"><div class="l">Verificados</div><div class="v">8</div><div class="d">Datos con fuente oficial y cifra correcta al 3-jun-2026</div></div>
+  <div class="sc warn"><div class="l">A revisar</div><div class="v">5</div><div class="d">Cifras razonables pero que conviene reetiquetar o redondear</div></div>
+  <div class="sc bad"><div class="l">Corregir</div><div class="v">1</div><div class="d">Discrepancia con la fuente oficial — fix obligatorio antes de presentar</div></div>
+  <div class="sc neutral"><div class="l">Demo / modelo</div><div class="v">20+</div><div class="d">Cifras ilustrativas ya etiquetadas como tales; no requieren verificación</div></div>
+</div>
+
+<div class="alert">
+  <div class="at">⛔ Hallazgo crítico</div>
+  El dashboard muestra <b>"Producción aguacate Antioquia 2024: 1,67 M t"</b>. La cifra oficial es de <b>~83.000 t</b> (Hass, según Corpohass / portalfruticola.com, nov-2025). La cifra mostrada es errónea por <b>20×</b> y debe corregirse antes de cualquier presentación. <span class="tag tag-fix">CORREGIR YA</span>
+</div>
+
+<div class="ok">
+  <div class="at">✅ Lo bueno</div>
+  El núcleo de cifras de exportación de aguacate Hass 2025 (US$375 M nacional, US$177,4 M Antioquia, +50,2%, 47,3% participación, Países Bajos 35,8%, España 7,9%) está <b>verificado con fuente oficial Analdex / DIAN</b> a febrero de 2026. La división territorial (125 municipios, 9 subregiones) también es correcta.
+</div>
+
+<div class="lgnd">
+  <span><span class="tag tag-real">REAL</span> verificado con fuente oficial</span>
+  <span><span class="tag tag-est">ESTIMADO</span> derivación razonable de la fuente</span>
+  <span><span class="tag tag-warn">A REVISAR</span> conviene ajustar etiqueta o cifra</span>
+  <span><span class="tag tag-fix">CORREGIR</span> error vs fuente — fix obligatorio</span>
+  <span><span class="tag tag-demo">DEMO</span> ilustrativo, ya etiquetado en UI</span>
+</div>
+
+<!-- TABLA 1 -->
+<div class="panel">
+  <h2>📋 Tabla 1 · Inventario completo de datos del dashboard</h2>
+  <div class="pd">Cada KPI, indicador y cifra que aparece hoy en el prototipo, con su fuente, fecha de la fuente, alcance temporal y estado de verificación.</div>
+
+  <h3>A · Territorio y geografía</h3>
+  <div class="scroll"><table>
+    <thead><tr><th style="width:24%">Dato / KPI en el dashboard</th><th>Valor mostrado</th><th>Fuente</th><th>Fecha</th><th>Alcance</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td><b>Cantidad de subregiones</b></td><td>9 subregiones</td><td>Ordenanza 41 de 1975 (Asamblea de Antioquia) · Anuario Estadístico de Antioquia<span class="src">antioquia.gov.co · DANE</span></td><td>Vigente desde 1975</td><td>Permanente</td><td><span class="tag tag-real">REAL</span></td></tr>
+      <tr><td><b>Cantidad de municipios</b></td><td>125 municipios</td><td>DANE — DIVIPOLA · Gobernación de Antioquia<span class="src">dane.gov.co/divipola</span></td><td>Vigente 2024–2026</td><td>Permanente</td><td><span class="tag tag-real">REAL</span></td></tr>
+      <tr><td><b>Reparto municipios×subregión</b></td><td>Urabá 11 · Norte 17 · Bajo Cauca 6 · Occidente 19 · Nordeste 10 · V. Aburrá 10 · Oriente 23 · Magdalena Medio 6 · Suroeste 23</td><td>DANE · Gobernación de Antioquia</td><td>Vigente</td><td>Permanente</td><td><span class="tag tag-real">REAL</span></td></tr>
+      <tr><td><b>Lista de los 125 municipios</b></td><td>Lista completa por subregión</td><td>DANE — DIVIPOLA</td><td>Vigente</td><td>Permanente</td><td><span class="tag tag-real">REAL</span> · <i>Validar contra DIVIPOLA actualizado (Medellín, Turbo y otros tienen estatus de "distrito")</i></td></tr>
+      <tr><td><b>Pisos térmicos asignados</b></td><td>Por subregión: Urabá/Bajo Cauca/Magdalena = cálido; Occidente/Nordeste/Aburrá/Suroeste = templado; Norte/Oriente = frío</td><td>Clasificación de Caldas (altitud) · IGAC<span class="src">igac.gov.co</span></td><td>Estable</td><td>Permanente</td><td><span class="tag tag-est">ESTIMADO</span> · <i>Cada subregión cubre varios pisos; en producción se usa altitud puntual del municipio (IGAC)</i></td></tr>
+      <tr><td><b>Coordenadas de los 125 municipios</b></td><td>Posiciones esquemáticas dentro de su subregión</td><td>Generador determinista (no fuente externa)</td><td>—</td><td>—</td><td><span class="tag tag-demo">DEMO</span> · <i>Para precisión geográfica: cargar centroides oficiales del IGAC/DANE</i></td></tr>
+      <tr><td><b>Coord. Central Mayorista (Itagüí)</b></td><td>≈ 6,16° N · 75,61° O (aprox.)</td><td>Conocimiento público de su ubicación en Itagüí, Valle de Aburrá</td><td>—</td><td>—</td><td><span class="tag tag-warn">A REVISAR</span> · <i>Geocodificar dirección exacta</i></td></tr>
+      <tr><td><b>Coord. Plaza Minorista (Medellín)</b></td><td>≈ 6,25° N · 75,57° O (aprox.)</td><td>Conocimiento público</td><td>—</td><td>—</td><td><span class="tag tag-warn">A REVISAR</span> · <i>Geocodificar dirección exacta</i></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>B · Indicadores monetarios y de mercado</h3>
+  <div class="scroll"><table>
+    <thead><tr><th style="width:24%">Dato / KPI</th><th>Valor mostrado</th><th>Fuente</th><th>Fecha</th><th>Alcance</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td><b>TRM por defecto (KPI · banner)</b></td><td>$ 3.667,06 / USD</td><td>Superintendencia Financiera de Colombia · verificada en Banco de la República<span class="src">banrep.gov.co</span></td><td>Vigente 23–26 may 2026</td><td>Diaria</td><td><span class="tag tag-real">REAL</span> a esa fecha · <span class="tag tag-warn">A REVISAR</span> hoy<br><i>TRM al 1-jun-2026: <b>$3.678,15</b> · al 3-jun-2026: ~$3.680. Conviene actualizar la fecha o conectar API en vivo.</i></td></tr>
+      <tr><td><b>Índice de precios</b></td><td>Base 100 · variación %</td><td>Motor sintético del prototipo</td><td>—</td><td>Mensual · 24m</td><td><span class="tag tag-demo">DEMO</span></td></tr>
+      <tr><td><b>Precios por producto</b></td><td>20 productos · COP/kg</td><td>Motor estacional sintético (no SIPSA)</td><td>—</td><td>Serie 24m</td><td><span class="tag tag-demo">DEMO</span> · <i>Reemplazar con SIPSA-DANE</i></td></tr>
+      <tr><td><b>Proyección de precios (6m)</b></td><td>Banda de confianza</td><td>Motor sintético</td><td>—</td><td>jun–nov 2026</td><td><span class="tag tag-demo">DEMO</span></td></tr>
+      <tr><td><b>Costos de producción</b></td><td>Por producto, COP/kg</td><td>Motor sintético</td><td>—</td><td>—</td><td><span class="tag tag-demo">DEMO</span> · <i>EVA publica costos por cultivo/municipio</i></td></tr>
+      <tr><td><b>Rentabilidad / Margen estimado</b></td><td>% por producto y zona</td><td>Cálculo (precio − costo)/precio sobre datos demo</td><td>—</td><td>—</td><td><span class="tag tag-demo">DEMO</span></td></tr>
+      <tr><td><b>Oferta / Demanda</b></td><td>Niveles 0–100 por subregión</td><td>Motor sintético</td><td>—</td><td>—</td><td><span class="tag tag-demo">DEMO</span> · <i>Aproximar con SIPSA-Abastecimiento</i></td></tr>
+      <tr><td><b>Riesgo de caída de precio</b></td><td>% por producto</td><td>Función de estacionalidad + volatilidad</td><td>—</td><td>—</td><td><span class="tag tag-demo">DEMO</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>C · Exportación · aguacate Hass 2025</h3>
+  <div class="scroll"><table>
+    <thead><tr><th style="width:24%">Dato / KPI</th><th>Valor mostrado</th><th>Fuente</th><th>Fecha</th><th>Alcance</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td><b>Hass nacional · valor 2025</b></td><td>US$ 375 millones</td><td>DIAN · análisis Analdex<span class="src">analdex.org/2026/02/25/exportaciones-de-aguacate-crecieron-un-213-durante-2025/<br>portafolio.co · elnuevosiglo.com.co</span></td><td>Publicado feb 2026</td><td>Año 2025</td><td><span class="tag tag-real">REAL</span></td></tr>
+      <tr><td><b>Hass nacional · volumen 2025</b></td><td>201.479 toneladas (+45,6%)</td><td>DIAN · Analdex<span class="src">Cifra Sicex/Corpohass: 201.464 t (variación &lt;0,01%)</span></td><td>Publicado feb 2026</td><td>Año 2025</td><td><span class="tag tag-real">REAL</span></td></tr>
+      <tr><td><b>Antioquia · valor exportado</b></td><td>US$ 177,4 millones</td><td>DIAN · Analdex</td><td>Publicado feb 2026</td><td>Año 2025</td><td><span class="tag tag-real">REAL</span></td></tr>
+      <tr><td><b>Antioquia · participación nacional</b></td><td>≈ 47% (texto) / 47,3% (Analdex)</td><td>DIAN · Analdex</td><td>feb 2026</td><td>Año 2025</td><td><span class="tag tag-real">REAL</span></td></tr>
+      <tr><td><b>Antioquia · variación vs 2024</b></td><td>+50,2%</td><td>DIAN · Analdex</td><td>feb 2026</td><td>2024→2025</td><td><span class="tag tag-real">REAL</span></td></tr>
+      <tr><td><b>Producción Hass de Antioquia</b></td><td style="background:#f3d6ce">El dashboard muestra <b>"1,67 M t"</b></td><td>Corpohass / Sec. Agricultura de Antioquia · portalfruticola.com nov-2025<span class="src">"Antioquia, con más de 83.000 toneladas"</span></td><td>nov 2025</td><td>2024/2025</td><td><span class="tag tag-fix">CORREGIR</span> → <b>~83.000 t</b> (Hass de Antioquia)</td></tr>
+      <tr><td><b>Países Bajos · participación</b></td><td>35,8%</td><td>DIAN · Analdex</td><td>feb 2026</td><td>Año 2025</td><td><span class="tag tag-real">REAL</span></td></tr>
+      <tr><td><b>España · participación</b></td><td>7,9%</td><td>DIAN · Analdex (US$29,7 M)</td><td>feb 2026</td><td>Año 2025</td><td><span class="tag tag-real">REAL</span></td></tr>
+      <tr><td><b>Alemania · participación</b></td><td>2,8%</td><td>DIAN · Analdex (US$10,4 M; ratio 2,77%)</td><td>feb 2026</td><td>Año 2025</td><td><span class="tag tag-real">REAL</span></td></tr>
+      <tr><td><b>Reino Unido · participación</b></td><td>6,0% (en dashboard)</td><td>Real: US$28,8 M ≈ <b>7,7%</b> (Analdex)</td><td>feb 2026</td><td>Año 2025</td><td><span class="tag tag-warn">A REVISAR</span> · ajustar a ~7,7%</td></tr>
+      <tr><td><b>EE.UU. · participación</b></td><td>15,0% (en dashboard)</td><td>Corpohass/Sicex: <b>~30% del volumen</b>; Analdex no separa el dato en su nota pública<span class="src">agronegocios.co (Mejía, Corpohass)</span></td><td>feb 2026</td><td>Año 2025</td><td><span class="tag tag-warn">A REVISAR</span> · ajustar a ~30% (volumen)</td></tr>
+      <tr><td><b>Europa · participación total</b></td><td>"&gt;60%"</td><td>Analdex · Corpohass</td><td>feb 2026</td><td>Año 2025</td><td><span class="tag tag-real">REAL</span></td></tr>
+      <tr><td><b>Banano · "1ª fruta de exportación"</b></td><td>Texto</td><td>Analdex; tradición exportadora de Urabá<span class="src">augura.com.co · ProColombia</span></td><td>Tendencia 2024–2025</td><td>Anual</td><td><span class="tag tag-real">REAL</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>D · Otros productos exportables (panel dinámico)</h3>
+  <div class="scroll"><table>
+    <thead><tr><th style="width:18%">Producto</th><th>Lo que dice el dashboard</th><th>Verificación</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td><b>Café</b></td><td>Exportador histórico; tradición FNC</td><td>Cierto. Antioquia es uno de los principales productores. FNC es la fuente oficial.</td><td><span class="tag tag-real">REAL</span> a nivel narrativo</td></tr>
+      <tr><td><b>Flores</b></td><td>Colombia 2º exportador mundial; Oriente antioqueño polo clave; Asocolflores gremio</td><td>Cierto. Cundinamarca es el #1 nacional; Antioquia es #2 (Oriente). Asocolflores es el gremio real.</td><td><span class="tag tag-real">REAL</span> a nivel narrativo</td></tr>
+      <tr><td><b>Cacao</b></td><td>Cacao fino de aroma; nombres mencionados (Casa Luker, CNCh)</td><td>Casa Luker y Compañía Nacional de Chocolates son reales; no se afirma su exportación específica desde Antioquia.</td><td><span class="tag tag-warn">A REVISAR</span> · ya está marcado "VERIFICAR"</td></tr>
+      <tr><td><b>Gulupa, Maracuyá, Plátano</b></td><td>Distribución de destinos % (ej. UE 75%, EE.UU. 50%)</td><td>Cifras <b>modeladas</b>, ya etiquetadas como "EST." en la UI. ProColombia / Trade Map tienen los reales.</td><td><span class="tag tag-est">ESTIMADO</span> · ya etiquetado en UI</td></tr>
+      <tr><td><b>Empresas exportadoras (todos)</b></td><td>Cartama, Westfalia, etc.</td><td>Son entidades reales del sector pero no se confirma el vínculo producto-empresa-volumen. El propio panel dice "VERIFICAR en DIAN/Legiscomex".</td><td><span class="tag tag-warn">A REVISAR</span> · ya marcado en UI; ideal: quitar nombres específicos o sustituir por gremios (Corpohass, Augura, Asocolflores, FNC)</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>E · Catálogo de productos (20)</h3>
+  <div class="scroll"><table>
+    <thead><tr><th style="width:22%">Atributo del producto</th><th>Lo que figura</th><th>Fuente</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td><b>Vocación por subregión</b></td><td>Cada subregión tiene lista de cultivos de vocación</td><td>Plan de Desarrollo Departamental · PDEA Antioquia 2024–2027 · conocimiento agronómico estable</td><td><span class="tag tag-real">REAL</span> a nivel narrativo</td></tr>
+      <tr><td><b>Piso térmico por producto</b></td><td>Asignación por cultivo (papa→frío, banano→cálido, etc.)</td><td>Manuales agronómicos (Corpoica/Agrosavia, FAO)</td><td><span class="tag tag-real">REAL</span></td></tr>
+      <tr><td><b>Ciclo del cultivo (días)</b></td><td>Papa 120 · Hass 400 · Plátano 330 · Café 300 · etc.</td><td>Aproximación basada en ciclos típicos<span class="src">Agrosavia · FAO · cartillas técnicas</span></td><td><span class="tag tag-est">ESTIMADO</span> · validar contra EVA (que publica ciclo por municipio)</td></tr>
+      <tr><td><b>Base de precio, volatilidad, costo</b></td><td>Por producto</td><td>Motor sintético</td><td><span class="tag tag-demo">DEMO</span></td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- TABLA 2 -->
+<div class="panel">
+  <h2>🔍 Tabla 2 · Hallazgos de verificación · acciones requeridas</h2>
+  <div class="pd">Lista priorizada de cosas a corregir antes de la próxima ronda de mejoras y de cualquier presentación.</div>
+  <div class="scroll"><table>
+    <thead><tr><th style="width:5%">#</th><th>Hallazgo</th><th>Severidad</th><th>Acción</th><th>Fuente para corregir</th></tr></thead>
+    <tbody>
+      <tr><td><b>1</b></td><td><b>Producción aguacate Antioquia "1,67 M t"</b> es <b>incorrecta</b>. La cifra real es <b>~83.000 t de Hass</b>.</td><td><span class="tag tag-fix">CRÍTICA</span></td><td>Cambiar la tarjeta del panel de exportación. Reemplazar también el subtítulo "Antioquia líder nacional" por algo verificable como "47,3% del valor exportado nacional".</td><td>Corpohass · portalfruticola.com (nov 2025) · DIAN/Analdex feb 2026</td></tr>
+      <tr><td><b>2</b></td><td><b>TRM fija</b> con etiqueta "26 may 2026". Hoy es 3-jun-2026 y la TRM real es ~$3.680.</td><td><span class="tag tag-warn">MEDIA</span></td><td>(a) etiquetar visiblemente "TRM al 26 may 2026 — actualizar"; o (b) conectar API del Banco de la República para refrescar diario.</td><td>Banco de la República · Superfinanciera</td></tr>
+      <tr><td><b>3</b></td><td><b>EE.UU. 15%</b> en el panel de destinos. La fuente real (Corpohass) habla de ~30% del volumen.</td><td><span class="tag tag-warn">MEDIA</span></td><td>Ajustar a "~30%" o marcar explícitamente "valor vs volumen" (Analdex publica valor por país europeo; Corpohass publica volumen total a EE.UU.).</td><td>Corpohass (Mejía, agronegocios.co)</td></tr>
+      <tr><td><b>4</b></td><td><b>Reino Unido 6%</b>. Real: US$28,8 M / US$375 M ≈ <b>7,7%</b>.</td><td><span class="tag tag-warn">BAJA</span></td><td>Redondear a "≈ 7,7%".</td><td>Analdex feb 2026</td></tr>
+      <tr><td><b>5</b></td><td><b>Empresas exportadoras nombradas</b> (Cartama, Westfalia, etc.) sin verificar empresa-producto-volumen.</td><td><span class="tag tag-warn">MEDIA</span></td><td>Sustituir por <b>gremios reales</b> (Corpohass, Augura, Asocolflores, FNC) y un texto "empresas: consultar DIAN/Legiscomex". Ya está casi así; afinar el wording.</td><td>Páginas oficiales de cada gremio</td></tr>
+      <tr><td><b>6</b></td><td><b>Posiciones de municipios</b> en el mapa son esquemáticas.</td><td><span class="tag tag-warn">BAJA</span></td><td>Ya está etiquetado en la UI. Para "exactitud geográfica": cargar GeoJSON oficial de DANE/IGAC con los 125 polígonos/centroides.</td><td>DANE — DIVIPOLA · IGAC — Mapas Bogotá</td></tr>
+      <tr><td><b>7</b></td><td><b>Precios, oferta, demanda y proyecciones</b> son del motor demo.</td><td><span class="tag tag-warn">BAJA</span></td><td>Ya etiquetados como "DEMO" en la UI. Para producción: conectar SIPSA-DANE + EVA + IDEAM. Mantener la etiqueta hasta que estén las APIs.</td><td>SIPSA-DANE · EVA UPRA · IDEAM</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- TABLA 3 -->
+<div class="panel">
+  <h2>📚 Tabla 3 · Fuentes oficiales · enlaces verificables</h2>
+  <div class="pd">Catálogo de las fuentes que deben citarse en la presentación y desde donde se carga el dato definitivo.</div>
+  <div class="scroll"><table>
+    <thead><tr><th style="width:18%">Fuente</th><th style="width:24%">Aporta a este dashboard</th><th>Enlace</th><th>Tipo</th></tr></thead>
+    <tbody>
+      <tr><td><b>DANE — DIVIPOLA</b></td><td>Lista oficial de los 125 municipios y su código por departamento</td><td><a href="https://www.dane.gov.co/index.php/sistema-estadistico-nacional-sen/normas-y-estandares/nomenclaturas-y-clasificaciones/clasificaciones/codificacion-de-la-division-politico-administrativa-de-colombia-divipola">dane.gov.co · DIVIPOLA</a></td><td>Maestro territorial</td></tr>
+      <tr><td><b>DANE — SIPSA</b></td><td>Precios mayoristas diarios de ~700 productos · Abastecimiento</td><td><a href="https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa">dane.gov.co · SIPSA</a></td><td>Precios y abasto</td></tr>
+      <tr><td><b>EVA — UPRA / datos.gov.co</b></td><td>Producción, área, rendimiento, costo y precio en finca <b>por municipio y cultivo</b></td><td><a href="https://www.datos.gov.co/Agricultura-y-Desarrollo-Rural/Evaluaciones-Agropecuarias-Municipales-EVA/2pnw-mmge">datos.gov.co · EVA</a></td><td>API abierta (Socrata)</td></tr>
+      <tr><td><b>UPRA</b></td><td>Análisis EVA · zonas aptas</td><td><a href="https://upra.gov.co">upra.gov.co</a></td><td>Análisis</td></tr>
+      <tr><td><b>Agronet — MinAgricultura</b></td><td>Estadísticas departamentales/municipales agregadas</td><td><a href="https://www.agronet.gov.co/estadistica/paginas/home.aspx?cod=1">agronet.gov.co</a></td><td>Tablero público</td></tr>
+      <tr><td><b>IDEAM</b></td><td>Clima, lluvias, temperatura por estación</td><td><a href="https://www.ideam.gov.co">ideam.gov.co</a></td><td>API datos abiertos</td></tr>
+      <tr><td><b>IGAC</b></td><td>Cartografía, centroides municipales, suelos, pisos térmicos</td><td><a href="https://www.igac.gov.co">igac.gov.co</a></td><td>Geoservicios</td></tr>
+      <tr><td><b>Banco de la República</b></td><td>TRM diaria oficial</td><td><a href="https://www.banrep.gov.co/es/glosario/tasa-cambio-trm">banrep.gov.co · TRM</a></td><td>Serie diaria</td></tr>
+      <tr><td><b>Superfinanciera</b></td><td>Certificación diaria de la TRM</td><td><a href="https://www.superfinanciera.gov.co/powerbi/reportes/514/482/">superfinanciera.gov.co</a></td><td>Reporte</td></tr>
+      <tr><td><b>DIAN</b></td><td>Exportaciones por producto y partida arancelaria</td><td><a href="https://www.dian.gov.co">dian.gov.co</a></td><td>Estadísticas</td></tr>
+      <tr><td><b>Analdex</b></td><td>Análisis del comercio exterior; informe Hass 2025</td><td><a href="https://analdex.org/2026/02/25/exportaciones-de-aguacate-crecieron-un-213-durante-2025/">analdex.org</a></td><td>Boletines</td></tr>
+      <tr><td><b>ProColombia</b></td><td>Inteligencia de mercados internacionales</td><td><a href="https://procolombia.co">procolombia.co</a></td><td>Estudios</td></tr>
+      <tr><td><b>Corpohass</b></td><td>Sicex · informe trimestral del Hass colombiano</td><td><a href="https://www.corpohass.com/content/uploads/2025/09/corpohass_informe-sectorial_2q-2025.pdf">corpohass.com · informe 2Q-2025 (PDF)</a></td><td>Reportes sectoriales</td></tr>
+      <tr><td><b>Augura</b></td><td>Gremio bananero (Urabá)</td><td><a href="https://www.augura.com.co">augura.com.co</a></td><td>Estadísticas</td></tr>
+      <tr><td><b>Asocolflores</b></td><td>Gremio floricultor</td><td><a href="https://asocolflores.org">asocolflores.org</a></td><td>Estadísticas</td></tr>
+      <tr><td><b>FNC</b></td><td>Federación Nacional de Cafeteros · precio interno</td><td><a href="https://federaciondecafeteros.org">federaciondecafeteros.org</a></td><td>Precios FNC</td></tr>
+      <tr><td><b>Gobernación de Antioquia</b></td><td>PDEA 2024–2027 · Secretaría de Agricultura</td><td><a href="https://www.adr.gov.co/wp-content/uploads/2024/07/01_PDEAAntioquia.pdf">PDEA Antioquia (PDF)</a></td><td>Plan oficial</td></tr>
+      <tr><td><b>Central Mayorista de Antioquia</b></td><td>Planilla de precios mayoristas Itagüí</td><td><a href="https://www.lamayorista.com.co">lamayorista.com.co</a></td><td>Reportes diarios</td></tr>
+      <tr><td><b>Trade Map (ITC)</b></td><td>Comercio internacional por producto y país</td><td><a href="https://www.trademap.org">trademap.org</a></td><td>Estadísticas</td></tr>
+      <tr><td><b>FAO · USDA</b></td><td>Precios y mercados internacionales</td><td><a href="https://www.fao.org">fao.org</a> · <a href="https://www.usda.gov">usda.gov</a></td><td>Series y reportes</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- TABLA 4 -->
+<div class="panel">
+  <h2>🛠 Tabla 4 · Plan de corrección antes de seguir mejorando</h2>
+  <div class="pd">Pasos concretos a aplicar al prototipo (en orden), separando lo que puede hacerse hoy de lo que requiere conectar fuentes externas.</div>
+  <div class="scroll"><table>
+    <thead><tr><th style="width:5%">Orden</th><th>Acción</th><th>Esfuerzo</th><th>Cuándo</th></tr></thead>
+    <tbody>
+      <tr><td><b>1</b></td><td>Corregir la tarjeta de producción de aguacate de Antioquia: <b>"~83.000 t (Hass)"</b> en vez de "1,67 M t".</td><td>Bajo</td><td><b>Antes de cualquier presentación</b></td></tr>
+      <tr><td><b>2</b></td><td>Ajustar destinos en el panel de Hass: <b>Reino Unido 7,7%</b>, <b>EE.UU. ~30% del volumen</b>. Aclarar valor vs volumen.</td><td>Bajo</td><td>Antes de presentar</td></tr>
+      <tr><td><b>3</b></td><td>Etiquetar la TRM con su fecha (o conectar API Banco de la República).</td><td>Medio</td><td>Próxima iteración</td></tr>
+      <tr><td><b>4</b></td><td>Reemplazar nombres de empresas exportadoras por <b>gremios verificados</b> (Corpohass, Augura, Asocolflores, FNC) + texto "empresas: DIAN/Legiscomex".</td><td>Bajo</td><td>Antes de presentar</td></tr>
+      <tr><td><b>5</b></td><td>Conectar API EVA (datos.gov.co/Socrata) para producción y precios por municipio.</td><td>Alto</td><td>Fase 1 de mejoras</td></tr>
+      <tr><td><b>6</b></td><td>Cargar GeoJSON IGAC/DANE con polígonos/centroides de los 125 municipios.</td><td>Medio</td><td>Fase 1 de mejoras</td></tr>
+      <tr><td><b>7</b></td><td>Conectar SIPSA-DANE para precios mayoristas reales y reemplazar los datos demo.</td><td>Alto</td><td>Fase 1–2 de mejoras</td></tr>
+      <tr><td><b>8</b></td><td>Añadir un pie de página o sección "Metodología y fuentes" con los enlaces de la Tabla 3.</td><td>Bajo</td><td>Antes de presentar</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<div class="note">
+  <b>Criterio editorial usado en esta auditoría:</b> consideramos <b>REAL</b> únicamente lo respaldado por una fuente oficial citable (DIAN, Analdex, Corpohass, DANE, Banco de la República, gremio gremial, ente público). Marcamos <b>ESTIMADO</b> cuando es derivación razonable pero el dato bruto no aparece publicado. Marcamos <b>DEMO</b> cuando proviene del motor sintético del prototipo. Marcamos <b>A REVISAR</b> cuando la cifra no es errónea pero conviene actualizarse o reetiquetarse, y <b>CORREGIR</b> cuando hay discrepancia frente a la fuente oficial.
+</div>
+
+<div class="foot">
+  <b>Documento de auditoría interna · AgroData Antioquia.</b> Preparado el 3 de junio de 2026 con verificación directa de fuentes oficiales.<br>
+  Una vez aprobadas las correcciones de la Tabla 4, el equipo puede proceder con la siguiente ronda de mejoras del prototipo sobre bases verificadas.
+</div>
+
+</div>
+</body>
+</html>
