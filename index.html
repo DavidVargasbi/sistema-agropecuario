@@ -418,6 +418,148 @@
   .kpi.audit .alink{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.04em;background:#fff;border:1px solid #c9892c;color:#9c6b3f;padding:2px 7px;border-radius:5px}
   .kpi.audit .more{color:#9c6b3f;opacity:1;font-weight:700}
 
+  /* ===== TOUR KPI (verde-bosque + dorado, distinctive) ===== */
+  .kpi.tour{background:linear-gradient(155deg,#fffdf8 0%,#eef3ec 60%,#dCe8d8 100%);border-color:#4a7a4e;position:relative}
+  .kpi.tour::before{content:"";position:absolute;inset:0;border-radius:14px;pointer-events:none;box-shadow:0 0 0 1px rgba(74,122,78,.35) inset, 0 0 18px rgba(74,122,78,.14)}
+  .kpi.tour .lab{color:var(--forest-deep)}
+  .kpi.tour .val{color:var(--forest-deep);font-size:21px;font-family:'Fraunces',serif;font-weight:600}
+  .kpi.tour .chg{color:#2f7a45}
+  .kpi.tour .tbadge{position:absolute;top:11px;right:12px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.05em;background:var(--forest);color:#fff;padding:2px 7px;border-radius:5px;font-weight:600;z-index:2;display:flex;align-items:center;gap:5px}
+  .kpi.tour .tbadge::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--gold);box-shadow:0 0 5px var(--gold)}
+  .kpi.tour .tsteps{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+  .kpi.tour .tstep{background:rgba(74,122,78,.12);border-radius:7px;padding:4px 9px;font-size:11px;color:var(--forest-deep);font-weight:600;font-family:'IBM Plex Mono',monospace;letter-spacing:.02em}
+  .kpi.tour .tstep b{color:var(--forest-deep);font-family:'Fraunces',serif;font-weight:700}
+  .kpi.tour .more{color:var(--forest-deep);opacity:1;font-weight:700}
+
+  /* ===== TOUR LAUNCH FLOATING BUTTON (top-right corner) ===== */
+  .tourbtn{
+    position:fixed;top:14px;right:14px;z-index:200;
+    display:flex;align-items:center;gap:8px;
+    background:linear-gradient(135deg,var(--forest) 0%,var(--forest-deep) 100%);
+    color:#fff8d0;border:1px solid var(--gold);border-radius:11px;
+    padding:9px 14px 9px 11px;cursor:pointer;
+    font-family:inherit;font-size:12.5px;font-weight:600;letter-spacing:.01em;
+    box-shadow:0 6px 18px rgba(17,39,26,.28), 0 0 0 0 rgba(224,168,58,.4);
+    transition:transform .18s, box-shadow .18s, background .18s;
+    animation:tourBtnPulse 3.5s ease-in-out infinite
+  }
+  .tourbtn:hover{
+    transform:translateY(-2px);
+    background:linear-gradient(135deg,var(--gold) 0%,#ecb852 100%);
+    color:#3a2c08;
+    box-shadow:0 10px 26px rgba(224,168,58,.4), 0 0 0 4px rgba(224,168,58,.18)
+  }
+  .tourbtn .tb-ic{
+    width:26px;height:26px;border-radius:7px;
+    background:var(--gold);color:#3a2c08;
+    display:flex;align-items:center;justify-content:center;font-size:14px;
+    box-shadow:0 0 0 1px rgba(255,253,248,.4) inset, 0 0 8px rgba(224,168,58,.5)
+  }
+  .tourbtn:hover .tb-ic{background:var(--forest);color:#fff8d0;box-shadow:0 0 0 1px rgba(255,253,248,.5) inset}
+  .tourbtn .tb-txt{display:flex;flex-direction:column;line-height:1.1;align-items:flex-start}
+  .tourbtn .tb-l{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);opacity:.9}
+  .tourbtn:hover .tb-l{color:#3a2c08;opacity:1}
+  .tourbtn .tb-v{font-family:'Fraunces',serif;font-weight:600;font-size:13.5px}
+  @keyframes tourBtnPulse{
+    0%,100%{box-shadow:0 6px 18px rgba(17,39,26,.28), 0 0 0 0 rgba(224,168,58,.4)}
+    50%{box-shadow:0 6px 18px rgba(17,39,26,.28), 0 0 0 6px rgba(224,168,58,0)}
+  }
+  /* Pulse stops once user has seen the tour at least once */
+  .tourbtn.seen{animation:none}
+  /* On mobile, shrink */
+  @media(max-width:680px){
+    .tourbtn{padding:7px 11px 7px 9px}
+    .tourbtn .tb-v{font-size:12px}
+    .tourbtn .tb-l{display:none}
+  }
+
+  /* Overlay container is non-blocking; only the tooltip captures clicks */
+  .tour-overlay{position:fixed;inset:0;z-index:9000;pointer-events:none;opacity:0;transition:opacity .25s ease;visibility:hidden}
+  .tour-overlay.on{opacity:1;visibility:visible}
+  /* Full-screen dark mask used ONLY for centered (no-target) steps */
+  .tour-mask{position:absolute;inset:0;background:rgba(7,18,15,.82);pointer-events:auto;display:none}
+  .tour-overlay.on .tour-mask.on{display:block}
+  /* Spotlight: a positioned box whose massive box-shadow makes the dark overlay; interior stays transparent so the element underneath is visible AND clickable */
+  .tour-spotlight{
+    position:absolute;pointer-events:none;border-radius:14px;
+    background:transparent;
+    border:3px solid var(--gold);
+    box-shadow:
+      0 0 0 9999px rgba(7,18,15,.82),
+      0 0 0 6px rgba(224,168,58,.35),
+      0 0 28px 8px rgba(224,168,58,.45),
+      0 0 60px 16px rgba(224,168,58,.2);
+    transition:all .35s cubic-bezier(.4,0,.2,1);
+    animation:tourPulse 2.4s ease-in-out infinite;
+    display:none
+  }
+  .tour-spotlight.on{display:block}
+  @keyframes tourPulse{
+    0%,100%{border-color:var(--gold);box-shadow:0 0 0 9999px rgba(7,18,15,.82),0 0 0 6px rgba(224,168,58,.35),0 0 28px 8px rgba(224,168,58,.45),0 0 60px 16px rgba(224,168,58,.18)}
+    50%{border-color:#fff8d0;box-shadow:0 0 0 9999px rgba(7,18,15,.82),0 0 0 8px rgba(224,168,58,.45),0 0 36px 10px rgba(224,168,58,.55),0 0 76px 22px rgba(224,168,58,.28)}
+  }
+
+  /* Tooltip card (clickable) */
+  .tour-tip{
+    position:absolute;background:linear-gradient(155deg,#fffdf8,#f4ebd9);
+    border:1px solid var(--gold);border-radius:14px;
+    padding:18px 20px 16px;max-width:380px;min-width:280px;
+    box-shadow:0 18px 50px rgba(0,0,0,.45), 0 0 0 1px rgba(224,168,58,.4), 0 0 22px rgba(224,168,58,.25);
+    color:var(--ink);
+    transition:left .3s cubic-bezier(.4,0,.2,1), top .3s cubic-bezier(.4,0,.2,1);
+    pointer-events:auto;z-index:9100;
+    animation:tipBoot .35s ease-out;
+    display:none
+  }
+  .tour-tip.on{display:block}
+  @keyframes tipBoot{from{opacity:0;transform:translateY(8px) scale(.96)}to{opacity:1;transform:none}}
+  .tour-tip .tt-h{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .tour-tip .tt-icon{width:34px;height:34px;border-radius:9px;background:var(--forest);color:#f4f1e8;display:flex;align-items:center;justify-content:center;font-size:18px;flex:none;box-shadow:0 4px 10px rgba(17,39,26,.25)}
+  .tour-tip .tt-step{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--clay)}
+  .tour-tip .tt-t{font-family:'Fraunces',serif;font-weight:600;font-size:17px;color:var(--forest-deep);line-height:1.15;margin-top:1px}
+  .tour-tip .tt-d{font-size:13.5px;color:var(--ink);line-height:1.55}
+  .tour-tip .tt-d b{color:var(--forest-deep)}
+  .tour-tip .tt-d kbd{background:#eef3ec;border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:11.5px;font-family:'IBM Plex Mono',monospace;color:var(--forest-deep)}
+
+  .tour-tip .tt-foot{display:flex;align-items:center;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+  .tour-tip .tt-progress{flex:1;display:flex;flex-direction:column;gap:5px}
+  .tour-tip .tt-pn{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.05em;color:var(--ink-soft);text-transform:uppercase}
+  .tour-tip .tt-pbar{height:4px;background:#eee5d2;border-radius:3px;overflow:hidden}
+  .tour-tip .tt-pbar .tt-pfill{height:100%;background:linear-gradient(90deg,var(--gold),#fff8d0,var(--gold));background-size:200% auto;animation:shineP 3s linear infinite;transition:width .35s ease}
+  @keyframes shineP{to{background-position:200% center}}
+  .tour-tip .tt-btn{background:var(--forest);color:#f4f1e8;border:none;border-radius:9px;padding:8px 14px;font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:5px}
+  .tour-tip .tt-btn:hover{background:var(--forest-deep)}
+  .tour-tip .tt-btn:disabled{opacity:.4;cursor:not-allowed}
+  .tour-tip .tt-btn.prev{background:transparent;color:var(--ink-soft);padding:8px 10px}
+  .tour-tip .tt-btn.prev:hover{color:var(--forest-deep);background:#eef3ec}
+  .tour-tip .tt-btn.primary{background:var(--gold);color:#3a2c08;font-weight:700}
+  .tour-tip .tt-btn.primary:hover{background:#ecb852}
+  .tour-tip .tt-close{position:absolute;top:10px;right:12px;background:transparent;border:none;color:var(--ink-soft);cursor:pointer;font-size:16px;padding:4px 8px;border-radius:6px;transition:.12s}
+  .tour-tip .tt-close:hover{background:#f4ebd9;color:var(--bad)}
+
+  /* Welcome / closing card */
+  .tour-tip.welcome{
+    background:linear-gradient(155deg,#11271a 0%,#1f4632 60%,#0d2117 100%);
+    color:#f4f1e8;border-color:rgba(224,168,58,.6);
+    box-shadow:0 24px 60px rgba(0,0,0,.55), 0 0 0 1px rgba(224,168,58,.4), 0 0 38px rgba(224,168,58,.35);
+    max-width:460px
+  }
+  .tour-tip.welcome .tt-icon{background:var(--gold);color:#3a2c08;box-shadow:0 4px 14px rgba(224,168,58,.4)}
+  .tour-tip.welcome .tt-step{color:var(--gold)}
+  .tour-tip.welcome .tt-t{color:#fff8d0;text-shadow:0 0 14px rgba(224,168,58,.3)}
+  .tour-tip.welcome .tt-d{color:#cfe0cf}
+  .tour-tip.welcome .tt-d b{color:#fff8d0}
+  .tour-tip.welcome .tt-foot{border-top-color:rgba(224,168,58,.25)}
+  .tour-tip.welcome .tt-pn{color:#cfe0cf}
+  .tour-tip.welcome .tt-pbar{background:rgba(255,253,248,.12)}
+  .tour-tip.welcome .tt-close{color:#cfe0cf}
+  .tour-tip.welcome .tt-close:hover{background:rgba(255,253,248,.12);color:#fff8d0}
+  .tour-tip.welcome .tt-btn.prev{color:#cfe0cf}
+  .tour-tip.welcome .tt-btn.prev:hover{background:rgba(255,253,248,.1);color:#fff8d0}
+
+  /* Body lock: prevent scroll glitches during tour, keep app interactive */
+  body.tour-active{overflow:auto}
+
   /* Audit modal: summary cards + tables */
   .audit-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
   @media(max-width:780px){.audit-summary{grid-template-columns:1fr 1fr}}
@@ -1037,11 +1179,24 @@
   <div class="intro-foot">DIAN<span class="sep">·</span>Analdex<span class="sep">·</span>SIPSA-DANE<span class="sep">·</span>FNC<span class="sep">·</span>Corpohass</div>
 </div>
 
+<!-- Tour launch (floating, top-right) -->
+<button class="tourbtn" id="tourBtn" title="Iniciar tour guiado de la plataforma">
+  <span class="tb-ic">🎓</span>
+  <span class="tb-txt"><span class="tb-l">TUTORIAL</span><span class="tb-v">Tour guiado</span></span>
+</button>
+
 <!-- Sound toggle (bottom right, persistent) -->
 <button class="sndbtn" id="sndBtn" aria-label="Activar / silenciar sonidos" title="Activar/silenciar sonidos">
   <span id="sndIcon">🔊</span>
   <span class="snd-hint" id="sndHint">Sonidos: ON</span>
 </button>
+
+<!-- ===== GUIDED TOUR OVERLAY ===== -->
+<div class="tour-overlay" id="tourOverlay" role="dialog" aria-label="Tutorial de la plataforma">
+  <div class="tour-mask" id="tourMask"></div>
+  <div class="tour-spotlight" id="tourSpotlight" style="display:none"></div>
+  <div class="tour-tip" id="tourTip" style="display:none"></div>
+</div>
 <div class="app">
 
   <header>
@@ -1901,6 +2056,7 @@ function renderKPIs(){
     if(c.premium)return renderPremiumExportKPI();
     if(c.validation)return renderValidationKPI();
     if(c.audit)return renderAuditKPI();
+    if(c.tour)return renderTourKPI();
     return`<div class="kpi" data-kpi="${c.key}"><div class="lab">${c.lab}</div><div class="val">${c.val}</div><div class="chg">${c.chg}</div><div class="what">${c.what}</div><div class="per">📅 ${c.per}</div><div class="more">DETALLE ▸</div></div>`;
   }).join('');
   document.querySelectorAll('.kpi').forEach(el=>el.addEventListener('click',()=>openKPI(el.dataset.kpi)));
@@ -2691,6 +2847,299 @@ const AUDIT_DATA={
   ]
 };
 
+/* ============================================================
+   GUIDED TOUR · 11 pasos con spotlight + tooltip
+   - Centra cada paso en un elemento del DOM (selector)
+   - Cambia de pestaña automáticamente si el paso lo requiere
+   - Persiste en localStorage que ya se vio
+============================================================ */
+const TOUR_STEPS=[
+  {
+    title:'¡Bienvenido a AgroData!',
+    icon:'🌱',
+    body:'Esta es una plataforma de <b>inteligencia agrícola</b> para los <b>125 municipios</b> y <b>9 subregiones</b> de Antioquia. Te ayuda a decidir <b>qué sembrar</b>, <b>cuándo cosechar</b>, <b>dónde vender</b> y <b>cuánto puedes ganar</b>, usando datos reales de SIPSA, DIAN, Corpohass y FNC. Te muestro un recorrido rápido por las funciones principales — toma menos de 2 minutos.',
+    placement:'center'
+  },
+  {
+    title:'Selectores globales',
+    icon:'🎛',
+    body:'Aquí arriba están los <b>filtros que afectan toda la app</b>: moneda (COP/USD con TRM real), temporada (lluvia/seca) y clima (cálido/templado/frío). Cambiarlos actualiza precios, recomendaciones y predicciones en todas las pestañas.',
+    selector:'header.head',
+    placement:'bottom'
+  },
+  {
+    title:'Hero del producto activo',
+    icon:'🥑',
+    body:'El <b>producto seleccionado</b> gobierna toda la app. Aquí ves su precio actual, variación, margen estimado, riesgo de caída, si es exportable y zonas recomendadas. Cambia el producto con los chips de abajo y todo se reestima.',
+    selector:'#prodHero',
+    placement:'bottom'
+  },
+  {
+    title:'Barra de pestañas',
+    icon:'🧭',
+    body:'Las <b>6 ventanas</b> de la plataforma: <b>Resumen</b> (KPIs), <b>Mapa</b> (territorio), <b>Productos</b> (precios por producto), <b>Recomendaciones</b> (qué sembrar), <b>Simulador</b> (predicción) y <b>Exportación</b> (datos reales DIAN). Cada cambio de pestaña recarga ese contenido específico.',
+    selector:'.tabnav',
+    placement:'bottom'
+  },
+  {
+    title:'KPIs principales',
+    icon:'📊',
+    body:'En <b>Resumen</b> tienes los KPIs estrella: el <b>dorado</b> (Exportación Hass — datos reales 2025), el <b>azul</b> (Validación de fuentes — tabla con 34 datos verificables) y el <b>tierra</b> (Auditoría de datos — documento de fiabilidad). Haz clic en cualquiera para ver el detalle.',
+    selector:'#kpis',
+    placement:'top',
+    requireTab:'resumen'
+  },
+  {
+    title:'Mapa tecnológico interactivo',
+    icon:'🗺',
+    body:'El mapa muestra <b>9 subregiones</b> con estilo command-center. Haz clic en cualquier zona y se resalta con glow dorado + se actualiza el panel lateral derecho con sus municipios, KPIs y cultivos de vocación. Los puntos pulsantes son los centros de abasto (Central Mayorista y Plaza Minorista).',
+    selector:'#mapwrap',
+    placement:'right',
+    requireTab:'mapa'
+  },
+  {
+    title:'Pestaña Productos',
+    icon:'🌿',
+    body:'Aquí ves todos los <b>125 municipios filtrables</b> y un explorador del producto activo con gráfica de precios, proyección y comparador. Los <b>precios anclados</b> de papa, aguacate Hass, café, tomate, cebolla y plátano son <b>reales 2024-2026</b> (SIPSA-DANE + FNC).',
+    selector:'.tabbtn[data-tab="productos"]',
+    placement:'bottom',
+    requireTab:'productos'
+  },
+  {
+    title:'Recomendaciones por zona',
+    icon:'🌾',
+    body:'<b>"¿Qué sembrar ahora?"</b> Ranking de cultivos por rentabilidad y riesgo según la zona seleccionada en el Mapa y la familia activa. Cambia la zona en el Mapa y vuelve aquí para ver cómo se reordena.',
+    selector:'.tabbtn[data-tab="recomendaciones"]',
+    placement:'bottom',
+    requireTab:'recomendaciones'
+  },
+  {
+    title:'Simulador predictivo',
+    icon:'🧪',
+    body:'El <b>módulo más potente</b>: ingresa fecha, municipio, producto, temporada y punto de venta. Te devuelve <b>viabilidad (0-100)</b>, fecha estimada de cosecha, ventana de venta, precio esperado, riesgo logístico y una <b>alternativa más rentable</b> para el mismo piso térmico.',
+    selector:'.tabbtn[data-tab="simulador"]',
+    placement:'bottom',
+    requireTab:'simulador'
+  },
+  {
+    title:'Exportación · datos reales',
+    icon:'🌎',
+    body:'El panel cambia según el producto. Para <b>Aguacate Hass</b> tienes datos <b>reales 2025</b> de DIAN/Analdex: US$177,4 M Antioquia (+50,2%), destinos verificados, comparativa con Eje Cafetero. Banano, Café, Flores y Cacao también traen datos reales de sus gremios oficiales.',
+    selector:'.tabbtn[data-tab="exportacion"]',
+    placement:'bottom',
+    requireTab:'exportacion'
+  },
+  {
+    title:'¡Estás listo!',
+    icon:'🎉',
+    body:'Ya conoces lo principal. Algunos atajos útiles:<br>• El botón <b>🎓 Tour guiado</b> arriba a la derecha repite este recorrido cuando quieras.<br>• El botón <b>🔊</b> abajo-derecha activa/silencia sonidos.<br>• El botón <b>?</b> en la barra de pestañas abre la guía rápida.<br><br>¡Explora con confianza! Todos los datos tienen su fuente verificable.',
+    placement:'center'
+  }
+];
+
+let TOUR={i:0,active:false};
+
+function renderTourKPI(){
+  const tip='Recorrido guiado por las funciones principales de AgroData. 11 pasos con resaltado visual, dura ~2 min. Puedes repetirlo cuando quieras.';
+  return `<div class="kpi tour" data-kpi="tour" data-tip="${tip}">
+    <span class="tbadge">TOUR</span>
+    <div class="lab">🎓 Tour guiado</div>
+    <div class="val">${TOUR_STEPS.length} pasos · ~2 min</div>
+    <div class="chg">▶ recorrido interactivo</div>
+    <div class="tsteps">
+      <span class="tstep"><b>6</b> pestañas</span>
+      <span class="tstep"><b>4</b> KPIs</span>
+      <span class="tstep"><b>Mapa</b> + sim</span>
+    </div>
+    <div class="more">INICIAR TOUR ▸</div>
+  </div>`;
+}
+
+function startTour(){
+  TOUR.i=0;TOUR.active=true;TOUR._scrollRetry=0;
+  document.body.classList.add('tour-active');
+  document.getElementById('tourOverlay').classList.add('on');
+  // hide intro if still showing
+  const intro=document.getElementById('introOverlay');if(intro&&!intro.classList.contains('gone'))dismissIntro();
+  renderTourStep();
+  try{localStorage.setItem('agv_tour_seen','1');}catch(e){}
+  if(typeof SND==='object'&&SND.cta)SND.cta();
+}
+
+function endTour(){
+  TOUR.active=false;TOUR._scrollRetry=0;
+  document.body.classList.remove('tour-active');
+  const ov=document.getElementById('tourOverlay');
+  const mask=document.getElementById('tourMask');
+  const spot=document.getElementById('tourSpotlight');
+  const tip=document.getElementById('tourTip');
+  if(ov)ov.classList.remove('on');
+  if(mask)mask.classList.remove('on');
+  if(spot){spot.classList.remove('on');spot.style.display='';}
+  if(tip){tip.classList.remove('on');tip.style.display='';tip.style.transform='';}
+  if(typeof SND==='object'&&SND.tick)SND.tick();
+}
+
+function nextTourStep(){
+  if(TOUR.i<TOUR_STEPS.length-1){TOUR.i++;TOUR._scrollRetry=0;renderTourStep();if(typeof SND==='object'&&SND.tick)SND.tick();}
+  else{endTour();if(typeof SND==='object'&&SND.confirm)SND.confirm();}
+}
+function prevTourStep(){if(TOUR.i>0){TOUR.i--;TOUR._scrollRetry=0;renderTourStep();if(typeof SND==='object'&&SND.tick)SND.tick();}}
+
+function renderTourStep(){
+  if(!TOUR.active)return;
+  const step=TOUR_STEPS[TOUR.i];
+  const tip=document.getElementById('tourTip');
+  const spot=document.getElementById('tourSpotlight');
+  const mask=document.getElementById('tourMask');
+  if(!tip||!spot||!mask)return;
+  // Switch tab first if needed
+  const needsTabSwitch=step.requireTab&&typeof showTab==='function'&&currentTab!==step.requireTab;
+  if(needsTabSwitch){showTab(step.requireTab,{silent:true});}
+  // Wait for tab change + render to settle
+  const delay=needsTabSwitch?450:30;
+  setTimeout(()=>{
+    if(!TOUR.active)return;
+    let target=null;
+    if(step.selector){try{target=document.querySelector(step.selector);}catch(e){target=null;}}
+    // Validate target: must exist AND have non-zero size
+    let validTarget=false;
+    let r=null;
+    if(target){
+      r=target.getBoundingClientRect();
+      validTarget=(r.width>0&&r.height>0);
+    }
+    // Decide rendering mode
+    const useCenter=(step.placement==='center')||!validTarget;
+    if(useCenter){renderCenteredStep(step,tip,spot,mask);return;}
+    // From here: target is valid. Hide centered mask, show spotlight.
+    mask.classList.remove('on');
+    // Check if target is in viewport. If not, scroll ONCE then re-render (max 1 retry).
+    const outOfView=(r.top<70||r.bottom>window.innerHeight-70);
+    if(outOfView&&TOUR._scrollRetry<1){
+      TOUR._scrollRetry++;
+      try{target.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}
+      setTimeout(()=>renderTourStep(),480);
+      return;
+    }
+    TOUR._scrollRetry=0;
+    // Position spotlight (re-measure after possible scroll)
+    r=target.getBoundingClientRect();
+    const pad=10;
+    spot.classList.add('on');
+    spot.style.display='block';
+    spot.style.left=(r.left-pad)+'px';
+    spot.style.top=(r.top-pad)+'px';
+    spot.style.width=(r.width+pad*2)+'px';
+    spot.style.height=(r.height+pad*2)+'px';
+    // Render tip content + initial position (estimated size)
+    tip.style.display='block';
+    tip.classList.add('on');
+    tip.className='tour-tip on';
+    tip.innerHTML=buildTipHTML(step);
+    const estTip={w:Math.min(380,window.innerWidth-40),h:260};
+    const p1=resolvePlacement(step.placement||'bottom',r,estTip);
+    tip.classList.add('pos-'+p1.where);
+    tip.style.transform='none';
+    tip.style.left=p1.x+'px';
+    tip.style.top=p1.y+'px';
+    wireTipBtns();
+    // Refine with real size on next frame
+    requestAnimationFrame(()=>{
+      if(!TOUR.active)return;
+      const rr=target.getBoundingClientRect();
+      const tr=tip.getBoundingClientRect();
+      if(tr.width<=0||tr.height<=0)return;
+      const p2=resolvePlacement(step.placement||'bottom',rr,{w:tr.width,h:tr.height});
+      tip.className='tour-tip on pos-'+p2.where;
+      tip.style.left=p2.x+'px';
+      tip.style.top=p2.y+'px';
+    });
+  },delay);
+}
+
+function renderCenteredStep(step,tip,spot,mask){
+  spot.classList.remove('on');spot.style.display='none';
+  mask.classList.add('on');
+  tip.style.display='block';
+  tip.classList.add('on');
+  const isWelcome=(TOUR.i===0||TOUR.i===TOUR_STEPS.length-1);
+  tip.className='tour-tip on pos-center'+(isWelcome?' welcome':'');
+  tip.innerHTML=buildTipHTML(step);
+  // Use transform-based centering (left/top at 50%)
+  requestAnimationFrame(()=>{
+    if(!TOUR.active)return;
+    const tr=tip.getBoundingClientRect();
+    if(tr.width<=0)return;
+    const x=Math.round((window.innerWidth-tr.width)/2);
+    const y=Math.round((window.innerHeight-tr.height)/2);
+    tip.style.transform='none';
+    tip.style.left=x+'px';
+    tip.style.top=y+'px';
+  });
+  wireTipBtns();
+}
+
+function resolvePlacement(pref,r,tip){
+  const margin=18;const vw=window.innerWidth,vh=window.innerHeight;
+  // try preferred, then fall through
+  const tryOrder=[pref,'bottom','top','right','left'].filter((v,i,a)=>a.indexOf(v)===i);
+  for(const where of tryOrder){
+    let x,y;
+    if(where==='bottom'){y=r.bottom+margin;x=r.left+r.width/2-tip.w/2;if(y+tip.h<vh-10) return clampXY(where,x,y,tip,vw,vh);}
+    if(where==='top'){y=r.top-margin-tip.h;x=r.left+r.width/2-tip.w/2;if(y>10) return clampXY(where,x,y,tip,vw,vh);}
+    if(where==='right'){x=r.right+margin;y=r.top+r.height/2-tip.h/2;if(x+tip.w<vw-10) return clampXY(where,x,y,tip,vw,vh);}
+    if(where==='left'){x=r.left-margin-tip.w;y=r.top+r.height/2-tip.h/2;if(x>10) return clampXY(where,x,y,tip,vw,vh);}
+  }
+  // fallback bottom
+  return clampXY('bottom',r.left+r.width/2-tip.w/2,r.bottom+margin,tip,vw,vh);
+}
+function clampXY(where,x,y,tip,vw,vh){
+  x=Math.max(12,Math.min(x,vw-tip.w-12));
+  y=Math.max(12,Math.min(y,vh-tip.h-12));
+  return {where,x,y};
+}
+
+function buildTipHTML(step){
+  const total=TOUR_STEPS.length;
+  const pct=Math.round(((TOUR.i+1)/total)*100);
+  const isFirst=TOUR.i===0,isLast=TOUR.i===total-1;
+  return `
+    <button class="tt-close" id="tt-close" title="Cerrar tutorial">✕</button>
+    <div class="tt-h">
+      <div class="tt-icon">${step.icon||'•'}</div>
+      <div>
+        <div class="tt-step">Paso ${TOUR.i+1} de ${total}</div>
+        <div class="tt-t">${step.title}</div>
+      </div>
+    </div>
+    <div class="tt-d">${step.body}</div>
+    <div class="tt-foot">
+      <button class="tt-btn prev" id="tt-prev" ${isFirst?'disabled':''}>← Anterior</button>
+      <div class="tt-progress">
+        <div class="tt-pn">${pct}% completado</div>
+        <div class="tt-pbar"><div class="tt-pfill" style="width:${pct}%"></div></div>
+      </div>
+      <button class="tt-btn primary" id="tt-next">${isLast?'Finalizar ✓':'Siguiente →'}</button>
+    </div>`;
+}
+function wireTipBtns(){
+  const tip=document.getElementById('tourTip');
+  const c=tip.querySelector('#tt-close');if(c)c.onclick=endTour;
+  const p=tip.querySelector('#tt-prev');if(p)p.onclick=prevTourStep;
+  const n=tip.querySelector('#tt-next');if(n)n.onclick=nextTourStep;
+}
+
+/* Keyboard: arrows + Esc */
+document.addEventListener('keydown',e=>{
+  if(!TOUR.active)return;
+  if(e.key==='Escape'){endTour();}
+  else if(e.key==='ArrowRight'||e.key==='Enter'){nextTourStep();}
+  else if(e.key==='ArrowLeft'){prevTourStep();}
+});
+/* re-position on resize */
+window.addEventListener('resize',()=>{if(TOUR.active)renderTourStep();});
+
 function renderAuditKPI(){
   const c=AUDIT_DATA.contador;
   const total=c.verificados+c.revisar+c.corregir;
@@ -3041,6 +3490,7 @@ function openKPI(key){
   if(key==='gate'){openKnowledge();return;}
   if(key==='validacion'){openValidationModal();return;}
   if(key==='auditoria'){openAuditModal();return;}
+  if(key==='tour'){startTour();return;}
   const k=kpiData();
   if(key==='producto'){
     const m=metrics(selProd),f=FAM[m.fam],harvest=dateAfter(m.days);
@@ -3228,6 +3678,14 @@ document.getElementById('sndBtn').addEventListener('click',()=>{
   if(SND.enabled)SND.confirm();
 });
 
+/* Tour launch button */
+const tourBtn=document.getElementById('tourBtn');
+if(tourBtn){
+  // Stop pulse animation if user already saw the tour
+  try{if(localStorage.getItem('agv_tour_seen')==='1')tourBtn.classList.add('seen');}catch(e){}
+  tourBtn.addEventListener('click',()=>{startTour();tourBtn.classList.add('seen');});
+}
+
 /* Intro: skip, enter, and auto-play arpeggio when user first interacts */
 const intro=document.getElementById('introOverlay');
 const introEnter=document.getElementById('introEnter');
@@ -3241,15 +3699,24 @@ function playIntroArpeggioIfReady(){
 // First interaction with the intro primes audio AND plays arpeggio
 intro.addEventListener('mouseenter',()=>{SND.prime();playIntroArpeggioIfReady();},{once:true});
 intro.addEventListener('click',()=>{SND.prime();playIntroArpeggioIfReady();},{once:true});
-introEnter.addEventListener('click',()=>{dismissIntro();setTimeout(()=>SND.confirm(),350);});
-introSkip.addEventListener('click',dismissIntro);
+introEnter.addEventListener('click',()=>{dismissIntro();setTimeout(()=>SND.confirm(),350);setTimeout(maybeAutoStartTour,1100);});
+introSkip.addEventListener('click',()=>{dismissIntro();setTimeout(maybeAutoStartTour,800);});
 // Keyboard: Esc or Enter
 document.addEventListener('keydown',e=>{
   if(intro.classList.contains('gone'))return;
   if(e.key==='Escape'||e.key==='Enter'){dismissIntro();SND.prime();}
 });
 // Auto-dismiss after 9s if user does nothing (UX safety)
-setTimeout(()=>dismissIntro(),30000);
+setTimeout(()=>{if(!document.getElementById('introOverlay').classList.contains('gone'))dismissIntro();setTimeout(maybeAutoStartTour,800);},30000);
+
+/* Auto-start tour first time only */
+function maybeAutoStartTour(){
+  try{
+    if(localStorage.getItem('agv_tour_seen')==='1')return;
+  }catch(e){}
+  if(TOUR.active)return;
+  startTour();
+}
 
 /* Contextual sounds on specific app events */
 const _origRunSim=runSimulator;
