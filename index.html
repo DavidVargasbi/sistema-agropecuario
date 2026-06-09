@@ -128,10 +128,81 @@
 
   /* ===== TAB NAVIGATION (replaces long scroll with windows) ===== */
   .tabnav{position:sticky;top:0;z-index:40;background:linear-gradient(180deg,var(--bg) 0%,var(--bg) 80%,rgba(244,241,232,0));backdrop-filter:blur(4px);padding:10px 0 14px;margin-bottom:6px}
-  .tabnav-inner{display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:7px;box-shadow:var(--shadow)}
+  .tabnav-inner{
+    display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+    background:var(--paper);
+    border:2px solid var(--gold);
+    border-radius:14px;padding:7px;
+    box-shadow:var(--shadow);position:relative;
+    animation:tabnavBreath 2.2s ease-in-out infinite
+  }
+  /* strong sweeping highlight inside the bar */
+  .tabnav-inner::before{
+    content:"";position:absolute;inset:-3px;border-radius:16px;pointer-events:none;z-index:-1;
+    background:linear-gradient(90deg,transparent 0%,rgba(224,168,58,.5) 15%,rgba(255,232,128,.85) 50%,rgba(224,168,58,.5) 85%,transparent 100%);
+    background-size:220% 100%;
+    filter:blur(10px);opacity:0;
+    animation:tabnavSweep 3.5s ease-in-out infinite
+  }
+  /* "Navega aquí" floating tag, points to the tab bar */
+  .tabnav-inner::after{
+    content:"⬆ Navega entre ventanas";
+    position:absolute;top:calc(100% + 6px);right:14px;
+    background:var(--gold);color:#3a2c08;
+    font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    padding:3px 9px 3px 8px;border-radius:6px;
+    box-shadow:0 4px 10px rgba(224,168,58,.4), 0 0 0 1px rgba(58,44,8,.15);
+    pointer-events:none;
+    animation:tabnavHint 2.2s ease-in-out infinite
+  }
+  @keyframes tabnavBreath{
+    0%,100%{
+      border-color:var(--gold);
+      box-shadow:var(--shadow), 0 0 0 0 rgba(224,168,58,0), 0 0 0 0 rgba(224,168,58,0)
+    }
+    50%{
+      border-color:#fff8d0;
+      box-shadow:var(--shadow), 0 0 0 4px rgba(224,168,58,.35), 0 0 40px 8px rgba(224,168,58,.4)
+    }
+  }
+  @keyframes tabnavSweep{
+    0%,100%{opacity:0;background-position:-120% 0}
+    50%{opacity:.95;background-position:220% 0}
+  }
+  @keyframes tabnavHint{
+    0%,100%{transform:translateY(0);opacity:.9}
+    50%{transform:translateY(-3px);opacity:1}
+  }
+  /* Hint tag disappears after first tab click (user learned) */
+  body.tabs-used .tabnav-inner::after{display:none}
+  body.tabs-used .tabnav-inner{animation:tabnavBreathSoft 4s ease-in-out infinite}
+  @keyframes tabnavBreathSoft{
+    0%,100%{box-shadow:var(--shadow), 0 0 0 0 rgba(224,168,58,0)}
+    50%{box-shadow:var(--shadow), 0 0 22px 4px rgba(224,168,58,.2)}
+  }
+
   .tabbtn{position:relative;background:transparent;border:none;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--ink-soft);padding:9px 16px;border-radius:10px;cursor:pointer;transition:.18s;display:flex;align-items:center;gap:7px;letter-spacing:.01em}
-  .tabbtn:hover{background:#f8f1de;color:var(--forest-deep)}
-  .tabbtn.on{background:var(--forest);color:#f4f1e8;box-shadow:0 2px 8px rgba(17,39,26,.22)}
+  .tabbtn:hover{background:#f8f1de;color:var(--forest-deep);transform:translateY(-1px)}
+  .tabbtn.on{
+    background:var(--forest);color:#f4f1e8;
+    box-shadow:0 2px 8px rgba(17,39,26,.22);
+    animation:tabActiveBeat 1.6s ease-in-out infinite
+  }
+  @keyframes tabActiveBeat{
+    0%,100%{
+      box-shadow:0 2px 8px rgba(17,39,26,.22), 0 0 0 0 rgba(224,168,58,.7), 0 0 0 0 rgba(224,168,58,.4)
+    }
+    50%{
+      box-shadow:0 2px 12px rgba(17,39,26,.3), 0 0 0 4px rgba(224,168,58,.4), 0 0 18px 6px rgba(224,168,58,.45)
+    }
+  }
+  /* Inactive tabs also gently invite click */
+  .tabbtn:not(.on){animation:tabHintInactive 3s ease-in-out infinite}
+  body.tabs-used .tabbtn:not(.on){animation:none}
+  @keyframes tabHintInactive{
+    0%,100%{background:transparent}
+    50%{background:rgba(224,168,58,.06)}
+  }
   .tabbtn .tab-ic{font-size:15px;line-height:1}
   .tabbtn .tab-badge{position:absolute;top:-3px;right:-3px;background:var(--gold);color:#3a2c08;font-size:9px;font-weight:700;padding:1px 5px;border-radius:5px;font-family:'IBM Plex Mono',monospace}
   .tabbtn.on .tab-badge{background:#fff;color:var(--forest-deep)}
@@ -472,6 +543,183 @@
     .tourbtn .tb-v{font-size:12px}
     .tourbtn .tb-l{display:none}
   }
+
+  /* ===== CHATBOT · floating launch button + premium side panel ===== */
+  .cbot-btn{
+    position:fixed;left:16px;bottom:16px;z-index:300;
+    display:flex;align-items:center;gap:9px;
+    background:linear-gradient(135deg,var(--forest) 0%,var(--forest-deep) 100%);
+    color:#fff8d0;border:1px solid var(--gold);border-radius:50px;
+    padding:10px 16px 10px 11px;cursor:pointer;
+    font-family:inherit;font-size:13px;font-weight:600;letter-spacing:.01em;
+    box-shadow:0 8px 22px rgba(17,39,26,.32), 0 0 0 0 rgba(224,168,58,.4);
+    transition:transform .18s, box-shadow .18s, background .18s;
+    animation:cbotBtnPulse 3.4s ease-in-out infinite
+  }
+  .cbot-btn:hover{transform:translateY(-2px);background:linear-gradient(135deg,var(--gold),#ecb852);color:#3a2c08;box-shadow:0 12px 28px rgba(224,168,58,.45), 0 0 0 5px rgba(224,168,58,.18)}
+  .cbot-btn .cb-av{width:30px;height:30px;border-radius:50%;background:var(--gold);color:#3a2c08;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 0 0 1px rgba(255,253,248,.4) inset, 0 0 8px rgba(224,168,58,.5);flex:none;position:relative}
+  .cbot-btn:hover .cb-av{background:var(--forest);color:#fff8d0}
+  .cbot-btn .cb-av::after{content:"";position:absolute;right:-2px;bottom:-2px;width:9px;height:9px;background:#7ee0a0;border-radius:50%;border:2px solid var(--forest);box-shadow:0 0 6px #7ee0a0;animation:cbotDot 2s ease-in-out infinite}
+  .cbot-btn:hover .cb-av::after{border-color:var(--gold)}
+  @keyframes cbotDot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.15);opacity:.7}}
+  @keyframes cbotBtnPulse{0%,100%{box-shadow:0 8px 22px rgba(17,39,26,.32), 0 0 0 0 rgba(224,168,58,.4)}50%{box-shadow:0 8px 22px rgba(17,39,26,.32), 0 0 0 7px rgba(224,168,58,0)}}
+  .cbot-btn.open{animation:none}
+  .cbot-btn .cb-txt{display:flex;flex-direction:column;line-height:1.05;align-items:flex-start}
+  .cbot-btn .cb-l{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);opacity:.9}
+  .cbot-btn:hover .cb-l{color:#3a2c08}
+  .cbot-btn .cb-v{font-family:'Fraunces',serif;font-weight:600;font-size:13.5px}
+  @media(max-width:680px){.cbot-btn .cb-l{display:none}.cbot-btn{padding:8px 13px 8px 9px}}
+
+  /* Notification badge */
+  .cbot-btn .cb-badge{position:absolute;top:-4px;right:-4px;background:var(--bad);color:#fff;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;padding:2px 6px;border-radius:9px;border:2px solid #fff;display:none}
+  .cbot-btn.has-notif .cb-badge{display:block;animation:cbotBadge .4s ease-out}
+  @keyframes cbotBadge{from{transform:scale(0)}to{transform:scale(1)}}
+
+  /* ===== Chatbot panel ===== */
+  .cbot-panel{
+    position:fixed;left:16px;bottom:16px;z-index:301;
+    width:min(400px,calc(100vw - 32px));
+    height:min(620px,calc(100vh - 32px));
+    background:linear-gradient(180deg,#fffdf8 0%,#faf6ec 100%);
+    border:1px solid var(--gold);border-radius:18px;
+    box-shadow:0 30px 70px rgba(0,0,0,.4), 0 0 0 1px rgba(224,168,58,.3), 0 0 38px rgba(224,168,58,.18);
+    display:flex;flex-direction:column;overflow:hidden;
+    transform:translateY(20px) scale(.96);opacity:0;visibility:hidden;
+    transition:transform .3s cubic-bezier(.4,0,.2,1), opacity .25s ease, visibility .3s;
+    transform-origin:bottom left
+  }
+  .cbot-panel.on{transform:none;opacity:1;visibility:visible}
+
+  .cbot-head{
+    background:linear-gradient(135deg,var(--forest-deep) 0%,var(--forest) 60%,#2a5a3e 100%);
+    color:#f4f1e8;padding:14px 16px 13px;
+    display:flex;align-items:center;gap:11px;
+    border-bottom:1px solid var(--gold);
+    position:relative
+  }
+  .cbot-head::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);box-shadow:0 0 6px rgba(224,168,58,.5)}
+  .cbot-head .ch-av{width:38px;height:38px;border-radius:50%;background:var(--gold);color:#3a2c08;display:flex;align-items:center;justify-content:center;font-size:19px;flex:none;box-shadow:0 4px 10px rgba(224,168,58,.3), 0 0 0 1px rgba(255,253,248,.5) inset;position:relative}
+  .cbot-head .ch-av::after{content:"";position:absolute;right:1px;bottom:1px;width:10px;height:10px;background:#7ee0a0;border-radius:50%;border:2px solid var(--gold);box-shadow:0 0 6px #7ee0a0}
+  .cbot-head .ch-info{flex:1;min-width:0}
+  .cbot-head .ch-name{font-family:'Fraunces',serif;font-weight:600;font-size:15px;color:#fff8d0;line-height:1.1}
+  .cbot-head .ch-status{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.06em;color:#cfe0cf;margin-top:2px;display:flex;align-items:center;gap:5px}
+  .cbot-head .ch-status::before{content:"";width:6px;height:6px;border-radius:50%;background:#7ee0a0;box-shadow:0 0 5px #7ee0a0;animation:cbotDot 2s ease-in-out infinite}
+  .cbot-head .ch-close{background:transparent;border:none;color:#cfe0cf;cursor:pointer;font-size:18px;padding:6px 10px;border-radius:8px;transition:.12s}
+  .cbot-head .ch-close:hover{background:rgba(255,253,248,.14);color:#fff8d0}
+
+  .cbot-body{
+    flex:1;overflow-y:auto;padding:14px 14px 8px;
+    background:
+      radial-gradient(ellipse at top, rgba(95,170,90,.04), transparent 50%),
+      linear-gradient(180deg,#fffdf8,#faf6ec);
+    scroll-behavior:smooth
+  }
+  .cbot-body::-webkit-scrollbar{width:6px}
+  .cbot-body::-webkit-scrollbar-thumb{background:rgba(156,107,63,.25);border-radius:3px}
+  .cbot-body::-webkit-scrollbar-thumb:hover{background:rgba(156,107,63,.4)}
+
+  /* messages */
+  .cbot-msg{display:flex;gap:8px;margin-bottom:12px;animation:msgIn .3s ease-out}
+  @keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .cbot-msg.user{flex-direction:row-reverse}
+  .cbot-msg .m-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex:none;box-shadow:0 2px 6px rgba(0,0,0,.1)}
+  .cbot-msg.bot .m-av{background:var(--forest);color:#fff8d0}
+  .cbot-msg.user .m-av{background:var(--clay);color:#fff}
+  .cbot-msg .m-bubble{
+    max-width:78%;padding:9px 12px 9px 13px;border-radius:14px;
+    font-size:13px;line-height:1.5;
+    box-shadow:0 1px 3px rgba(0,0,0,.06)
+  }
+  .cbot-msg.bot .m-bubble{
+    background:#fff;border:1px solid var(--line);border-top-left-radius:4px;
+    color:var(--ink)
+  }
+  .cbot-msg.user .m-bubble{
+    background:linear-gradient(135deg,var(--forest),var(--forest-deep));color:#f4f1e8;
+    border-top-right-radius:4px
+  }
+  .cbot-msg.bot.welcome .m-bubble{
+    background:linear-gradient(135deg,#fbf3e6,#fffdf8);
+    border:1px solid var(--gold);
+    box-shadow:0 2px 8px rgba(224,168,58,.15)
+  }
+  .cbot-msg .m-bubble b{color:var(--forest-deep)}
+  .cbot-msg.user .m-bubble b{color:#fff8d0}
+  .cbot-msg .m-bubble code{background:#eef3ec;padding:1px 5px;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--forest-deep)}
+  .cbot-msg .m-bubble a{color:var(--terra);text-decoration:none;border-bottom:1px dotted var(--terra)}
+  .cbot-msg .m-bubble a:hover{color:var(--forest-deep);border-color:var(--forest-deep)}
+
+  /* action buttons inside bot messages */
+  .cbot-actions{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+  .cbot-act{
+    background:var(--forest);color:#f4f1e8;border:none;border-radius:7px;
+    padding:6px 11px;font-family:inherit;font-size:11.5px;font-weight:600;cursor:pointer;
+    transition:.15s;display:inline-flex;align-items:center;gap:4px
+  }
+  .cbot-act:hover{background:var(--gold);color:#3a2c08}
+  .cbot-act.alt{background:transparent;color:var(--forest-deep);border:1px solid var(--line)}
+  .cbot-act.alt:hover{background:var(--gold);color:#3a2c08;border-color:var(--gold)}
+  .cbot-act::after{content:"→";font-size:11px}
+  .cbot-act.no-arrow::after{display:none}
+
+  /* Echo chip: shows what the bot understood */
+  .cbot-echo{display:inline-flex;align-items:center;gap:6px;background:#eef3ec;border:1px solid var(--line);border-radius:14px;padding:3px 10px;font-size:10.5px;color:var(--ink-soft);margin-bottom:7px;max-width:100%}
+  .cbot-echo .ec-l{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.06em;color:var(--clay);text-transform:uppercase}
+  .cbot-echo .ec-v{color:var(--forest-deep);font-weight:600}
+
+  /* No-match honest block */
+  .cbot-msg.bot.unknown .m-bubble{background:linear-gradient(135deg,#fef6e8,#fffdf8);border:1px solid #e8c97a}
+  .cbot-msg.bot.unknown .unk-title{font-family:'Fraunces',serif;font-weight:600;color:var(--clay);font-size:14px}
+  .cbot-msg.bot.unknown .unk-not{font-size:12px;color:var(--ink-soft);font-style:italic;margin-top:3px}
+
+  /* Typing indicator */
+  .cbot-typing{display:flex;gap:8px;margin-bottom:12px;align-items:center}
+  .cbot-typing .m-av{width:28px;height:28px;border-radius:50%;background:var(--forest);color:#fff8d0;display:flex;align-items:center;justify-content:center;font-size:14px;flex:none}
+  .cbot-typing .bubble{background:#fff;border:1px solid var(--line);border-radius:14px;border-top-left-radius:4px;padding:11px 14px;display:flex;gap:4px}
+  .cbot-typing .dot{width:7px;height:7px;border-radius:50%;background:var(--ink-soft);animation:tdot 1.2s ease-in-out infinite}
+  .cbot-typing .dot:nth-child(2){animation-delay:.15s}
+  .cbot-typing .dot:nth-child(3){animation-delay:.3s}
+  @keyframes tdot{0%,80%,100%{transform:translateY(0);opacity:.4}40%{transform:translateY(-5px);opacity:1}}
+
+  /* Suggested chips (quick prompts) */
+  .cbot-sugg{padding:6px 14px 12px;border-top:1px solid var(--line);background:#faf6ec}
+  .cbot-sugg .sugg-l{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;color:var(--ink-soft);text-transform:uppercase;margin-bottom:6px}
+  .cbot-sugg .sugg-row{display:flex;flex-wrap:wrap;gap:5px}
+  .cbot-chip{
+    background:#fff;border:1px solid var(--line);color:var(--forest-deep);
+    border-radius:14px;padding:5px 10px;font-size:11.5px;cursor:pointer;
+    transition:.15s;font-family:inherit
+  }
+  .cbot-chip:hover{background:var(--forest);color:#f4f1e8;border-color:var(--forest)}
+
+  /* Input area */
+  .cbot-input{
+    padding:12px 14px 14px;background:#fff;border-top:1px solid var(--line);
+    display:flex;gap:8px;align-items:flex-end
+  }
+  .cbot-input textarea{
+    flex:1;border:1px solid var(--line);border-radius:11px;
+    padding:9px 12px;font-family:inherit;font-size:13px;color:var(--ink);
+    resize:none;min-height:40px;max-height:100px;outline:none;
+    background:#faf6ec;transition:.15s;line-height:1.4
+  }
+  .cbot-input textarea:focus{border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px rgba(224,168,58,.15)}
+  .cbot-input textarea::placeholder{color:var(--ink-soft)}
+  .cbot-send{
+    width:40px;height:40px;border-radius:11px;
+    background:linear-gradient(135deg,var(--gold),#ecb852);
+    color:#3a2c08;border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;font-size:18px;
+    box-shadow:0 4px 10px rgba(224,168,58,.3);transition:.15s
+  }
+  .cbot-send:hover{transform:translateY(-1px);box-shadow:0 6px 14px rgba(224,168,58,.45)}
+  .cbot-send:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+  /* Mobile: full screen */
+  @media(max-width:480px){
+    .cbot-panel{left:8px;right:8px;bottom:8px;top:8px;width:auto;height:auto;border-radius:14px}
+  }
+
 
   /* Overlay container is non-blocking; only the tooltip captures clicks */
   .tour-overlay{position:fixed;inset:0;z-index:9000;pointer-events:none;opacity:0;transition:opacity .25s ease;visibility:hidden}
@@ -1190,6 +1438,32 @@
   <span id="sndIcon">🔊</span>
   <span class="snd-hint" id="sndHint">Sonidos: ON</span>
 </button>
+
+<!-- ===== CHATBOT · floating launch + panel ===== -->
+<button class="cbot-btn" id="cbotBtn" title="Abrir asistente AgroData">
+  <span class="cb-av">🤖<span class="cb-badge" id="cbotBadge">1</span></span>
+  <span class="cb-txt"><span class="cb-l">ASISTENTE</span><span class="cb-v">Pregúntame</span></span>
+</button>
+
+<div class="cbot-panel" id="cbotPanel" role="dialog" aria-label="Asistente AgroData">
+  <div class="cbot-head">
+    <div class="ch-av">🤖</div>
+    <div class="ch-info">
+      <div class="ch-name">Asesor AgroData</div>
+      <div class="ch-status">En línea · responde al instante</div>
+    </div>
+    <button class="ch-close" id="cbotClose" aria-label="Cerrar">✕</button>
+  </div>
+  <div class="cbot-body" id="cbotBody"></div>
+  <div class="cbot-sugg" id="cbotSugg">
+    <div class="sugg-l">SUGERENCIAS</div>
+    <div class="sugg-row" id="cbotSuggRow"></div>
+  </div>
+  <div class="cbot-input">
+    <textarea id="cbotInput" placeholder="Pregúntame algo… (ej: ¿precio del café?)" rows="1"></textarea>
+    <button class="cbot-send" id="cbotSend" aria-label="Enviar">➤</button>
+  </div>
+</div>
 
 <!-- ===== GUIDED TOUR OVERLAY ===== -->
 <div class="tour-overlay" id="tourOverlay" role="dialog" aria-label="Tutorial de la plataforma">
@@ -2962,7 +3236,7 @@ function startTour(){
   // hide intro if still showing
   const intro=document.getElementById('introOverlay');if(intro&&!intro.classList.contains('gone'))dismissIntro();
   renderTourStep();
-  try{localStorage.setItem('agv_tour_seen','1');}catch(e){}
+  // (tour runs on every session — no localStorage marker)
   if(typeof SND==='object'&&SND.cta)SND.cta();
 }
 
@@ -3139,6 +3413,464 @@ document.addEventListener('keydown',e=>{
 });
 /* re-position on resize */
 window.addEventListener('resize',()=>{if(TOUR.active)renderTourStep();});
+
+/* ============================================================
+   CHATBOT · Asesor AgroData (knowledge base + rule-based matching)
+   - 50+ entradas con keywords, sinónimos, respuesta, acciones
+   - Detecta intención y devuelve mejor coincidencia
+   - Cada respuesta puede incluir botones de acción (cambiar tab, abrir modal, seleccionar producto)
+============================================================ */
+const CBOT={open:false,history:[],firstOpen:true};
+
+/* Knowledge base */
+const KB=[
+  /* === Greeting / help === */
+  {id:'hello',kw:['hola','buenas','hi','hello','saludos','buenos días','buenas tardes','buenas noches','hey'],
+   answer:'¡Hola! 👋 Soy el <b>Asesor AgroData</b>, tu consultor virtual. Conozco al 100% la plataforma: <b>125 municipios</b>, <b>9 subregiones</b>, <b>20 productos</b>, datos reales de SIPSA, DIAN y FNC. Pregúntame lo que quieras o usa las sugerencias de abajo.',
+   actions:[]},
+  {id:'help',kw:['ayuda','help','que puedes hacer','que sabes','qué sabes','funciones','para que sirves'],
+   answer:'Puedo ayudarte con:<br>• <b>Explicar</b> cualquier KPI, producto, municipio o concepto<br>• <b>Llevarte</b> a cualquier sección de la app con un clic<br>• <b>Buscar</b> precios reales, exportaciones, recomendaciones<br>• <b>Guiar</b> paso a paso para tomar decisiones agrícolas<br><br>Prueba escribiendo: <i>"precio del aguacate"</i>, <i>"qué sembrar en oriente"</i>, <i>"abre el simulador"</i>',
+   actions:[{label:'Tour completo',act:'tour'},{label:'Guía rápida',act:'guide'}]},
+
+  /* === Navigation (open tabs) === */
+  {id:'goto-resumen',kw:['resumen','dashboard principal','kpis','inicio','home'],
+   answer:'Te llevo al <b>Resumen</b>. Ahí tienes los KPIs principales (precio del producto activo, exportación Hass, validación de fuentes y auditoría).',
+   actions:[{label:'Ir a Resumen',act:'tab:resumen'}]},
+  {id:'goto-mapa',kw:['mapa','territorio','subregion','subregiones','zona','zonas','geografia','geografía','región','regiones'],
+   answer:'El <b>Mapa</b> tiene las 9 subregiones de Antioquia con sus 125 municipios. Haz clic en una zona y se actualiza todo el panel lateral con sus métricas y cultivos.',
+   actions:[{label:'Abrir Mapa',act:'tab:mapa'}]},
+  {id:'goto-productos',kw:['productos','producto','catalogo','catálogo','cultivos lista'],
+   answer:'En <b>Productos</b> ves los 125 municipios filtrables y un explorador del producto activo con gráfica de precios. Los precios de papa, aguacate Hass, café, tomate, cebolla y plátano son <b>reales 2024-2026</b>.',
+   actions:[{label:'Abrir Productos',act:'tab:productos'}]},
+  {id:'goto-recom',kw:['recomendaciones','qué sembrar','que sembrar','recomienda','ranking','mejor cultivo'],
+   answer:'<b>Recomendaciones</b> te muestra el ranking de cultivos por rentabilidad y riesgo según la zona seleccionada. Primero elige una zona en el Mapa, luego entra aquí.',
+   actions:[{label:'Ver recomendaciones',act:'tab:recomendaciones'},{label:'Antes ir al Mapa',act:'tab:mapa'}]},
+  {id:'goto-sim',kw:['simulador','simular','simulación','simulacion','predicción','prediccion','viabilidad','siembra hoy','que pasa si','como simulo','cómo simulo','como uso simulador','probar siembra','generar análisis','generar analisis'],
+   answer:'El <b>Simulador predictivo</b> es el módulo más potente: ingresa fecha, municipio, producto, temporada y punto de venta. Te devuelve <b>viabilidad (0-100)</b>, fecha estimada de cosecha, ventana de venta, precio esperado, riesgo y una alternativa más rentable.',
+   actions:[{label:'Abrir Simulador',act:'tab:simulador'}]},
+  {id:'goto-exp',kw:['exportacion','exportación','exportar','mercado externo','internacional','exportaciones'],
+   answer:'En <b>Exportación</b> ves los destinos por producto. Aguacate Hass tiene datos reales 2025 (DIAN/Analdex): US$177,4 M de Antioquia (+50,2%), 47,3% del país. También banano, café, flores y cacao.',
+   actions:[{label:'Ver Exportación',act:'tab:exportacion'}]},
+
+  /* === KPIs === */
+  {id:'kpi-hass',kw:['hass','aguacate hass','exportacion hass','exportación hass','kpi dorado'],
+   answer:'<b>KPI dorado · Exportación Hass 2025:</b><br>• Antioquia: <b>US$ 177,4 M</b> (+50,2% vs 2024)<br>• Es el <b>47,3%</b> del total nacional (US$ 375 M)<br>• Producción Antioquia: ≈ 83.000 t (Corpohass)<br>• Destinos verificados (por valor): Países Bajos 35,8% · España 7,9% · Reino Unido 7,7% · Bélgica 4,6%<br>• Fuente: DIAN/Analdex (feb 2026)',
+   actions:[{label:'Ver KPI',act:'kpi:hass'},{label:'Panel Exportación',act:'tab:exportacion'}]},
+  {id:'kpi-validacion',kw:['validacion','validación','fuentes','verificable','verificar','kpi azul','tabla de fuentes'],
+   answer:'<b>KPI azul · Validación de fuentes:</b> tabla con <b>34 datos verificables</b> (30 reales + 1 en vivo + 3 demo). Cada fila tiene su URL clicable a la fuente oficial (boletines SIPSA, FNC, El Colombiano, Analdex). Te permite mostrar cualquier cifra del dashboard con su respaldo.',
+   actions:[{label:'Abrir KPI Validación',act:'kpi:validacion'}]},
+  {id:'kpi-audit',kw:['auditoria','auditoría','kpi tierra','documento','plan de correccion','plan de corrección'],
+   answer:'<b>KPI tierra · Auditoría de datos:</b> documento formal con 8 datos verificados, 5 a revisar y 1 corregido. Incluye los hallazgos (1,67M t → 83.000 t fue el error más grave, ya corregido), 18 fuentes oficiales y plan de 8 pasos con estado actual.',
+   actions:[{label:'Abrir Auditoría',act:'kpi:auditoria'}]},
+  {id:'trm',kw:['trm','dolar','dólar','tipo de cambio','tasa de cambio','cop usd','peso colombiano'],
+   answer:'La <b>TRM (Tasa Representativa del Mercado)</b> está cacheada al 26-may-2026 en <b>$3.667,06 COP/USD</b>. Puedes consultarla en vivo desde el KPI azul de Validación con el botón "Consultar API en vivo" (conecta al endpoint público de datos.gov.co · Socrata).',
+   actions:[{label:'Ver KPI Validación',act:'kpi:validacion'}]},
+
+  /* === Products (precios reales) === */
+  {id:'aguacate',kw:['aguacate','aguacate hass','hass precio','precio aguacate'],
+   answer:'<b>🥑 Aguacate Hass:</b> 5 anclas reales de SIPSA-DANE:<br>• Mar 2023 CMA Antioquia: $3.679/kg<br>• Mar 2024 CMA Antioquia: <b>$6.329/kg</b> (+72% vs 2023)<br>• Mar 2023 Corabastos: $5.440/kg<br>• Mar 2024 Corabastos: <b>$8.031/kg</b> (+47%)<br>• Abr 2024 retail: $9.000-$10.000/kg<br>Antioquia exporta 47,3% del Hass nacional.',
+   actions:[{label:'Seleccionar producto',act:'prod:Aguacate Hass'},{label:'Ver exportación',act:'tab:exportacion'}]},
+  {id:'papa',kw:['papa','papas','precio papa'],
+   answer:'<b>🥔 Papa:</b> 4 anclas reales SIPSA-DANE:<br>• Ago 2024 Bucaramanga (criolla): <b>$2.678/kg</b><br>• 22-mar-2025 Corabastos (parda pastusa): $2.000/kg<br>• 24-mar-2025 Corabastos: $2.300/kg<br>• 17-may-2025 Corabastos: $1.600/kg<br>Producida principalmente en Norte y Oriente antioqueño.',
+   actions:[{label:'Seleccionar Papa',act:'prod:Papa'}]},
+  {id:'cafe',kw:['café','cafe','precio cafe','precio café','fnc','federación cafeteros','federacion cafeteros'],
+   answer:'<b>☕ Café:</b> 10 anclas reales del precio interno FNC (carga 125 kg):<br>• Jul 2024: $14.400/kg<br>• Nov 2024: $20.000/kg (récord)<br>• <b>Pico 13-feb-2025: $27.040/kg</b><br>• Caída julio 2025: $18.560/kg<br>• Mar 2026 (actual FNC): $17.640/kg<br>Suroeste, Norte y Oriente son las zonas cafeteras.',
+   actions:[{label:'Seleccionar Café',act:'prod:Café'}]},
+  {id:'tomate',kw:['tomate','tomate chonto','precio tomate'],
+   answer:'<b>🍅 Tomate chonto:</b> 3 anclas reales SIPSA:<br>• 9-mar-2024: $3.750/kg<br>• 23-ago-2024: <b>$1.932/kg</b> (caída por sobreoferta)<br>• Ene 2025 CMA Medellín: $3.199/kg (+51,83%)',
+   actions:[{label:'Seleccionar Tomate',act:'prod:Tomate'}]},
+  {id:'cebolla',kw:['cebolla','cebolla cabezona','precio cebolla'],
+   answer:'<b>🧅 Cebolla cabezona blanca:</b> 5 anclas reales SIPSA:<br>• 6-sep-2024 CMA Medellín: $2.600/kg (+20%)<br>• 15-abr-2025 Corabastos: $1.750/kg<br>• 13-nov-2025 Armenia: $1.967/kg<br>• 10-dic-2025 Pasto: $859/kg<br>• Dic 2025 Bucaramanga: $1.184/kg',
+   actions:[{label:'Seleccionar Cebolla',act:'prod:Cebolla'}]},
+  {id:'platano',kw:['plátano','platano','platano harton','plátano hartón','banano','musa'],
+   answer:'<b>🍌 Plátano hartón verde:</b> 7 anclas reales SIPSA:<br>• 30-ago-2024 Valledupar: $1.650/kg<br>• 30-ago-2024 Montería: $1.125/kg<br>• 6-sep-2024 Bucaramanga: $6.500/kg (evento atípico)<br>• 4-nov-2025 Armenia: $1.767/kg<br>• 7-ene-2026 Montería: $2.750/kg<br>Producido en Urabá antioqueño, Córdoba y Quindío.',
+   actions:[{label:'Seleccionar Plátano',act:'prod:Plátano'}]},
+
+  /* === Subregiones === */
+  {id:'sub-oriente',kw:['oriente','rionegro','la ceja','marinilla','guarne','el retiro'],
+   answer:'<b>🌿 Subregión Oriente:</b> altiplano frío muy productivo. 23 municipios. Vocación: <b>papa, hortalizas, fresa, flores</b>. Centro de abasto: CMA Itagüí (~55 km, 1h). Una de las zonas más rentables.',
+   actions:[{label:'Ver en Mapa',act:'sub:oriente'}]},
+  {id:'sub-suroeste',kw:['suroeste','jardín','jardin','jericó','jerico','andes','urrao'],
+   answer:'<b>🌿 Subregión Suroeste:</b> región cafetera por excelencia. Templado a frío. Vocación: <b>café, aguacate Hass, plátano, cítricos</b>. Hass tiene certificación de origen aquí.',
+   actions:[{label:'Ver en Mapa',act:'sub:suroeste'}]},
+  {id:'sub-uraba',kw:['urabá','uraba','apartadó','apartado','chigorodó','chigorodo','turbo','golfo'],
+   answer:'<b>🌿 Subregión Urabá:</b> cálida tropical, salida al mar. Vocación: <b>banano (exportación), plátano, cacao, palma</b>. Punto clave de exportación por el Golfo.',
+   actions:[{label:'Ver en Mapa',act:'sub:uraba'}]},
+  {id:'sub-norte',kw:['norte antioquia','santa rosa','don matias','don matías','yarumal','entrerríos','entrerrios'],
+   answer:'<b>🌿 Subregión Norte:</b> altiplano lechero y papero. Frío. Vocación: <b>papa, leche, hortalizas, fresa</b>. Carolina, Don Matías, Santa Rosa de Osos.',
+   actions:[{label:'Ver en Mapa',act:'sub:norte'}]},
+  {id:'sub-occidente',kw:['occidente','santa fe de antioquia','santa fé','frontino','dabeiba','sopetrán','sopetran'],
+   answer:'<b>🌿 Subregión Occidente:</b> templado a cálido seco. Vocación: <b>frutales (mango, cítricos), caña, café</b>. Santa Fe de Antioquia es centro turístico.',
+   actions:[{label:'Ver en Mapa',act:'sub:occidente'}]},
+  {id:'sub-nordeste',kw:['nordeste','remedios','segovia','amalfi','yolombó','yolombo'],
+   answer:'<b>🌿 Subregión Nordeste:</b> templado-cálido. Vocación: <b>café, plátano, cacao</b>. Tradicionalmente minera, en transición agrícola.',
+   actions:[{label:'Ver en Mapa',act:'sub:nordeste'}]},
+  {id:'sub-bajocauca',kw:['bajo cauca','caucasia','el bagre','nechi','nechí','tarazá','taraza'],
+   answer:'<b>🌿 Subregión Bajo Cauca:</b> cálida húmeda. Vocación: <b>caucho, palma, arroz, plátano, yuca, ganado</b>. Frontera con Córdoba.',
+   actions:[{label:'Ver en Mapa',act:'sub:bajocauca'}]},
+  {id:'sub-magdalena',kw:['magdalena medio','puerto berrío','puerto berrio','yondó','yondo','puerto nare','caracolí','caracoli'],
+   answer:'<b>🌿 Subregión Magdalena Medio:</b> cálida fluvial. Vocación: <b>palma, ganado, pesca, cacao, caucho</b>. Puerto Berrío es el centro logístico.',
+   actions:[{label:'Ver en Mapa',act:'sub:magdalena'}]},
+  {id:'sub-aburra',kw:['aburrá','aburra','medellín','medellin','itagüí','itagui','envigado','sabaneta','bello'],
+   answer:'<b>🌿 Valle de Aburrá:</b> templado urbano. No es agrícola por densidad poblacional, pero es el <b>centro comercial</b>: aquí está la CMA Itagüí (Central Mayorista) y la Plaza Minorista de Medellín, los dos centros de abasto más importantes.',
+   actions:[{label:'Ver en Mapa',act:'sub:aburra'}]},
+
+  /* === Conceptos === */
+  {id:'piso-termico',kw:['piso termico','piso térmico','clima frio','clima cálido','clima templado','altitud','temperatura'],
+   answer:'<b>Piso térmico:</b> clasificación por altitud y temperatura:<br>• <b>Cálido</b> (0-1.000m): banano, cacao, plátano, palma, maracuyá, yuca<br>• <b>Templado</b> (1.000-2.000m): café, aguacate Hass, cítricos, plátano<br>• <b>Frío</b> (2.000-3.000m): papa, hortalizas, fresa, flores, mora<br>El piso de cada subregión se ve al hacer clic en el Mapa.',
+   actions:[{label:'Ver Mapa',act:'tab:mapa'}]},
+  {id:'sipsa',kw:['sipsa','dane','boletin sipsa','boletín sipsa'],
+   answer:'<b>SIPSA-DANE:</b> Sistema de Información de Precios y Abastecimiento del Sector Agropecuario. Publica precios mayoristas <b>diarios</b> de ~700 productos en 25 mercados. Es la fuente oficial de precios en Colombia. Tenemos 28 anclas reales SIPSA en el dashboard (papa, aguacate, tomate, cebolla, plátano).',
+   actions:[{label:'Ver fuentes',act:'kpi:validacion'}]},
+  {id:'dian',kw:['dian','exportaciones colombia','analdex','partida arancelaria'],
+   answer:'<b>DIAN:</b> Dirección de Impuestos y Aduanas Nacionales. Publica estadísticas de exportación por producto y país. <b>Analdex</b> es el gremio que analiza esos datos. El dato Hass 2025 (US$375M nacional, US$177,4M Antioquia) viene de Analdex/DIAN feb 2026.',
+   actions:[{label:'Ver Exportación',act:'tab:exportacion'}]},
+  {id:'fnc',kw:['fnc','federación cafeteros','federacion cafeteros','precio carga café','carga 125 kg'],
+   answer:'<b>FNC:</b> Federación Nacional de Cafeteros. Publica el <b>precio interno diario</b> para la carga de 125 kg de café pergamino seco. El precio en COP/kg se obtiene dividiendo entre 125. Varía con cierre de Bolsa NY y TRM. Mar 2026: $17.640/kg.',
+   actions:[{label:'Ver precio Café',act:'prod:Café'}]},
+  {id:'corpohass',kw:['corpohass','sicex','informe hass'],
+   answer:'<b>Corpohass:</b> Corporación Colombiana del Hass. Publica informe sectorial trimestral con cifras de producción, hectáreas, exportación y destinos. Fuente clave para la corrección de "1,67M t → 83.000 t" en la auditoría.',
+   actions:[{label:'Ver auditoría',act:'kpi:auditoria'}]},
+  {id:'demo',kw:['demo','simulado','sintético','sintetico','ficticio','no real','inventado'],
+   answer:'Los datos <b>"DEMO"</b> son del motor sintético del prototipo (consistente, pero no calibrado a la realidad). Están claramente etiquetados en cada panel y en la tabla de Validación. Cobertura real actual: 6 de 20 productos (papa, aguacate, café, tomate, cebolla, plátano) tienen anclas reales SIPSA/FNC. El resto vendrá conectando EVA/SIPSA en producción.',
+   actions:[{label:'Ver auditoría',act:'kpi:auditoria'},{label:'Ver validación',act:'kpi:validacion'}]},
+
+  /* === Cómo usar === */
+  {id:'how-tour',kw:['tour','tutorial','recorrido','guía completa','guia completa'],
+   answer:'Tienes el <b>Tour guiado de 11 pasos</b> arriba a la derecha (botón dorado). Te lleva por toda la plataforma con resaltado visual. Dura ~2 minutos.',
+   actions:[{label:'Iniciar Tour',act:'tour'}]},
+  {id:'how-guide',kw:['guía rápida','guia rapida','ayuda rapida','manual'],
+   answer:'Tienes la <b>Guía rápida</b> en el botón "?" de la barra de pestañas. Es un resumen de 6 pestañas en una sola ventana.',
+   actions:[{label:'Abrir Guía',act:'guide'}]},
+  {id:'how-currency',kw:['cambiar moneda','dolares','dólares','convertir','cop a usd','usd a cop'],
+   answer:'En la <b>barra superior</b> tienes el selector <b>Moneda · COP / USD</b>. Al cambiar a USD, todos los precios se reestiman usando la TRM ($3.667,06). Funciona en todas las pestañas a la vez.',
+   actions:[]},
+  {id:'how-export-ready',kw:['exportable','para exportar','qué exporta','que exporta'],
+   answer:'En el hero del producto activo ves <b>"Exportable: Sí/No"</b>. Productos exportables actualmente con datos reales: <b>aguacate Hass, banano, café, cacao, flores</b>. Los demás se consumen principalmente en mercado interno.',
+   actions:[{label:'Ver Exportación',act:'tab:exportacion'}]},
+  {id:'sound',kw:['sonido','silenciar','mute','sound','audio','volumen'],
+   answer:'El botón <b>🔊</b> abajo a la derecha activa/silencia los sonidos tech-UI. Tu preferencia se guarda automáticamente.',
+   actions:[]},
+
+  /* === Negocio / decisiones === */
+  {id:'business-rent',kw:['rentabilidad','ganancia','margen','utilidad','cuánto gano','cuanto gano'],
+   answer:'Cada producto muestra <b>margen estimado</b> en el hero. Para análisis profundo: <b>Recomendaciones</b> rankea cultivos por rentabilidad y riesgo según la zona. El <b>Simulador</b> proyecta cosecha + venta para una fecha específica. Los precios reales (papa, aguacate, café, tomate, cebolla, plátano) son SIPSA verificable.',
+   actions:[{label:'Ver Recomendaciones',act:'tab:recomendaciones'},{label:'Abrir Simulador',act:'tab:simulador'}]},
+  {id:'business-risk',kw:['riesgo','caída','caida','volatilidad','perder dinero'],
+   answer:'Cada producto trae <b>Riesgo de caída (%)</b>: probabilidad de que el precio baje en la ventana de cosecha. Productos con alta volatilidad (papa, tomate, cebolla) pueden ganar mucho o caer fuerte. Café y aguacate Hass son más estables. Mira el riesgo siempre junto al margen.',
+   actions:[{label:'Recomendaciones',act:'tab:recomendaciones'}]},
+  {id:'business-when',kw:['cuando sembrar','cuándo sembrar','mejor mes','calendario','época','epoca','siembra'],
+   answer:'Para saber cuándo sembrar un producto específico, usa el <b>Simulador</b>: ingresa el municipio, producto, temporada (lluvia/seca) y te dice la fecha de cosecha y precio esperado. El periodo base del modelo cubre jun-2024 a may-2025.',
+   actions:[{label:'Abrir Simulador',act:'tab:simulador'}]}
+];
+
+/* Common keyword expansion — accent-insensitive */
+function cbotNorm(s){return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();}
+function cbotScore(query,entry){
+  const q=cbotNorm(query);if(!q)return 0;
+  let score=0;
+  for(const k of entry.kw){
+    const kn=cbotNorm(k);
+    if(q===kn)return 1000;
+    if(q.includes(kn))score+=10*kn.length;
+    else if(kn.includes(q)&&q.length>=3)score+=5*q.length;
+    else{
+      // word-by-word fuzzy match
+      const qw=q.split(/\s+/),kw=kn.split(/\s+/);
+      for(const a of qw)for(const b of kw){if(a.length>=3&&b.length>=3&&(a===b||(a.length>4&&b.includes(a))||(b.length>4&&a.includes(b))))score+=3*Math.min(a.length,b.length);}
+    }
+  }
+  return score;
+}
+function cbotFind(query){
+  let best={score:0,entry:null};
+  const ranked=[];
+  for(const e of KB){const s=cbotScore(query,e);if(s>best.score){best={score:s,entry:e};}if(s>0)ranked.push({s,e});}
+  ranked.sort((a,b)=>b.s-a.s);
+  return {best:best.entry,score:best.score,top3:ranked.slice(0,3).map(r=>r.e)};
+}
+
+/* ===== DYNAMIC RESOLVERS · respuestas generadas desde los datos reales de la app ===== */
+/* Resolve a product name from the query if the user mentions one of the 20 productos */
+function cbotResolveProduct(q){
+  const qn=cbotNorm(q);if(!qn)return null;
+  let best={score:0,name:null};
+  Object.keys(PROD).forEach(p=>{
+    const pn=cbotNorm(p);
+    let s=0;
+    if(qn===pn)s=1000;
+    else if(qn.includes(pn))s=10*pn.length;
+    else if(pn.includes(qn)&&qn.length>=4)s=5*qn.length;
+    if(s>best.score)best={score:s,name:p};
+  });
+  // aliases for common variants
+  const alias={'banana':'Banano','musa':'Plátano','platano harton':'Plátano','aguacate':'Aguacate Hass','hass':'Aguacate Hass','citricos':'Cítricos','citrico':'Cítricos','maiz':'Maíz','frutilla':'Fresa','strawberry':'Fresa','passion fruit':'Maracuyá','sour sop':'Guanábana'};
+  for(const k in alias){if(qn.includes(cbotNorm(k))){const sc=8*k.length;if(sc>best.score)best={score:sc,name:alias[k]};}}
+  return best.score>=15?best.name:null;
+}
+function cbotProductAnswer(prodName){
+  const meta=PMETA[prodName]||{icon:'🌱'};
+  const m=metrics(prodName);
+  const realData=(typeof REAL_PRICES!=='undefined')?REAL_PRICES[prodName]:null;
+  let body=`<b>${meta.icon} ${prodName}</b><br>`;
+  // Current metrics from the app's engine
+  body+=`• Precio actual: <b>${money(m.cur)}</b> · variación mensual: <b>${m.mChg>=0?'+':''}${m.mChg.toFixed(1)}%</b><br>`;
+  body+=`• Margen estimado: <b>${Math.round(m.margin)}%</b> · riesgo de caída: <b>${Math.round(m.fall)}%</b><br>`;
+  body+=`• Piso térmico: <b>${PT[PROD[prodName].pt].label}</b> · familia: <b>${FAM[PROD[prodName].fam].short}</b><br>`;
+  body+=`• Exportable: <b>${PROD[prodName].exp?'Sí':'No'}</b><br>`;
+  // Real anchor data if available
+  if(realData&&realData.points&&realData.points.length){
+    body+=`<br><b>📊 Anclas reales SIPSA / FNC (${realData.points.length}):</b><br>`;
+    realData.points.slice(0,5).forEach(pt=>{
+      const mkt=pt.market?' · '+pt.market:'';
+      body+=`• <b>${pt.ymd}</b>${mkt}: <b>$${pt.value.toLocaleString('es-CO')}/kg</b><br>`;
+    });
+    if(realData.points.length>5)body+=`<i>(${realData.points.length-5} más en el KPI Validación)</i>`;
+  }else{
+    body+=`<br><i>⚠ Para este producto los precios vienen del motor demo. Datos reales 2024-2026 disponibles en: <b>Papa, Aguacate Hass, Café, Tomate, Cebolla, Plátano</b>.</i>`;
+  }
+  // Actions
+  const actions=[{label:'Activar producto',act:'prod:'+prodName}];
+  if(PROD[prodName].exp)actions.push({label:'Ver exportación',act:'tab:exportacion'});
+  actions.push({label:'Probar simulador',act:'tab:simulador'});
+  return {answer:body,actions:actions,echo:prodName};
+}
+
+/* Resolve a subregion from query */
+function cbotResolveSub(q){
+  const qn=cbotNorm(q);if(!qn)return null;
+  let best={score:0,key:null};
+  Object.keys(SUB).forEach(k=>{
+    const nm=cbotNorm(SUB[k].name);
+    const kn=cbotNorm(k);
+    if(qn.includes(nm)){if(nm.length>best.score)best={score:nm.length*10,key:k};}
+    else if(qn.includes(kn)&&kn.length>=4){if(kn.length>best.score)best={score:kn.length*8,key:k};}
+  });
+  return best.score>=30?best.key:null;
+}
+function cbotSubAnswer(subKey){
+  const s=SUB[subKey];
+  const a=subAgg(subKey);
+  const fams=PTFAM[s.pt];
+  const cropsList=Object.keys(PROD).filter(p=>PROD[p].pt===s.pt).slice(0,8);
+  const distTxt=s.dist===0?'En el mismo valle (sin flete)':'≈ '+s.dist+' km (~'+Math.max(1,Math.round(s.dist/55))+' h)';
+  let body=`<b>🌿 Subregión ${s.name}</b><br>`;
+  body+=`${s.desc}<br><br>`;
+  body+=`• Piso térmico: <b>${PT[s.pt].label}</b> · altitud: <b>${s.alt}</b><br>`;
+  body+=`• Municipios: <b>${a.n}</b> · centro de abasto: <b>${s.center}</b> (${distTxt})<br>`;
+  body+=`• Rentab. demo: <b>${a.rent}%</b> · riesgo demo: <b>${a.risk}%</b><br>`;
+  body+=`• Familias aptas: ${fams.map(f=>FAM[f].short).join(', ')}<br>`;
+  body+=`• Productos sugeridos: <b>${cropsList.join(', ')}</b>`;
+  return {answer:body,actions:[{label:'Ver en Mapa',act:'sub:'+subKey},{label:'Ver recomendaciones',act:'tab:recomendaciones'}],echo:s.name};
+}
+
+/* Resolve a municipality from query — returns {muni, sub} */
+function cbotResolveMuni(q){
+  const qn=cbotNorm(q);if(!qn||qn.length<4)return null;
+  let best={score:0,muni:null,sub:null};
+  Object.keys(MUNIS).forEach(sk=>{
+    MUNIS[sk].forEach(nm=>{
+      const mn=cbotNorm(nm);
+      if(qn===mn){if(mn.length*100>best.score)best={score:mn.length*100,muni:nm,sub:sk};}
+      else if(qn.includes(mn)&&mn.length>=4){if(mn.length*15>best.score)best={score:mn.length*15,muni:nm,sub:sk};}
+      else if(mn.includes(qn)&&qn.length>=5){if(qn.length*10>best.score)best={score:qn.length*10,muni:nm,sub:sk};}
+    });
+  });
+  return best.score>=50?{muni:best.muni,sub:best.sub}:null;
+}
+function cbotMuniAnswer(muniRes){
+  const s=SUB[muniRes.sub];
+  const fams=PTFAM[s.pt];
+  const distTxt=s.dist===0?'sin flete':'≈ '+s.dist+' km a centro de abasto';
+  let body=`<b>📍 ${muniRes.muni}</b> · Subregión <b>${s.name}</b><br>`;
+  body+=`• Piso térmico: <b>${PT[s.pt].label}</b><br>`;
+  body+=`• Altitud subregional: <b>${s.alt}</b><br>`;
+  body+=`• ${distTxt}<br>`;
+  body+=`• Vocación: <b>${fams.map(f=>FAM[f].short).join(', ')}</b><br>`;
+  body+=`<i>Datos por municipio (EVA/SIPSA) se cargan en la fase siguiente; los valores aplican a nivel de subregión.</i>`;
+  return {answer:body,actions:[{label:'Ver zona en Mapa',act:'sub:'+muniRes.sub},{label:'Recomendaciones',act:'tab:recomendaciones'}],echo:muniRes.muni};
+}
+
+/* Pretty rendering of bot messages */
+function cbotAddBotMsg(text,actions,opts){
+  opts=opts||{};
+  const body=document.getElementById('cbotBody');
+  const m=document.createElement('div');
+  m.className='cbot-msg bot'+(opts.welcome?' welcome':'')+(opts.unknown?' unknown':'');
+  let actionsHtml='';
+  if(actions&&actions.length){
+    actionsHtml='<div class="cbot-actions">'+actions.map((a,i)=>`<button class="cbot-act${i>0?' alt':''}" data-act="${a.act}">${a.label}</button>`).join('')+'</div>';
+  }
+  // Echo chip if present
+  const echoHtml=opts.echo?`<div class="cbot-echo"><span class="ec-l">Entendí:</span><span class="ec-v">${cbotEscape(opts.echo)}</span></div>`:'';
+  m.innerHTML=`<div class="m-av">🤖</div><div class="m-bubble">${echoHtml}${text}${actionsHtml}</div>`;
+  body.appendChild(m);
+  m.querySelectorAll('.cbot-act').forEach(btn=>btn.addEventListener('click',()=>cbotDoAction(btn.dataset.act)));
+  body.scrollTop=body.scrollHeight;
+}
+function cbotAddUserMsg(text){
+  const body=document.getElementById('cbotBody');
+  const m=document.createElement('div');
+  m.className='cbot-msg user';
+  m.innerHTML=`<div class="m-av">👤</div><div class="m-bubble">${cbotEscape(text)}</div>`;
+  body.appendChild(m);
+  body.scrollTop=body.scrollHeight;
+}
+function cbotEscape(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function cbotShowTyping(){
+  const body=document.getElementById('cbotBody');
+  const t=document.createElement('div');
+  t.className='cbot-typing';t.id='cbotTypingEl';
+  t.innerHTML='<div class="m-av">🤖</div><div class="bubble"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  body.appendChild(t);body.scrollTop=body.scrollHeight;
+}
+function cbotHideTyping(){const t=document.getElementById('cbotTypingEl');if(t)t.remove();}
+
+/* Action dispatcher: act strings like "tab:mapa", "prod:Café", "kpi:hass", "sub:oriente", "tour", "guide" */
+function cbotDoAction(act){
+  if(typeof SND==='object'&&SND.cta)SND.cta();
+  if(act==='tour'){cbotClose();if(typeof startTour==='function')startTour();return;}
+  if(act==='guide'){cbotClose();if(typeof openQuickGuide==='function')openQuickGuide();return;}
+  const [type,val]=act.split(':');
+  if(type==='tab'){if(typeof showTab==='function')showTab(val);cbotAddBotMsg('Listo, te llevé a la pestaña <b>'+val+'</b>.');return;}
+  if(type==='kpi'){
+    cbotClose();
+    if(val==='hass'){if(typeof showTab==='function')showTab('exportacion');}
+    else if(val==='validacion'&&typeof openValidationModal==='function')openValidationModal();
+    else if(val==='auditoria'&&typeof openAuditModal==='function')openAuditModal();
+    return;
+  }
+  if(type==='prod'){
+    if(typeof selectProduct==='function'){selectProduct(val);}
+    cbotAddBotMsg('Producto activo: <b>'+val+'</b>. Toda la app se actualizó.');return;
+  }
+  if(type==='sub'){
+    if(typeof selectSub==='function'){selectSub(val,true);}
+    if(typeof showTab==='function')showTab('mapa');
+    cbotAddBotMsg('Zona seleccionada en el Mapa.');return;
+  }
+}
+
+/* Main query handler · cascade resolver: KB → product → subregion → municipality → honest no-match */
+const MIN_KB_SCORE=20; // Threshold raised from 3 to 20: avoid false positives
+function cbotAsk(query){
+  query=(query||'').trim();if(!query)return;
+  cbotAddUserMsg(query);
+  cbotShowTyping();
+  setTimeout(()=>{
+    cbotHideTyping();
+    // 1. Try product match (highest priority for "precio de X")
+    const prodMatch=cbotResolveProduct(query);
+    // 2. Try municipality
+    const muniMatch=cbotResolveMuni(query);
+    // 3. Try subregion
+    const subMatch=cbotResolveSub(query);
+    // 4. Try KB
+    const {best:kbBest,score:kbScore,top3}=cbotFind(query);
+    // Decide best resolver
+    const candidates=[];
+    if(prodMatch)candidates.push({type:'prod',name:prodMatch,score:60});
+    if(muniMatch)candidates.push({type:'muni',data:muniMatch,score:55});
+    if(subMatch)candidates.push({type:'sub',key:subMatch,score:50});
+    if(kbBest&&kbScore>=MIN_KB_SCORE)candidates.push({type:'kb',entry:kbBest,score:kbScore});
+    // Sort by score; if tied prefer specific (product > muni > sub > kb)
+    candidates.sort((a,b)=>b.score-a.score);
+    if(candidates.length===0){
+      // Honest no-match
+      cbotAddBotMsg(
+        `<span class="unk-title">No tengo información sobre eso.</span><div class="unk-not">Mi base cubre solo lo que está dentro de la app. Estos son temas que sí domino bien:</div>`,
+        [
+          {label:'Lista de productos',act:'kb:goto-productos'},
+          {label:'Lista de subregiones',act:'kb:goto-mapa'},
+          {label:'Ayuda completa',act:'kb:help'}
+        ],
+        {unknown:true}
+      );
+      if(typeof SND==='object'&&SND.err)SND.err();
+      return;
+    }
+    const top=candidates[0];
+    let result;
+    if(top.type==='prod')result=cbotProductAnswer(top.name);
+    else if(top.type==='muni')result=cbotMuniAnswer(top.data);
+    else if(top.type==='sub')result=cbotSubAnswer(top.key);
+    else result={answer:top.entry.answer,actions:top.entry.actions||[],echo:top.entry.kw[0]};
+    cbotAddBotMsg(result.answer,result.actions,{echo:result.echo});
+    if(typeof SND==='object'&&SND.tick)SND.tick();
+  },520+Math.random()*200);
+}
+
+/* Allow kb: prefix in actions to chain answers */
+const _origDoAction=cbotDoAction;
+cbotDoAction=function(act){
+  if(act&&act.startsWith('kb:')){
+    const id=act.slice(3);
+    const entry=KB.find(e=>e.id===id);
+    if(entry){cbotAddBotMsg(entry.answer,entry.actions||[],{echo:entry.kw[0]});return;}
+  }
+  _origDoAction(act);
+};
+
+/* Suggested chips · DYNAMIC by active tab AND active product/subregion */
+function cbotUpdateSuggestions(){
+  const tab=(typeof currentTab!=='undefined')?currentTab:'resumen';
+  const prod=(typeof selProd!=='undefined')?selProd:'';
+  const sub=(typeof selSub!=='undefined')?selSub:'';
+  const subName=sub&&SUB[sub]?SUB[sub].name:'';
+  // Build context-aware suggestions
+  let suggs=[];
+  // Tab-base
+  const tabBase={
+    resumen:['¿Qué es el KPI dorado?','Explícame la TRM','¿Qué es la auditoría?'],
+    mapa:['Explícame los colores','¿Dónde está la CMA?','¿Qué es el piso térmico?'],
+    productos:['¿Qué es exportable?','Lista de productos','Llévame al simulador'],
+    recomendaciones:['¿Cómo leo el ranking?','¿Qué sembrar en '+(subName||'Oriente')+'?'],
+    simulador:['¿Qué es viabilidad?','¿Cómo lo uso?'],
+    exportacion:['¿Cuánto exportamos Hass?','Destinos por país','¿Qué países compran?']
+  };
+  suggs=[...(tabBase[tab]||tabBase.resumen)];
+  // Add product-aware suggestion
+  if(prod)suggs.unshift('Precio de '+prod);
+  // Add sub-aware suggestion (for non-mapa tabs only — mapa already has zone hints)
+  if(subName&&tab!=='mapa'&&tab!=='recomendaciones')suggs.push(subName);
+  // Trim to 4
+  suggs=suggs.slice(0,4);
+  const row=document.getElementById('cbotSuggRow');if(!row)return;
+  row.innerHTML=suggs.map(s=>`<button class="cbot-chip">${s}</button>`).join('');
+  row.querySelectorAll('.cbot-chip').forEach(c=>c.addEventListener('click',()=>{cbotAsk(c.textContent);}));
+}
+
+function cbotOpen(){
+  CBOT.open=true;
+  document.getElementById('cbotPanel').classList.add('on');
+  document.getElementById('cbotBtn').classList.add('open');
+  document.getElementById('cbotBtn').classList.remove('has-notif');
+  // Welcome message on first open
+  if(CBOT.firstOpen){
+    CBOT.firstOpen=false;
+    const tab=(typeof currentTab!=='undefined')?currentTab:'resumen';
+    const ctxMsg={
+      resumen:'Estás en <b>Resumen</b>. Los KPIs dorado, azul y tierra son los más importantes.',
+      mapa:'Estás en el <b>Mapa</b>. Haz clic en una zona para ver sus métricas y municipios.',
+      productos:'Estás en <b>Productos</b>. 6 productos tienen precios reales 2024-2026 (papa, aguacate, café, tomate, cebolla, plátano).',
+      recomendaciones:'Estás en <b>Recomendaciones</b>. Selecciona zona en el Mapa para ver el ranking.',
+      simulador:'Estás en el <b>Simulador</b>. Ingresa datos y dame "Generar análisis".',
+      exportacion:'Estás en <b>Exportación</b>. El Hass tiene datos reales 2025 verificables.'
+    };
+    cbotAddBotMsg('¡Hola! 👋 Soy el <b>Asesor AgroData</b>, tu consultor virtual interno. Conozco al 100% la plataforma. '+(ctxMsg[tab]||'')+'<br><br>Pregúntame lo que necesites o usa las sugerencias abajo.',
+      [{label:'Ver Tour',act:'tour'},{label:'Guía rápida',act:'guide'}],
+      {welcome:true});
+  }
+  cbotUpdateSuggestions();
+  setTimeout(()=>{const i=document.getElementById('cbotInput');if(i)i.focus();},340);
+  if(typeof SND==='object'&&SND.tab)SND.tab();
+}
+function cbotClose(){
+  CBOT.open=false;
+  document.getElementById('cbotPanel').classList.remove('on');
+  document.getElementById('cbotBtn').classList.remove('open');
+  if(typeof SND==='object'&&SND.tick)SND.tick();
+}
 
 function renderAuditKPI(){
   const c=AUDIT_DATA.contador;
@@ -3624,7 +4356,7 @@ document.getElementById('simSub').addEventListener('change',fillSimMunis);
 document.getElementById('simRun').addEventListener('click',runSimulator);
 
 /* ===== tab nav events ===== */
-document.querySelectorAll('.tabbtn').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+document.querySelectorAll('.tabbtn').forEach(b=>b.addEventListener('click',()=>{showTab(b.dataset.tab);document.body.classList.add('tabs-used');}));
 /* goto-btn delegate (any element with data-goto attribute switches tabs) */
 document.addEventListener('click',e=>{
   const btn=e.target.closest('[data-goto]');
@@ -3681,9 +4413,45 @@ document.getElementById('sndBtn').addEventListener('click',()=>{
 /* Tour launch button */
 const tourBtn=document.getElementById('tourBtn');
 if(tourBtn){
-  // Stop pulse animation if user already saw the tour
-  try{if(localStorage.getItem('agv_tour_seen')==='1')tourBtn.classList.add('seen');}catch(e){}
+  // Pulse stops after first click in the session (always pulses on new visit)
   tourBtn.addEventListener('click',()=>{startTour();tourBtn.classList.add('seen');});
+}
+
+/* Chatbot wireup */
+const cbotBtn=document.getElementById('cbotBtn');
+const cbotPanel=document.getElementById('cbotPanel');
+const cbotInput=document.getElementById('cbotInput');
+const cbotSend=document.getElementById('cbotSend');
+const cbotClose_=document.getElementById('cbotClose');
+if(cbotBtn){
+  cbotBtn.addEventListener('click',()=>{if(CBOT.open){cbotClose();}else{cbotOpen();}});
+  // Show notification badge initially so it's discoverable
+  try{if(localStorage.getItem('agv_cbot_seen')!=='1')cbotBtn.classList.add('has-notif');}catch(e){}
+}
+if(cbotClose_){cbotClose_.addEventListener('click',cbotClose);}
+function cbotSubmit(){
+  const v=cbotInput.value.trim();if(!v)return;
+  cbotInput.value='';cbotInput.style.height='40px';
+  cbotAsk(v);
+  try{localStorage.setItem('agv_cbot_seen','1');}catch(e){}
+}
+if(cbotSend)cbotSend.addEventListener('click',cbotSubmit);
+if(cbotInput){
+  cbotInput.addEventListener('keydown',e=>{
+    if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();cbotSubmit();}
+  });
+  // auto-grow textarea
+  cbotInput.addEventListener('input',()=>{
+    cbotInput.style.height='40px';
+    cbotInput.style.height=Math.min(100,cbotInput.scrollHeight)+'px';
+  });
+}
+// Esc to close chatbot when open
+document.addEventListener('keydown',e=>{if(CBOT.open&&e.key==='Escape'){cbotClose();}});
+// Update suggestions when tab changes
+if(typeof showTab==='function'){
+  const _origShowTab=showTab;
+  window.showTab=function(name,opts){_origShowTab(name,opts);if(CBOT.open)cbotUpdateSuggestions();};
 }
 
 /* Intro: skip, enter, and auto-play arpeggio when user first interacts */
@@ -3699,21 +4467,17 @@ function playIntroArpeggioIfReady(){
 // First interaction with the intro primes audio AND plays arpeggio
 intro.addEventListener('mouseenter',()=>{SND.prime();playIntroArpeggioIfReady();},{once:true});
 intro.addEventListener('click',()=>{SND.prime();playIntroArpeggioIfReady();},{once:true});
-introEnter.addEventListener('click',()=>{dismissIntro();setTimeout(()=>SND.confirm(),350);setTimeout(maybeAutoStartTour,1100);});
-introSkip.addEventListener('click',()=>{dismissIntro();setTimeout(maybeAutoStartTour,800);});
-// Keyboard: Esc or Enter
+introEnter.addEventListener('click',()=>{dismissIntro();setTimeout(()=>SND.confirm(),350);setTimeout(autoStartTour,1100);});
+introSkip.addEventListener('click',()=>{dismissIntro();setTimeout(autoStartTour,800);});
+// Keyboard: Enter to enter the app (Esc no longer dismisses — user must click)
 document.addEventListener('keydown',e=>{
   if(intro.classList.contains('gone'))return;
-  if(e.key==='Escape'||e.key==='Enter'){dismissIntro();SND.prime();}
+  if(e.key==='Enter'){dismissIntro();SND.prime();setTimeout(autoStartTour,1100);}
 });
-// Auto-dismiss after 9s if user does nothing (UX safety)
-setTimeout(()=>{if(!document.getElementById('introOverlay').classList.contains('gone'))dismissIntro();setTimeout(maybeAutoStartTour,800);},30000);
+// NOTE: intro stays visible until user clicks "Entrar" or "Saltar" — no auto-dismiss
 
-/* Auto-start tour first time only */
-function maybeAutoStartTour(){
-  try{
-    if(localStorage.getItem('agv_tour_seen')==='1')return;
-  }catch(e){}
+/* Always start tour after entering (every session) */
+function autoStartTour(){
   if(TOUR.active)return;
   startTour();
 }
